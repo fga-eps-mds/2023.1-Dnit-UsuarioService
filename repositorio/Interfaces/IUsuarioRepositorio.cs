@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using dominio;
 
 namespace repositorio.Interfaces
 {
-    internal class UsuarioRepositorio
+    public interface IUsuarioRepositorio
     {
+        public UsuarioDnit Obter(string email, string senha);
     }
 }
