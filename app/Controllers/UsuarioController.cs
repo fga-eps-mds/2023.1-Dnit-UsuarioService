@@ -16,6 +16,19 @@ namespace app.Controllers
             this.usuarioService = usuarioService;
         }
 
+        [HttpGet("item")]
+        public Item Obter([FromQuery] int id)
+        {
+            Item item = service.Obter(id);
 
+            bool verificar = usuarioService.validaLogin();
+        
+            if (verificar == true) return Ok();
+            else
+            {
+                return Unauthorized();
+            }
+
+        }
     }
 }
