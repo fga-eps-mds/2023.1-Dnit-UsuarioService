@@ -13,24 +13,21 @@ public class usuarioService : IUsuarioService
         this.usuarioRepositorio = usuarioRepositorio;
     }
 
-    public UsuarioDnit Obter(string email, string senha)
+    public UsuarioDnit Obter(string email)
     {
-        UsuarioDnit usuarioDnit = usuarioRepositorio.Obter(email, senha);
+        UsuarioDnit usuarioDnit = usuarioRepositorio.Obter(email);
         
         return usuarioDnit;
     }
 
-    public void Login(string email, string senha) // tipo
+    public bool validaLogin(UsuarioDnit primeiroUsuario) // parâmetros
     {
-        email = emailtxt.Text; // emailtxt seria o campo de email do front-end
-        senha = senhatxt.Text;
-
-        UsuarioDnit usuarioDnit = usuarioRepositorio.Obter(email, senha);
-    }
-
-    public bool validaLogin() // parâmetros
-    {
-        //valida se a senha digitada confere com a do banco
+        UsuarioDnit segundoUsuario = Obter(primeiroUsuario.email);
+        
+        if (segundoUsuario.email == primeiroUsuario.email) return true;
+        else{
+            return false;
+        }
 
     }
 }
