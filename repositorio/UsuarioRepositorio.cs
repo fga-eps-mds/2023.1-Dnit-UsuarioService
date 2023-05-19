@@ -19,14 +19,14 @@ namespace repositorio
 
        
 
-        public UsuarioDnit Obter(UsuarioDnit usuario)
+        public UsuarioDnit Obter(string email)
         {
             var sql = @"SELECT * FROM public.usuario WHERE email = @Email";
 
 
             var parametro = new
             {
-                Email = usuario.email
+                Email = email
             };
 
             var usuarioDnit = contexto?.Conexao.QuerySingle<UsuarioDnit>(sql, parametro);

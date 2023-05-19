@@ -5,6 +5,7 @@ namespace service.Interfaces
 {
     public interface IUsuarioService
     {
-        public bool validaLogin();
+        public UsuarioDnit Obter(string email);
+        public bool validaLogin(UsuarioDnit primeiroUsuario);
     }
 }

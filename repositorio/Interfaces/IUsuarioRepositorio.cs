@@ -4,6 +4,6 @@ namespace repositorio.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        public UsuarioDnit Obter(UsuarioDnit usuario);
+        public UsuarioDnit Obter(string email);
     }
 }
