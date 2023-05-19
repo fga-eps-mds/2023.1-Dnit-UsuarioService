@@ -1,7 +1,10 @@
-## [_Issue_ #XX](link-para-issue)
+## _Issue :_ Nome da issue
+
+<!-- Substituir "XX" pelo numero da issue -->
+Resolves fga-eps-mds/2023.1-Dnit-DOC#XX
 <!-- Este projeto só aceita pull request de issues abertas -->
 <!--  Se você está propondo um novo recurso ou modificação, primeiro discuta-o com uma issue --> 
-<!-- A issue deve ser refrenciada diretamente com #codigo da issue -->
+
 
 ## Descrição
 <!-- Descreva suas alterações em detalhes -->
@@ -12,8 +15,7 @@
 <!-- Quais tipos de alterações foram feitas -->
 - [ ] _correção_ _de_ _bug_
 - [ ] Nova _feature_
-- [ ] ...
-
+- [ ] Outro: <!-- especificar  -->
 ## Lista de controle:
 
 - [ ] Atribui este pull request ao projeto
