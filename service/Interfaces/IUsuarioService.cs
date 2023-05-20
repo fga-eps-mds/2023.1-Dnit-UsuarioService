@@ -5,7 +5,7 @@ namespace service.Interfaces
 {
     public interface IUsuarioService
     {
-        public UsuarioDnit Obter(string email);
+        public UsuarioDnit Obter(UsuarioDnit usuarioDnit);
         public bool validaLogin(UsuarioDnit primeiroUsuario);
     }
 }

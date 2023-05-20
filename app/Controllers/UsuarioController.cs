@@ -19,15 +19,15 @@ namespace app.Controllers
         }
         
         [HttpGet("usuario")]
-        public IActionResult Obter([FromQuery] string email)
+        public IActionResult Obter([FromBody] UsuarioDnit usuarioDnit)
         { 
             
-            UsuarioDnit usuario = usuarioService.Obter(email);
+            UsuarioDnit usuario = usuarioService.Obter(usuarioDnit);
             Debug.WriteLine(usuario.email);
 
             bool verificar = usuarioService.validaLogin(usuario);
         
-            if (verificar == true) return Ok(usuario);
+            if (verificar == true) return Ok();
             else
             {
                 return Unauthorized();

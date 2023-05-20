@@ -19,7 +19,7 @@ namespace repositorio
 
        
 
-        public UsuarioDnit Obter(string email)
+        public UsuarioDnit ObterUsuario(string email)
         {
             var sql = @"SELECT * FROM public.usuario WHERE email = @Email";
 

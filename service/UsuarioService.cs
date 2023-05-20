@@ -13,21 +13,31 @@ public class UsuarioService : IUsuarioService
         this.usuarioRepositorio = usuarioRepositorio;
     }
 
-    public UsuarioDnit Obter(string email)
+    public UsuarioDnit Obter(UsuarioDnit usuarioDnit)
     {
-        UsuarioDnit usuarioDnit = usuarioRepositorio.Obter(email);
+        UsuarioDnit usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.email);
         
-        return usuarioDnit;
+        return usuario;
     }
 
-    public bool validaLogin(UsuarioDnit primeiroUsuario) // parâmetros
+    public bool validaLogin(UsuarioDnit primeiroUsuario) //primeiroUsuario: retorno do front; segundoUsuario: retorno do banco
     {
-        UsuarioDnit segundoUsuario = Obter(primeiroUsuario.email);
-        
-        if (segundoUsuario.email == primeiroUsuario.email) return true;
-        else{
-            return false;
-        }
+        UsuarioDnit segundoUsuario = Obter(primeiroUsuario);
+       
+        if (validaEmail(primeiroUsuario, segundoUsuario) && validaSenha(primeiroUsuario, segundoUsuario)) return true;
+        else return false;
 
+    }
+
+    public bool validaEmail(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
+    {
+        if (segundoUsuario.email == primeiroUsuario.email) return true;
+        else return false;
+    }
+
+    public bool validaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
+    {
+        if (segundoUsuario.senha == primeiroUsuario.senha) return true;
+        else return false;
     }
 }
