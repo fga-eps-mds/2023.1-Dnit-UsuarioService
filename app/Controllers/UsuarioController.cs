@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using service;
 using service.Interfaces;
+using System.Diagnostics;
+using System.Web;
 
 namespace app.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/usuario")]
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService usuarioService;
@@ -15,15 +17,17 @@ namespace app.Controllers
         {
             this.usuarioService = usuarioService;
         }
-
-        [HttpGet("item")]
-        public Item Obter([FromQuery] int id)
-        {
-            Item item = service.Obter(id);
-
-            bool verificar = usuarioService.validaLogin();
         
-            if (verificar == true) return Ok();
+        [HttpGet("usuario")]
+        public IActionResult Obter([FromQuery] string email)
+        { 
+            
+            UsuarioDnit usuario = usuarioService.Obter(email);
+            Debug.WriteLine(usuario.email);
+
+            bool verificar = usuarioService.validaLogin(usuario);
+        
+            if (verificar == true) return Ok(usuario);
             else
             {
                 return Unauthorized();

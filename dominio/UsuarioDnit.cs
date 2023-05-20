@@ -2,11 +2,11 @@ namespace dominio
 {
     public class UsuarioDnit
     {
-        public int ID;
-        public string email;
-        public string senha;
-        public string nome;
-        public string UF;
+        public int id { get; set; }
+        public string email { get; set; }
+        public string senha { get; set; }
+        public string nome { get; set; }
+        public string UF { get; set; }
 
         public UsuarioDnit(string email, string senha, string nome, string UF)
         {
@@ -21,5 +21,14 @@ namespace dominio
             this.email = email;
             this.senha = senha;
         }
+
+        public UsuarioDnit(int id, string nome, string email, string senha)
+        {
+            this.email = email;
+            this.senha = senha;
+            this.nome = nome;
+            this.id = id;
+        }
+
     }
 }

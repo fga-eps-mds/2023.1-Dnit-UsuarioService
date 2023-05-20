@@ -4,11 +4,11 @@ using repositorio.Contexto;
 using service.Interfaces;
 
 
-public class usuarioService : IUsuarioService
+public class UsuarioService : IUsuarioService
 {
     private readonly IUsuarioRepositorio usuarioRepositorio;
 
-    public usuarioService(IUsuarioRepositorio usuarioRepositorio)
+    public UsuarioService(IUsuarioRepositorio usuarioRepositorio)
     {
         this.usuarioRepositorio = usuarioRepositorio;
     }
