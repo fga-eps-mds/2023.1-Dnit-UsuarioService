@@ -18,7 +18,6 @@ namespace repositorio
         }
 
        
-
         public UsuarioDnit ObterUsuario(string email)
         {
             var sql = @"SELECT * FROM public.usuario WHERE email = @Email";
@@ -29,7 +28,10 @@ namespace repositorio
                 Email = email
             };
 
-            var usuarioDnit = contexto?.Conexao.QuerySingle<UsuarioDnit>(sql, parametro);
+            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sql, parametro);
+
+            if (usuarioDnit == null)
+                return null;
 
             return usuarioDnit;
         }

@@ -1,4 +1,5 @@
-﻿using dominio;
+﻿using AutoMapper;
+using dominio;
 using Microsoft.AspNetCore.Mvc;
 using service;
 using service.Interfaces;
@@ -18,14 +19,10 @@ namespace app.Controllers
             this.usuarioService = usuarioService;
         }
         
-        [HttpGet("usuario")]
-        public IActionResult Obter([FromBody] UsuarioDnit usuarioDnit)
-        { 
-            
-            UsuarioDnit usuario = usuarioService.Obter(usuarioDnit);
-            Debug.WriteLine(usuario.email);
-
-            bool verificar = usuarioService.validaLogin(usuario);
+        [HttpPost]
+        public IActionResult Obter([FromBody] UsuarioDTO usuarioDTO)
+        {
+            bool verificar = usuarioService.validaLogin(usuarioDTO);
         
             if (verificar == true) return Ok();
             else

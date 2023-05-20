@@ -2,26 +2,30 @@ using dominio;
 using repositorio.Interfaces;
 using repositorio.Contexto;
 using service.Interfaces;
-
+using AutoMapper;
 
 public class UsuarioService : IUsuarioService
 {
     private readonly IUsuarioRepositorio usuarioRepositorio;
+    private readonly IMapper mapper;
 
-    public UsuarioService(IUsuarioRepositorio usuarioRepositorio)
+    public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper)
     {
         this.usuarioRepositorio = usuarioRepositorio;
+        this.mapper = mapper;
     }
 
-    public UsuarioDnit Obter(UsuarioDnit usuarioDnit)
+    public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
     {
-        UsuarioDnit usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.email);
+        UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.email);
         
         return usuario;
     }
 
-    public bool validaLogin(UsuarioDnit primeiroUsuario) //primeiroUsuario: retorno do front; segundoUsuario: retorno do banco
+    public bool validaLogin(UsuarioDTO usuarioDTO)
     {
+        var primeiroUsuario = mapper.Map<UsuarioDnit>(usuarioDTO);
+
         UsuarioDnit segundoUsuario = Obter(primeiroUsuario);
        
         if (validaEmail(primeiroUsuario, segundoUsuario) && validaSenha(primeiroUsuario, segundoUsuario)) return true;
