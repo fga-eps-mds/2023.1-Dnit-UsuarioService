@@ -12,9 +12,10 @@ namespace service
         /// Função para pegar UsuarioDNIT retirado do repositorio
         /// retorno null até a implementação correta
         /// </summary>
-        public UsuarioDNIT Obter(int id)
+
+        public void Cadastrar(UsuarioDNIT usuario)
         {
-           return null;
+            throw new NotImplementedException();
         }
     }
 }

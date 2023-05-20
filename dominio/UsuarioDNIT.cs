@@ -8,11 +8,11 @@ namespace dominio
 {
     public class UsuarioDNIT
     {
-        int ID;
-        string email;
-        string senha;
-        string nome;
-        string UF;
+        public int ID { get; set; }
+        public string email { get;  set; }
+        public string senha { get;  set; }
+        public string nome { get; set; }
+        public string UF { get; set; }
 
         public UsuarioDNIT(string email, string senha, string nome, string UF)
         {

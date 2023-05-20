@@ -17,5 +17,14 @@ namespace app.Controllers
         {
             this.usuarioService = usuarioService;
         }
+
+        [HttpPost("usuarioDnit")]
+        public IActionResult Cadastrar([FromBody] UsuarioDNIT usuarioDNIT)
+        {
+            usuarioService.Cadastrar(usuarioDNIT);
+
+            return Ok();
+            //return item;
+        }
     }
 }

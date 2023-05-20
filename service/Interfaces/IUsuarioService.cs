@@ -10,6 +10,6 @@ namespace service.Interfaces
     public interface IUsuarioService
     {
 
-        public UsuarioDNIT Obter(int id);
+        public void Cadastrar(UsuarioDNIT usuario);
     }
 }
