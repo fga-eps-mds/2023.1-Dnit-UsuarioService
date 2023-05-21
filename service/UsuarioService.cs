@@ -8,14 +8,17 @@ namespace service
 {
     class UsuarioService : IUsuarioService
     {
-        /// <summary>
-        /// Função para pegar UsuarioDNIT retirado do repositorio
-        /// retorno null até a implementação correta
-        /// </summary>
+
+        private readonly IUsuarioRepositorio usuarioRepositorio;
+
+        public UsuarioService(IUsuarioRepositorio usuarioRepositorio)
+        {
+            this.usuarioRepositorio = usuarioRepositorio;
+        }
 
         public void Cadastrar(UsuarioDNIT usuario)
         {
-            throw new NotImplementedException();
+            usuarioRepositorio.Cadastrar(usuario);
         }
     }
 }
