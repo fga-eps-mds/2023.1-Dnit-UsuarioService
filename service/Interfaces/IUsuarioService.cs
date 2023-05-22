@@ -6,6 +6,6 @@ namespace service.Interfaces
     public interface IUsuarioService
     {
         public UsuarioDnit Obter(UsuarioDnit usuarioDnit);
-        public bool validaLogin(UsuarioDTO usuarioDTO);
+        public bool ValidaLogin(UsuarioDTO usuarioDTO);
     }
 }

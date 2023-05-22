@@ -19,32 +19,32 @@ public class UsuarioService : IUsuarioService
 
     public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
     {
-        UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.email);
+        UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.Email);
 
         if(usuario == null) throw new KeyNotFoundException();
         
         return usuario;
     }
 
-    public bool validaLogin(UsuarioDTO usuarioDTO)
+    public bool ValidaLogin(UsuarioDTO usuarioDTO)
     {
         var primeiroUsuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
         UsuarioDnit segundoUsuario = Obter(primeiroUsuario);
        
-        if (validaEmail(primeiroUsuario, segundoUsuario) && validaSenha(primeiroUsuario, segundoUsuario)) return true;
+        if (ValidaEmail(primeiroUsuario, segundoUsuario) && ValidaSenha(primeiroUsuario, segundoUsuario)) return true;
         else return false;
     }
 
-    public bool validaEmail(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
+    private bool ValidaEmail(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
     {
-        if (segundoUsuario.email == primeiroUsuario.email) return true;
+        if (segundoUsuario.Email == primeiroUsuario.Email) return true;
         else return false;
     }
 
-    public bool validaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
+    private bool ValidaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
     {
-        if (segundoUsuario.senha == primeiroUsuario.senha) return true;
+        if (segundoUsuario.Senha == primeiroUsuario.Senha) return true;
         else throw new UnauthorizedAccessException();
     }
 }

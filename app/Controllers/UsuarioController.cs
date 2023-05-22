@@ -19,11 +19,11 @@ namespace app.Controllers
             this.usuarioService = usuarioService;
         }
         
-        [HttpPost]
+        [HttpPost("login")]
         public IActionResult Obter([FromBody] UsuarioDTO usuarioDTO)
         {
             try{
-                bool verificar = usuarioService.validaLogin(usuarioDTO);
+                bool verificar = usuarioService.ValidaLogin(usuarioDTO);
                 return Ok();
             }
             catch(UnauthorizedAccessException){
