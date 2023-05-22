@@ -7,7 +7,7 @@ namespace app.DI
     {
         public static void AddConfigRepositorios(this IServiceCollection services)
         {
-            services.AddScoped<IItemRepositorio, ItemRepositorio>();
+            services.AddScoped<IUnidadeFederativaRepositorio, UnidadeFederativaRepositorio>();
             services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
         }
     }

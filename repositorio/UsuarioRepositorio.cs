@@ -17,15 +17,34 @@ namespace repositorio
             contexto = resolverContexto(ContextoBancoDeDados.Postgresql);
         }
 
-        public void Cadastrar(UsuarioDNIT usuario)
+       
+        public UsuarioDnit ObterUsuario(string email)
+        {
+            var sql = @"SELECT * FROM public.usuario WHERE email = @Email";
+
+
+            var parametro = new
+            {
+                Email = email
+            };
+
+            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sql, parametro);
+
+            if (usuarioDnit == null)
+                return null;
+
+            return usuarioDnit;
+        }
+
+        public void Cadastrar(UsuarioDnit usuario)
         {
             var sql = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha)";
 
             var parametros = new
             {
-                Senha = usuario.senha,
-                Nome = usuario.nome,
-                Email = usuario.email
+                Senha = usuario.Senha,
+                Nome = usuario.Nome,
+                Email = usuario.Email
             };
 
             contexto?.Conexao.Execute(sql, parametros);

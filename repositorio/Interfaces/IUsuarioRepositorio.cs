@@ -5,6 +5,7 @@ namespace repositorio.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        public void Cadastrar(UsuarioDNIT usuario);
+        public UsuarioDnit ObterUsuario(string email);
+        public void Cadastrar(UsuarioDnit usuario);
     }
 }

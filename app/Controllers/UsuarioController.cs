@@ -1,13 +1,15 @@
+using AutoMapper;
 using dominio;
 using Microsoft.AspNetCore.Mvc;
 using service;
 using service.Interfaces;
+using System.Diagnostics;
+using System.Web;
 
 namespace app.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-
+    [Route("api/usuario")]
     public class UsuarioController : ControllerBase
     {
 
@@ -17,14 +19,29 @@ namespace app.Controllers
         {
             this.usuarioService = usuarioService;
         }
-
-        [HttpPost("usuarioDnit")]
-        public IActionResult Cadastrar([FromBody] UsuarioDNIT usuarioDNIT)
+        
+        [HttpPost("login")]
+        public IActionResult Obter([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.Cadastrar(usuarioDNIT);
+            try
+            {
+                bool verificar = usuarioService.ValidaLogin(usuarioDTO);
+                return Ok();
+            }
+            catch(UnauthorizedAccessException){
+                return Unauthorized();
+            }
+            catch(KeyNotFoundException){
+                return NotFound();
+            }
+        }
+
+        [HttpPost("cadastrar")]
+        public IActionResult Cadastrar([FromBody] UsuarioDTO usuarioDTO)
+        {
+            usuarioService.Cadastrar(usuarioDTO);
 
             return Ok();
-            //return item;
         }
     }
 }
