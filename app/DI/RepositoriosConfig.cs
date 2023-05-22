@@ -9,6 +9,7 @@ namespace app.DI
         {
             services.AddScoped<IItemRepositorio, ItemRepositorio>();
             services.AddScoped<IUnidadeFederativaRepositorio, UnidadeFederativaRepositorio>();
+            services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
         }
     }
 }

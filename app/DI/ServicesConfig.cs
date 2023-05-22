@@ -8,6 +8,7 @@ namespace app.DI
         public static void AddConfigServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddScoped<IItemService, ItemService>();
+            services.AddScoped<IUsuarioService, UsuarioService>();
         }
     }
 }
