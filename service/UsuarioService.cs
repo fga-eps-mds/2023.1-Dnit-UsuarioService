@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace service
 {
-    class UsuarioService : IUsuarioService
+    public class UsuarioService : IUsuarioService
     {
 
         private readonly IUsuarioRepositorio usuarioRepositorio;

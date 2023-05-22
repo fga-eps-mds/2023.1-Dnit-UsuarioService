@@ -14,6 +14,8 @@ namespace dominio
         public string nome { get; set; }
         public string UF { get; set; }
 
+        public UsuarioDNIT() { }
+
         public UsuarioDNIT(string email, string senha, string nome, string UF)
         {
             this.email = email;

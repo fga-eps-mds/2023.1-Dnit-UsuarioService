@@ -17,19 +17,18 @@ namespace repositorio
             contexto = resolverContexto(ContextoBancoDeDados.Postgresql);
         }
 
-    public void Cadastrar(UsuarioDNIT usuario)
-    {
-        var sql = @"INSERT INTO public.usuario(@nome, @email, @senha) VALUES(usuario.nome, usuario.email, usuario.senha)";
-
-        var parametros = new
+        public void Cadastrar(UsuarioDNIT usuario)
         {
-            Id = usuario.ID,
-            Nome = usuario.nome,
-            Email = usuario.email
-        };
+            var sql = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha)";
 
-        // comando do Atualizar() do ItemRepositorio
-        contexto?.Conexao.Execute(sql, parametros);
-    }
+            var parametros = new
+            {
+                Senha = usuario.senha,
+                Nome = usuario.nome,
+                Email = usuario.email
+            };
+
+            contexto?.Conexao.Execute(sql, parametros);
+        }
     }
 }
