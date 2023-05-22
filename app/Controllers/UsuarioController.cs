@@ -22,14 +22,17 @@ namespace app.Controllers
         [HttpPost]
         public IActionResult Obter([FromBody] UsuarioDTO usuarioDTO)
         {
-            bool verificar = usuarioService.validaLogin(usuarioDTO);
-        
-            if (verificar == true) return Ok();
-            else
-            {
-                return Unauthorized();
+            try{
+                bool verificar = usuarioService.validaLogin(usuarioDTO);
+                return Ok();
             }
+            catch(UnauthorizedAccessException){
+                return Unauthorized();
 
+            }
+            catch(KeyNotFoundException){
+                return NotFound();
+            }
         }
     }
 }

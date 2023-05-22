@@ -3,6 +3,8 @@ using repositorio.Interfaces;
 using repositorio.Contexto;
 using service.Interfaces;
 using AutoMapper;
+using System.Collections.Generic;
+using System;
 
 public class UsuarioService : IUsuarioService
 {
@@ -18,6 +20,8 @@ public class UsuarioService : IUsuarioService
     public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
     {
         UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.email);
+
+        if(usuario == null) throw new KeyNotFoundException();
         
         return usuario;
     }
@@ -30,7 +34,6 @@ public class UsuarioService : IUsuarioService
        
         if (validaEmail(primeiroUsuario, segundoUsuario) && validaSenha(primeiroUsuario, segundoUsuario)) return true;
         else return false;
-
     }
 
     public bool validaEmail(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
@@ -42,6 +45,6 @@ public class UsuarioService : IUsuarioService
     public bool validaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
     {
         if (segundoUsuario.senha == primeiroUsuario.senha) return true;
-        else return false;
+        else throw new UnauthorizedAccessException();
     }
 }
