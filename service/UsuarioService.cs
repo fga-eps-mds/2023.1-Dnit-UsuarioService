@@ -51,20 +51,15 @@ namespace service
 
             UsuarioDnit segundoUsuario = Obter(primeiroUsuario);
 
-            if (ValidaEmail(primeiroUsuario, segundoUsuario) && ValidaSenha(primeiroUsuario, segundoUsuario)) return true;
-            else return false;
-        }
-
-        private bool ValidaEmail(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
-        {
-            if (segundoUsuario.Email == primeiroUsuario.Email) return true;
-            else return false;
+            return ValidaSenha(primeiroUsuario, segundoUsuario);
         }
 
         private bool ValidaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
         {
-            if (segundoUsuario.Senha == primeiroUsuario.Senha) return true;
-            else throw new UnauthorizedAccessException();
+            if (BCryptNet.Verify(primeiroUsuario.Senha, segundoUsuario.Senha))
+                return true;
+
+            throw new UnauthorizedAccessException();
         }
     }
 }
