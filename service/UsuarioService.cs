@@ -1,11 +1,10 @@
 ﻿using dominio;
 using repositorio.Interfaces;
-using repositorio.Contexto;
 using service.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
 using System;
-using System.Collections.Generic;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace service
 {
@@ -25,7 +24,16 @@ namespace service
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
+            usuario.Senha = EncriptarSenha(usuario);
+
             usuarioRepositorio.Cadastrar(usuario);
+        }
+
+        public string EncriptarSenha(UsuarioDnit usuarioDnit)
+        {
+            string salt = BCryptNet.GenerateSalt();
+
+            return BCryptNet.HashPassword(usuarioDnit.Senha, salt);
         }
 
         public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
