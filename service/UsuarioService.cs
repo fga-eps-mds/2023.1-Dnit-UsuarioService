@@ -58,5 +58,16 @@ namespace service
             if (segundoUsuario.Senha == primeiroUsuario.Senha) return true;
             else throw new UnauthorizedAccessException();
         }
+        
+        public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto)
+        {
+            var primeiroUsuario = mapper.Map<UsuarioDnit>(usuarioDto);
+
+            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(primeiroUsuario.Email);
+
+            usuarioRepositorio.TrocarSenha(primeiroUsuario.Email, primeiroUsuario.Senha);
+            
+            return usuario;
+        }
     }
 }

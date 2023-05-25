@@ -13,5 +13,7 @@ namespace service.Interfaces
         public UsuarioDnit Obter(UsuarioDnit usuarioDnit);
         public bool ValidaLogin(UsuarioDTO usuarioDTO);
         public void Cadastrar(UsuarioDTO usuarioDTO);
+        public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto);
+
     }
 }

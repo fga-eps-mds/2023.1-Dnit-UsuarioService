@@ -20,18 +20,14 @@ namespace repositorio
        
         public UsuarioDnit ObterUsuario(string email)
         {
-            var sql = @"SELECT * FROM public.usuario WHERE email = @Email";
-
+            var sqlBuscarEmail = @"SELECT * FROM public.usuario WHERE email = @Email";
 
             var parametro = new
             {
                 Email = email
             };
 
-            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sql, parametro);
-
-            if (usuarioDnit == null)
-                return null;
+            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sqlBuscarEmail, parametro);
 
             return usuarioDnit;
         }
@@ -62,6 +58,20 @@ namespace repositorio
 
                 contexto?.Conexao.Execute(sqlInserirUnidadeFederativaUsuario, parametrosUnidadeFederativaUsuario);
             }
+        }
+
+        public UsuarioDnit TrocarSenha(string email, string senha)
+        {
+            var sqlTrocarSenha = @"UPDATE public.usuario SET senha = @Senha WHERE email = @Email";
+
+            var parametro = new
+            {
+                Email = email,
+                Senha = senha
+            };
+            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sqlTrocarSenha, parametro);
+
+            return usuarioDnit;
         }
 
     }

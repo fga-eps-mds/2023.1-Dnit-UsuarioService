@@ -5,6 +5,7 @@ using service;
 using service.Interfaces;
 using System.Diagnostics;
 using System.Web;
+using repositorio.Interfaces;
 
 namespace app.Controllers
 {
@@ -15,13 +16,14 @@ namespace app.Controllers
 
         private readonly IUsuarioService usuarioService;
 
+
         public UsuarioController(IUsuarioService usuarioService)
         {
             this.usuarioService = usuarioService;
         }
         
         [HttpPost("login")]
-        public IActionResult Obter([FromBody] UsuarioDTO usuarioDTO)
+        public IActionResult Logar([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
@@ -41,6 +43,14 @@ namespace app.Controllers
         {
             usuarioService.Cadastrar(usuarioDTO);
 
+            return Ok();
+        }
+
+        [HttpPut("recuperarSenha")]
+        public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
+        {
+            
+            usuarioService.TrocaSenha(usuarioDto);
             return Ok();
         }
     }

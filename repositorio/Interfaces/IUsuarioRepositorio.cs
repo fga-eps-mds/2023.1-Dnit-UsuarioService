@@ -7,5 +7,7 @@ namespace repositorio.Interfaces
     {
         public UsuarioDnit ObterUsuario(string email);
         public void Cadastrar(UsuarioDnit usuario);
+        public UsuarioDnit TrocarSenha(string senha, string email);
+
     }
 }
