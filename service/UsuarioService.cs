@@ -1,11 +1,10 @@
 ﻿using dominio;
 using repositorio.Interfaces;
-using repositorio.Contexto;
 using service.Interfaces;
 using AutoMapper;
 using System.Collections.Generic;
 using System;
-using System.Collections.Generic;
+using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace service
 {
@@ -25,7 +24,16 @@ namespace service
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
+            usuario.Senha = EncriptarSenha(usuario);
+
             usuarioRepositorio.Cadastrar(usuario);
+        }
+
+        public string EncriptarSenha(UsuarioDnit usuarioDnit)
+        {
+            string salt = BCryptNet.GenerateSalt();
+
+            return BCryptNet.HashPassword(usuarioDnit.Senha, salt);
         }
 
         public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
@@ -39,24 +47,19 @@ namespace service
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            var primeiroUsuario = mapper.Map<UsuarioDnit>(usuarioDTO);
+            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
 
-            UsuarioDnit segundoUsuario = Obter(primeiroUsuario);
+            UsuarioDnit usuarioBanco = Obter(usuarioEntrada);
 
-            if (ValidaEmail(primeiroUsuario, segundoUsuario) && ValidaSenha(primeiroUsuario, segundoUsuario)) return true;
-            else return false;
+            return ValidaSenha(usuarioEntrada, usuarioBanco);
         }
 
-        private bool ValidaEmail(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
+        private bool ValidaSenha(UsuarioDnit usuarioEntrada, UsuarioDnit usuarioBanco)
         {
-            if (segundoUsuario.Email == primeiroUsuario.Email) return true;
-            else return false;
-        }
+            if (BCryptNet.Verify(usuarioEntrada.Senha, usuarioBanco.Senha))
+                return true;
 
-        private bool ValidaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
-        {
-            if (segundoUsuario.Senha == primeiroUsuario.Senha) return true;
-            else throw new UnauthorizedAccessException();
+            throw new UnauthorizedAccessException();
         }
         
         public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto)
