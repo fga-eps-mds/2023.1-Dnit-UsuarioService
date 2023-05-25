@@ -49,9 +49,15 @@ namespace app.Controllers
         [HttpPut("recuperarSenha")]
         public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
         {
-            
-            usuarioService.TrocaSenha(usuarioDto);
-            return Ok();
+            try
+            {
+                usuarioService.TrocaSenha(usuarioDto);
+                return Ok();
+            }
+            catch(KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

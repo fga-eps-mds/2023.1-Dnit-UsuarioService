@@ -65,6 +65,8 @@ namespace service
 
             UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(primeiroUsuario.Email);
 
+            if (usuario == null) throw new KeyNotFoundException();
+
             usuarioRepositorio.TrocarSenha(primeiroUsuario.Email, primeiroUsuario.Senha);
             
             return usuario;
