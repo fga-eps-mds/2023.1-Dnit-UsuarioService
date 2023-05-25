@@ -47,16 +47,16 @@ namespace service
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            var primeiroUsuario = mapper.Map<UsuarioDnit>(usuarioDTO);
+            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
 
-            UsuarioDnit segundoUsuario = Obter(primeiroUsuario);
+            UsuarioDnit usuarioBanco = Obter(usuarioEntrada);
 
-            return ValidaSenha(primeiroUsuario, segundoUsuario);
+            return ValidaSenha(usuarioEntrada, usuarioBanco);
         }
 
-        private bool ValidaSenha(UsuarioDnit primeiroUsuario, UsuarioDnit segundoUsuario)
+        private bool ValidaSenha(UsuarioDnit usuarioEntrada, UsuarioDnit usuarioBanco)
         {
-            if (BCryptNet.Verify(primeiroUsuario.Senha, segundoUsuario.Senha))
+            if (BCryptNet.Verify(usuarioEntrada.Senha, usuarioBanco.Senha))
                 return true;
 
             throw new UnauthorizedAccessException();
