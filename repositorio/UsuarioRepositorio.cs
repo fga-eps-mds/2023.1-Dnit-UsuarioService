@@ -36,7 +36,7 @@ namespace repositorio
             return usuarioDnit;
         }
 
-        public void Cadastrar(UsuarioDnit usuario)
+        public void CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
             var sqlInserirUsuario = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha) RETURNING id";
 
@@ -64,7 +64,7 @@ namespace repositorio
             }
         }
 
-        public void CadastrarTerceiro(UsuarioTerceiro usuarioTerceiro)
+        public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
         {
             var sqlInserirUsuarioTerceiro = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha) RETURNING id";
 

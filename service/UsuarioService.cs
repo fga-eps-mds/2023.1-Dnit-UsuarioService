@@ -20,20 +20,29 @@ namespace service
             this.mapper = mapper;
         }
 
-        public void Cadastrar(UsuarioDTO usuarioDTO)
+        public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario);
 
-            usuarioRepositorio.Cadastrar(usuario);
+            usuarioRepositorio.CadastrarUsuarioDnit(usuario);
         }
 
-        public string EncriptarSenha(UsuarioDnit usuarioDnit)
+        public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO)
+        {
+            var usuario = mapper.Map<UsuarioTerceiro>(usuarioDTO);
+
+            usuario.Senha = EncriptarSenha(usuario);
+
+            usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
+        }
+
+        public string EncriptarSenha(Usuario usuario)
         {
             string salt = BCryptNet.GenerateSalt();
 
-            return BCryptNet.HashPassword(usuarioDnit.Senha, salt);
+            return BCryptNet.HashPassword(usuario.Senha, salt);
         }
 
         public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
