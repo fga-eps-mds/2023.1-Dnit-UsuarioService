@@ -84,7 +84,7 @@ namespace repositorio
                 var parametrosEmpresa = new
                 {
                     IdUsuario = usuarioTerceiroId,
-                    CnpjEmpresa = usuarioTerceiro.CNPJempresa
+                    CnpjEmpresa = usuarioTerceiro.CNPJ
                 };
 
                 contexto?.Conexao.Execute(sqlInserirEmpresa, parametrosEmpresa);
