@@ -46,7 +46,7 @@ namespace app.Controllers
             return Ok();
         }
 
-        [HttpPut("recuperarSenha")]
+        [HttpPut("Recuperar Senha")]
         public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
         {
             try

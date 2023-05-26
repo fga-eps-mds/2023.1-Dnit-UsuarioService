@@ -64,13 +64,15 @@ namespace service
         
         public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto)
         {
-            var primeiroUsuario = mapper.Map<UsuarioDnit>(usuarioDto);
+            var usuarioBanco = mapper.Map<UsuarioDnit>(usuarioDto);
 
-            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(primeiroUsuario.Email);
+            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioBanco.Email);
 
             if (usuario == null) throw new KeyNotFoundException();
+            
+            usuarioBanco.Senha = EncriptarSenha(usuario);
 
-            usuarioRepositorio.TrocarSenha(primeiroUsuario.Email, primeiroUsuario.Senha);
+            usuarioRepositorio.TrocarSenha(usuarioBanco.Email, usuarioBanco.Senha);
             
             return usuario;
         }
