@@ -38,9 +38,9 @@ jobs:
       with:
         aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: demovideo
-        environment_name: demovideo-dev
-        region: us-east-2
+        application_name: dnit-usuario
+        environment_name: dnit-usuario-dev
+        region: us-east-1
         version_label: ${{ github.run_id }}
         version_description: ${{ github.sha }}
         deployment_package: ${{ github.workspace }}/out.zip
