@@ -36,10 +36,18 @@ namespace app.Controllers
             }
         }
 
-        [HttpPost("cadastrar")]
-        public IActionResult Cadastrar([FromBody] UsuarioDTO usuarioDTO)
+        [HttpPost("cadastrarUsuarioDnit")]
+        public IActionResult CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.Cadastrar(usuarioDTO);
+            usuarioService.CadastrarUsuarioDnit(usuarioDTO);
+
+            return Ok();
+        }
+
+        [HttpPost("cadastrarUsuarioTerceiro")]
+        public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTO usuarioDTO)
+        {
+            usuarioService.CadastrarUsuarioTerceiro(usuarioDTO);
 
             return Ok();
         }

@@ -27,7 +27,20 @@ builder.Services.AddConfigRepositorios();
 
 builder.Services.AddContexto(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowAllOrigins");
 
 app.UseCors("All");
 

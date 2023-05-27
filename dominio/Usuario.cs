@@ -6,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace dominio
 {
-    public class UsuarioDTO
+    public class Usuario
     {
+        public int Id { get; set; }
         public string Email { get; set; }
         public string Senha { get; set; }
         public string Nome { get; set; }
-        public int? UF { get; set; }
-        public int CNPJ { get; set; }
     }
 }
