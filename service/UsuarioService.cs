@@ -5,6 +5,10 @@ using AutoMapper;
 using System.Collections.Generic;
 using System;
 using BCryptNet = BCrypt.Net.BCrypt;
+using System.Threading.Tasks;
+using System.Net.Mail;
+using System.Net;
+using System.Globalization;
 
 namespace service
 {
@@ -61,20 +65,53 @@ namespace service
 
             throw new UnauthorizedAccessException();
         }
-        
+
         public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto)
         {
             var usuarioBanco = mapper.Map<UsuarioDnit>(usuarioDto);
 
-            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioBanco.Email);
+            UsuarioDnit? usuario = Obter(usuarioBanco);
 
-            if (usuario == null) throw new KeyNotFoundException();
-            
             usuarioBanco.Senha = EncriptarSenha(usuario);
 
             usuarioRepositorio.TrocarSenha(usuarioBanco.Email, usuarioBanco.Senha);
-            
+
+            enviarEmail(usuarioBanco.Email);
+
             return usuario;
         }
+
+
+        public void enviarEmail(string emailDestinatario)
+        {
+
+            MailMessage mensagem = new MailMessage();
+
+            string emailRemetente = "";
+            string senhaRemetente = "";
+
+            mensagem.From = new MailAddress(emailRemetente);
+            mensagem.Subject = "Mensagem teste";
+            mensagem.To.Add(new MailAddress(emailDestinatario));
+            mensagem.Body = "Mensagem de teste";
+
+            var clienteSmtp = new SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new NetworkCredential(emailRemetente, senhaRemetente),
+                EnableSsl = true,
+
+            };
+
+            clienteSmtp.Send(mensagem);
+
+        }
+
+
+
     }
-}
+}   
+
+
+
+
