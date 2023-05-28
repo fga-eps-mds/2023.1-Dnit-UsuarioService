@@ -76,24 +76,33 @@ namespace service
 
             usuarioRepositorio.TrocarSenha(usuarioBanco.Email, usuarioBanco.Senha);
 
-            enviarEmail(usuarioBanco.Email);
+            enviarEmail("email", "Link de recuperação", GerarLinkDeRecuperacao());
 
             return usuario;
         }
 
+        public string GerarLinkDeRecuperacao()
+        {
+            string token = Guid.NewGuid().ToString();
+            string baseUrl = "https://dnit.vercel.app/login";
+            string link = $"{baseUrl}?token={token}";
+            
+            return link;
+        }
 
-        public void enviarEmail(string emailDestinatario)
+
+        public void enviarEmail(string emailDestinatario, string assunto, string corpo)
         {
 
             MailMessage mensagem = new MailMessage();
 
-            string emailRemetente = "";
-            string senhaRemetente = "";
+            string emailRemetente = "email@gmail.com";
+            string senhaRemetente = "senha";
 
             mensagem.From = new MailAddress(emailRemetente);
-            mensagem.Subject = "Mensagem teste";
+            mensagem.Subject = assunto;
             mensagem.To.Add(new MailAddress(emailDestinatario));
-            mensagem.Body = "Mensagem de teste";
+            mensagem.Body = corpo;
 
             var clienteSmtp = new SmtpClient("smtp.gmail.com")
             {
@@ -102,16 +111,7 @@ namespace service
                 EnableSsl = true,
 
             };
-
             clienteSmtp.Send(mensagem);
-
         }
-
-
-
     }
 }   
-
-
-
-
