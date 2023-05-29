@@ -94,8 +94,8 @@ namespace service
 
             MailMessage mensagem = new MailMessage();
 
-            string emailRemetente = "mateusorlando2014@gmail.com";
-            string senhaRemetente = "mlcudyjsfcrwqgbq";
+            string emailRemetente = "email@gmail.com";
+            string senhaRemetente = "senha";
 
             mensagem.From = new MailAddress(emailRemetente);
             mensagem.Subject = assunto;
