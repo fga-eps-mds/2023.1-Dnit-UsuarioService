@@ -20,7 +20,7 @@ namespace repositorio
        
         public UsuarioDnit ObterUsuario(string email)
         {
-            var sqlBuscarEmail = @"SELECT * FROM public.usuario WHERE email = @Email";
+            var sqlBuscarEmail = @"SELECT id, email, senha, nome FROM public.usuario WHERE email = @Email";
 
             var parametro = new
             {
@@ -72,6 +72,35 @@ namespace repositorio
             var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sqlTrocarSenha, parametro);
 
             return usuarioDnit;
+        }
+
+        public RedefinicaoSenha ObterDadosRedefinicaoSenha(int id)
+        {
+            var sqlBuscarDados = @"SELECT * FROM public.recuperacao_senha WHERE id = @Id";
+
+            var parametro = new
+            {
+                Id = id
+            };
+
+            var redefinicaoSenha = contexto?.Conexao.QuerySingleOrDefault<RedefinicaoSenha>(sqlBuscarDados, parametro);
+
+            return redefinicaoSenha;
+        }
+
+        public RedefinicaoSenha InserirDadosRecuperacao(string uuid, int idUsuario)
+        {
+            var sqlInserirDadosRecuperacao = @"INSERT INTO public.recuperacao_senha(uuid, id_usuario) VALUES(@Uuid, @IdUsuario) RETURNING id";
+
+            var parametro = new
+            {
+                Uuid = uuid,
+                IdUsuario = idUsuario
+            };
+
+            var dadosRedefinicao = contexto?.Conexao.QuerySingleOrDefault<RedefinicaoSenha>(sqlInserirDadosRecuperacao, parametro);
+
+            return dadosRedefinicao;
         }
 
     }

@@ -51,7 +51,8 @@ namespace app.Controllers
         {
             try
             {
-                usuarioService.TrocaSenha(usuarioDto);
+                usuarioService.RecuperarSenha(usuarioDto);
+           //     usuarioService.TrocaSenha(usuarioDto);
                 return Ok();
             }
             catch(KeyNotFoundException)
@@ -60,6 +61,24 @@ namespace app.Controllers
             }
         }
 
-        
+        //  [HttpPut("Validar token de recuperação")]
+        // public IActionResult ValidarTokenDeRecuperacao([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
+        // {
+        //     usuarioService.ValidaRedefinicaoDeSenha(redefinirSenhaDto);
+        // }
+
+        [HttpPut("Redefinir Senha")]
+        public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
+        {
+            try
+            {
+                usuarioService.TrocaSenha(redefinirSenhaDto);
+                return Ok();
+            }
+            catch(KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
     }
 }

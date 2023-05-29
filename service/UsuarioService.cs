@@ -122,11 +122,14 @@ namespace service
         public void RecuperarSenha(UsuarioDTO usuarioDto)
         {
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDto);
+            UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
 
             string Uuid = Guid.NewGuid().ToString();
-            EnviarEmail(usuarioEntrada.Email, "Link de recuperação", GerarLinkDeRecuperacao(Uuid));
+            EnviarEmail(usuarioBanco.Email, "Link de recuperação", GerarLinkDeRecuperacao(Uuid));
 
-            usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioEntrada.Id);
+            Console.WriteLine(usuarioBanco.Id);
+            usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioBanco.Id);
+
         }
     }
 }   
