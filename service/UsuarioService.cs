@@ -76,7 +76,10 @@ namespace service
         public RedefinicaoSenha TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
         {
             var dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDto);
-            
+
+            int? IdUsuario = usuarioRepositorio.ObterIdRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
+
+
             dadosRedefinicaoSenha.Senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
 
             usuarioRepositorio.TrocarSenha(dadosRedefinicaoSenha.Email, dadosRedefinicaoSenha.Senha);
@@ -130,6 +133,11 @@ namespace service
             Console.WriteLine(usuarioBanco.Id);
             usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioBanco.Id);
 
+        }
+
+        public int? ObterIdRedefinicaoSenha(string uuid)
+        {
+            throw new NotImplementedException();
         }
     }
 }   

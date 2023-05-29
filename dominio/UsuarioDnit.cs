@@ -7,6 +7,7 @@ namespace dominio
         public string Senha { get; set; }
         public string Nome { get; set; }
         public int UF { get; set; }
+        
 
     }
 }
