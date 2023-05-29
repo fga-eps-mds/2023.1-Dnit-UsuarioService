@@ -28,21 +28,21 @@ namespace service
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
-            usuario.Senha = EncriptarSenha(usuario);
+            usuario.Senha = EncriptarSenha(usuario.Senha);
 
             usuarioRepositorio.Cadastrar(usuario);
         }
 
-        public string EncriptarSenha(UsuarioDnit usuarioDnit)
+        public string EncriptarSenha(string senha)
         {
             string salt = BCryptNet.GenerateSalt();
 
-            return BCryptNet.HashPassword(usuarioDnit.Senha, salt);
+            return BCryptNet.HashPassword(senha, salt);
         }
 
-        public UsuarioDnit? Obter(UsuarioDnit usuarioDnit)
+        public UsuarioDnit? Obter(string email)
         {
-            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(usuarioDnit.Email);
+            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(email);
 
             if (usuario == null) throw new KeyNotFoundException();
 
@@ -53,7 +53,7 @@ namespace service
         {
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
 
-            UsuarioDnit usuarioBanco = Obter(usuarioEntrada);
+            UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
 
             return ValidaSenha(usuarioEntrada, usuarioBanco);
         }
@@ -65,33 +65,28 @@ namespace service
 
             throw new UnauthorizedAccessException();
         }
-
-        public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto)
+        public string GerarLinkDeRecuperacao(string Uuid)
         {
-            var usuarioBanco = mapper.Map<UsuarioDnit>(usuarioDto);
-
-            UsuarioDnit? usuario = Obter(usuarioBanco);
-
-            usuarioBanco.Senha = EncriptarSenha(usuario);
-
-            usuarioRepositorio.TrocarSenha(usuarioBanco.Email, usuarioBanco.Senha);
-
-            enviarEmail("email", "Link de recuperação", GerarLinkDeRecuperacao());
-
-            return usuario;
-        }
-
-        public string GerarLinkDeRecuperacao()
-        {
-            string token = Guid.NewGuid().ToString();
             string baseUrl = "https://dnit.vercel.app/login";
-            string link = $"{baseUrl}?token={token}";
+            string link = $"{baseUrl}?token={Uuid}";
             
             return link;
         }
 
+        public RedefinicaoSenha TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
+        {
+            var dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDto);
+            
+            dadosRedefinicaoSenha.Senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
 
-        public void enviarEmail(string emailDestinatario, string assunto, string corpo)
+            usuarioRepositorio.TrocarSenha(dadosRedefinicaoSenha.Email, dadosRedefinicaoSenha.Senha);
+
+            return dadosRedefinicaoSenha;
+        }
+
+
+
+        public void EnviarEmail(string emailDestinatario, string assunto, string corpo)
         {
 
             MailMessage mensagem = new MailMessage();
@@ -112,6 +107,26 @@ namespace service
 
             };
             clienteSmtp.Send(mensagem);
+        }
+
+        public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
+        {
+            var dadosRedefinicao = mapper.Map<RedefinicaoSenhaDTO>(redefinicaoSenhaDto);
+            var usuarioBanco = Obter(dadosRedefinicao.Email);
+            var dadosRedefinicaoBanco = usuarioRepositorio.ObterDadosRedefinicaoSenha(usuarioBanco.Id);
+
+            if (dadosRedefinicao.Uuid == dadosRedefinicaoBanco.Uuid) return true;
+            else throw new UnauthorizedAccessException();
+        }
+
+        public void RecuperarSenha(UsuarioDTO usuarioDto)
+        {
+            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDto);
+
+            string Uuid = Guid.NewGuid().ToString();
+            EnviarEmail(usuarioEntrada.Email, "Link de recuperação", GerarLinkDeRecuperacao(Uuid));
+
+            usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioEntrada.Id);
         }
     }
 }   

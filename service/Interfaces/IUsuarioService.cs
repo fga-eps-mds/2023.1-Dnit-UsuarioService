@@ -10,10 +10,12 @@ namespace service.Interfaces
 {
     public interface IUsuarioService
     {
-        public UsuarioDnit Obter(UsuarioDnit usuarioDnit);
+        public UsuarioDnit Obter(string email);
         public bool ValidaLogin(UsuarioDTO usuarioDTO);
         public void Cadastrar(UsuarioDTO usuarioDTO);
-        public UsuarioDnit TrocaSenha(UsuarioDTO usuarioDto);
+        public RedefinicaoSenha TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
+        public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto);
+
 
     }
 }
