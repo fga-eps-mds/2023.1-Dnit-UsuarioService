@@ -1,0 +1,50 @@
+name: Deploy AWS
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+   
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+    
+    - name: Install dependencies
+      run: dotnet restore
+    
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
+    
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+
+    - name: Publish
+      run: dotnet publish -c Release -o '${{ github.workspace }}/out'
+  
+    - name: Zip Package
+      run: |
+        cd ${{ github.workspace }}/out 
+        zip -r ${{ github.workspace }}/out.zip *
+
+    - name: Deploy to EB
+      uses: einaregilsson/beanstalk-deploy@v21
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: back-dnit-usuario
+        environment_name: back-dnit-usuario-env
+        region: us-east-1
+        version_label: ${{ github.run_id }}
+        version_description: ${{ github.sha }}
+        deployment_package: ${{ github.workspace }}/out.zip
