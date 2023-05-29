@@ -16,5 +16,6 @@ namespace service.Interfaces
         public RedefinicaoSenha TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
         public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto);
         public void RecuperarSenha(UsuarioDTO usuarioDto);
+        public int? ObterIdRedefinicaoSenha(string uuid);
     }
 }

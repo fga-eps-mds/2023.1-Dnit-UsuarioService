@@ -10,6 +10,7 @@ namespace repositorio.Interfaces
         public UsuarioDnit TrocarSenha(string senha, string email);
         public RedefinicaoSenha ObterDadosRedefinicaoSenha(int id);
         public RedefinicaoSenha InserirDadosRecuperacao(string uuid, int idUsuario);
+        public int? ObterIdRedefinicaoSenha(string uuid);
 
 
     }
