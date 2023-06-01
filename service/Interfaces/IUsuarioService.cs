@@ -13,8 +13,8 @@ namespace service.Interfaces
         public UsuarioDnit Obter(string email);
         public bool ValidaLogin(UsuarioDTO usuarioDTO);
         public void Cadastrar(UsuarioDTO usuarioDTO);
-        public RedefinicaoSenha TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
-        public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto);
+        public void TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
+        //public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto);
         public void RecuperarSenha(UsuarioDTO usuarioDto);
         public int? ObterIdRedefinicaoSenha(string uuid);
     }

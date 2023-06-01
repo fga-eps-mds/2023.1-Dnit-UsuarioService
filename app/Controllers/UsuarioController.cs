@@ -52,7 +52,6 @@ namespace app.Controllers
             try
             {
                 usuarioService.RecuperarSenha(usuarioDto);
-           //     usuarioService.TrocaSenha(usuarioDto);
                 return Ok();
             }
             catch(KeyNotFoundException)

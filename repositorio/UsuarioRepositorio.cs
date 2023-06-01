@@ -74,18 +74,18 @@ namespace repositorio
             return usuarioDnit;
         }
 
-        public int? ObterIdRedefinicaoSenha(string uuid)
+        public string? ObterEmailRedefinicaoSenha(string uuid)
         {
-            var sqlBuscarDados = @"SELECT id FROM public.recuperacao_senha WHERE uuid = @Uuid";
+            var sqlBuscarDados = @"SELECT u.email FROM public.recuperacao_senha rs INNER JOIN public.usuario u ON rs.id_usuario = u.id WHERE uuid = @Uuid";
 
             var parametro = new
             {
                 Uuid = uuid,
             };
 
-            int? IdUsuario = contexto?.Conexao.QuerySingleOrDefault<int>(sqlBuscarDados, parametro);
+            string? email = contexto?.Conexao.QuerySingleOrDefault<string>(sqlBuscarDados, parametro);
 
-            return IdUsuario;
+            return email;
         }
 
         public RedefinicaoSenha InserirDadosRecuperacao(string uuid, int idUsuario)
