@@ -88,6 +88,18 @@ namespace repositorio
             return email;
         }
 
+        public void removerUuidRedefinicaoSenha(string uuid)
+        {
+            var sqlBuscarDados = @"DELETE FROM public.recuperacao_senha WHERE uuid = @Uuid";
+
+            var parametro = new
+            {
+                Uuid = uuid,
+            };
+
+            contexto?.Conexao.Execute(sqlBuscarDados, parametro);
+        }
+
         public RedefinicaoSenha InserirDadosRecuperacao(string uuid, int idUsuario)
         {
             var sqlInserirDadosRecuperacao = @"INSERT INTO public.recuperacao_senha(uuid, id_usuario) VALUES(@Uuid, @IdUsuario) RETURNING id";

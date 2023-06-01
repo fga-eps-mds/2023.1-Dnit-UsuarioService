@@ -83,6 +83,8 @@ namespace service
             usuarioRepositorio.TrocarSenha(emailUsuario, senha);
 
             EnviarEmail(emailUsuario, "Senha Atualizada", "A sua senha foi atualizada com sucesso.");
+
+            usuarioRepositorio.removerUuidRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
         }
 
 
