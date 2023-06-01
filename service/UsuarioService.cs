@@ -17,11 +17,13 @@ namespace service
 
         private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly IMapper mapper;
+        private readonly IEmailService emailService;
 
-        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper)
+        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper, IEmailService emailService)
         {
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
+            this.emailService = emailService;
         }
 
         public void Cadastrar(UsuarioDTO usuarioDTO)
@@ -82,34 +84,9 @@ namespace service
 
             usuarioRepositorio.TrocarSenha(emailUsuario, senha);
 
-            EnviarEmail(emailUsuario, "Senha Atualizada", "A sua senha foi atualizada com sucesso.");
+            emailService.EnviarEmail(emailUsuario, "Senha Atualizada", "A sua senha foi atualizada com sucesso.");
 
             usuarioRepositorio.removerUuidRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
-        }
-
-
-
-        public void EnviarEmail(string emailDestinatario, string assunto, string corpo)
-        {
-
-            MailMessage mensagem = new MailMessage();
-
-            string emailRemetente = "email@gmail.com";
-            string senhaRemetente = "senha";
-
-            mensagem.From = new MailAddress(emailRemetente);
-            mensagem.Subject = assunto;
-            mensagem.To.Add(new MailAddress(emailDestinatario));
-            mensagem.Body = corpo;
-
-            var clienteSmtp = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(emailRemetente, senhaRemetente),
-                EnableSsl = true,
-
-            };
-            clienteSmtp.Send(mensagem);
         }
 
         /*public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
@@ -128,10 +105,11 @@ namespace service
             UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
 
             string Uuid = Guid.NewGuid().ToString();
-            string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(Uuid)}";
-            EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
 
             usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioBanco.Id);
+
+            string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(Uuid)}";
+            emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
         }
 
         public int? ObterIdRedefinicaoSenha(string uuid)

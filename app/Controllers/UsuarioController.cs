@@ -46,7 +46,7 @@ namespace app.Controllers
             return Ok();
         }
 
-        [HttpPut("Recuperar Senha")]
+        [HttpPut("recuperarSenha")]
         public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
         {
             try
@@ -66,7 +66,7 @@ namespace app.Controllers
         //     usuarioService.ValidaRedefinicaoDeSenha(redefinirSenhaDto);
         // }
 
-        [HttpPut("Redefinir Senha")]
+        [HttpPut("redefinirSenha")]
         public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
         {
             try
