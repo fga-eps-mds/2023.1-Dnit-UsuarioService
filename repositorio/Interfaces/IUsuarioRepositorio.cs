@@ -6,8 +6,11 @@ namespace repositorio.Interfaces
     public interface IUsuarioRepositorio
     {
         public UsuarioDnit ObterUsuario(string email);
+        public UsuarioDnit TrocarSenha(string senha, string email);
+        public RedefinicaoSenha InserirDadosRecuperacao(string uuid, int idUsuario);
+        public string? ObterEmailRedefinicaoSenha(string uuid);
+        public void RemoverUuidRedefinicaoSenha(string uuid);
         public void CadastrarUsuarioDnit(UsuarioDnit usuario);
-
         public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro);
     }
 }
