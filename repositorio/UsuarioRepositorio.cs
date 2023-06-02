@@ -32,15 +32,15 @@ namespace repositorio
             return usuarioDnit;
         }
 
-        public void Cadastrar(UsuarioDnit usuario)
+        public void CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
             var sqlInserirUsuario = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha) RETURNING id";
 
             var parametrosUsuario = new
             {
-                Senha = usuario.Senha,
                 Nome = usuario.Nome,
-                Email = usuario.Email
+                Email = usuario.Email,
+                Senha = usuario.Senha,
             };
 
             int? usuarioId = contexto?.Conexao.ExecuteScalar<int>(sqlInserirUsuario, parametrosUsuario);
@@ -113,6 +113,33 @@ namespace repositorio
             var dadosRedefinicao = contexto?.Conexao.QuerySingleOrDefault<RedefinicaoSenha>(sqlInserirDadosRecuperacao, parametro);
 
             return dadosRedefinicao;
+        }
+
+        public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
+        {
+            var sqlInserirUsuarioTerceiro = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha) RETURNING id";
+
+            var parametrosUsuarioTerceiro = new
+            {
+                Nome = usuarioTerceiro.Nome,
+                Email = usuarioTerceiro.Email,
+                Senha = usuarioTerceiro.Senha
+            };
+
+            int? usuarioTerceiroId = contexto?.Conexao.ExecuteScalar<int>(sqlInserirUsuarioTerceiro, parametrosUsuarioTerceiro);
+
+            if (usuarioTerceiroId.HasValue)
+            {
+                var sqlInserirEmpresa = @"INSERT INTO public.usuario_empresa(id_usuario, cnpj_empresa) VALUES(@IdUsuario, @CnpjEmpresa)";
+
+                var parametrosEmpresa = new
+                {
+                    IdUsuario = usuarioTerceiroId,
+                    CnpjEmpresa = usuarioTerceiro.CNPJ
+                };
+
+                contexto?.Conexao.Execute(sqlInserirEmpresa, parametrosEmpresa);
+            }
         }
 
     }

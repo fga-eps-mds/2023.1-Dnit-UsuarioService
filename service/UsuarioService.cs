@@ -26,13 +26,13 @@ namespace service
             this.emailService = emailService;
         }
 
-        public void Cadastrar(UsuarioDTO usuarioDTO)
+        public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
-            usuarioRepositorio.Cadastrar(usuario);
+            usuarioRepositorio.CadastrarUsuarioDnit(usuario);
         }
 
         public string EncriptarSenha(string senha)
@@ -40,6 +40,15 @@ namespace service
             string salt = BCryptNet.GenerateSalt();
 
             return BCryptNet.HashPassword(senha, salt);
+        }
+
+        public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO)
+        {
+            var usuario = mapper.Map<UsuarioTerceiro>(usuarioDTO);
+
+            usuario.Senha = EncriptarSenha(usuario.Senha);
+
+            usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
         public UsuarioDnit? Obter(string email)
@@ -88,16 +97,6 @@ namespace service
 
             usuarioRepositorio.removerUuidRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
         }
-
-        /*public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
-        {
-            var dadosRedefinicao = mapper.Map<RedefinicaoSenhaDTO>(redefinicaoSenhaDto);
-            var usuarioBanco = Obter(dadosRedefinicao.Email);
-            var dadosRedefinicaoBanco = usuarioRepositorio.ObterDadosRedefinicaoSenha(usuarioBanco.Id);
-
-            if (dadosRedefinicao.Uuid == dadosRedefinicaoBanco.Uuid) return true;
-            else throw new UnauthorizedAccessException();
-        }*/
 
         public void RecuperarSenha(UsuarioDTO usuarioDto)
         {
