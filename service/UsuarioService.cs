@@ -17,20 +17,22 @@ namespace service
 
         private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly IMapper mapper;
+        private readonly IEmailService emailService;
 
-        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper)
+        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper, IEmailService emailService)
         {
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
+            this.emailService = emailService;
         }
 
-        public void Cadastrar(UsuarioDTO usuarioDTO)
+        public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
-            usuarioRepositorio.Cadastrar(usuario);
+            usuarioRepositorio.CadastrarUsuarioDnit(usuario);
         }
 
         public string EncriptarSenha(string senha)
@@ -38,6 +40,15 @@ namespace service
             string salt = BCryptNet.GenerateSalt();
 
             return BCryptNet.HashPassword(senha, salt);
+        }
+
+        public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO)
+        {
+            var usuario = mapper.Map<UsuarioTerceiro>(usuarioDTO);
+
+            usuario.Senha = EncriptarSenha(usuario.Senha);
+
+            usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
         public UsuarioDnit? Obter(string email)
@@ -69,57 +80,22 @@ namespace service
         {
             string baseUrl = "https://dnit.vercel.app/login";
             string link = $"{baseUrl}?token={Uuid}";
-            
+
             return link;
         }
 
-        public RedefinicaoSenha TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
+        public void TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
         {
             var dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDto);
 
-            int? IdUsuario = usuarioRepositorio.ObterIdRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
+            string emailUsuario = usuarioRepositorio.ObterEmailRedefinicaoSenha(dadosRedefinicaoSenha.Uuid) ?? throw new KeyNotFoundException();
+            string senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
 
+            usuarioRepositorio.TrocarSenha(emailUsuario, senha);
 
-            dadosRedefinicaoSenha.Senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
+            emailService.EnviarEmail(emailUsuario, "Senha Atualizada", "A sua senha foi atualizada com sucesso.");
 
-            usuarioRepositorio.TrocarSenha(dadosRedefinicaoSenha.Email, dadosRedefinicaoSenha.Senha);
-
-            return dadosRedefinicaoSenha;
-        }
-
-
-
-        public void EnviarEmail(string emailDestinatario, string assunto, string corpo)
-        {
-
-            MailMessage mensagem = new MailMessage();
-
-            string emailRemetente = "email@gmail.com";
-            string senhaRemetente = "senha";
-
-            mensagem.From = new MailAddress(emailRemetente);
-            mensagem.Subject = assunto;
-            mensagem.To.Add(new MailAddress(emailDestinatario));
-            mensagem.Body = corpo;
-
-            var clienteSmtp = new SmtpClient("smtp.gmail.com")
-            {
-                Port = 587,
-                Credentials = new NetworkCredential(emailRemetente, senhaRemetente),
-                EnableSsl = true,
-
-            };
-            clienteSmtp.Send(mensagem);
-        }
-
-        public bool ValidaRedefinicaoDeSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
-        {
-            var dadosRedefinicao = mapper.Map<RedefinicaoSenhaDTO>(redefinicaoSenhaDto);
-            var usuarioBanco = Obter(dadosRedefinicao.Email);
-            var dadosRedefinicaoBanco = usuarioRepositorio.ObterDadosRedefinicaoSenha(usuarioBanco.Id);
-
-            if (dadosRedefinicao.Uuid == dadosRedefinicaoBanco.Uuid) return true;
-            else throw new UnauthorizedAccessException();
+            usuarioRepositorio.removerUuidRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
         }
 
         public void RecuperarSenha(UsuarioDTO usuarioDto)
@@ -128,11 +104,11 @@ namespace service
             UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
 
             string Uuid = Guid.NewGuid().ToString();
-            EnviarEmail(usuarioBanco.Email, "Link de recuperação", GerarLinkDeRecuperacao(Uuid));
 
-            Console.WriteLine(usuarioBanco.Id);
             usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioBanco.Id);
 
+            string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(Uuid)}";
+            emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
         }
 
         public int? ObterIdRedefinicaoSenha(string uuid)
@@ -140,4 +116,4 @@ namespace service
             throw new NotImplementedException();
         }
     }
-}   
+}

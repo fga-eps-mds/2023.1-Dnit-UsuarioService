@@ -8,6 +8,7 @@ namespace dominio.Mapper
         {
             CreateMap<UsuarioDTO, UsuarioDnit>();
             CreateMap<RedefinicaoSenhaDTO, RedefinicaoSenha>();
+            CreateMap<UsuarioDTO, UsuarioTerceiro>();
         }
     }
 }

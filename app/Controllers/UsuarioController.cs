@@ -38,21 +38,28 @@ namespace app.Controllers
             }
         }
 
-        [HttpPost("cadastrar")]
-        public IActionResult Cadastrar([FromBody] UsuarioDTO usuarioDTO)
+        [HttpPost("cadastrarUsuarioDnit")]
+        public IActionResult CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.Cadastrar(usuarioDTO);
+            usuarioService.CadastrarUsuarioDnit(usuarioDTO);
 
             return Ok();
         }
 
-        [HttpPut("Recuperar Senha")]
+        [HttpPost("cadastrarUsuarioTerceiro")]
+        public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTO usuarioDTO)
+        {
+            usuarioService.CadastrarUsuarioTerceiro(usuarioDTO);
+
+            return Ok();
+        }
+
+        [HttpPut("recuperarSenha")]
         public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
         {
             try
             {
                 usuarioService.RecuperarSenha(usuarioDto);
-           //     usuarioService.TrocaSenha(usuarioDto);
                 return Ok();
             }
             catch(KeyNotFoundException)
@@ -67,7 +74,7 @@ namespace app.Controllers
         //     usuarioService.ValidaRedefinicaoDeSenha(redefinirSenhaDto);
         // }
 
-        [HttpPut("Redefinir Senha")]
+        [HttpPut("redefinirSenha")]
         public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
         {
             try
