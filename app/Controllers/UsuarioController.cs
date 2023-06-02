@@ -68,12 +68,6 @@ namespace app.Controllers
             }
         }
 
-        //  [HttpPut("Validar token de recuperação")]
-        // public IActionResult ValidarTokenDeRecuperacao([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
-        // {
-        //     usuarioService.ValidaRedefinicaoDeSenha(redefinirSenhaDto);
-        // }
-
         [HttpPut("redefinirSenha")]
         public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
         {

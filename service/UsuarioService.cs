@@ -76,10 +76,10 @@ namespace service
 
             throw new UnauthorizedAccessException();
         }
-        public string GerarLinkDeRecuperacao(string Uuid)
+        public string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
             string baseUrl = "https://dnit.vercel.app/login";
-            string link = $"{baseUrl}?token={Uuid}";
+            string link = $"{baseUrl}?token={UuidAutenticacao}";
 
             return link;
         }
@@ -88,14 +88,14 @@ namespace service
         {
             var dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDto);
 
-            string emailUsuario = usuarioRepositorio.ObterEmailRedefinicaoSenha(dadosRedefinicaoSenha.Uuid) ?? throw new KeyNotFoundException();
+            string emailUsuario = usuarioRepositorio.ObterEmailRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao) ?? throw new KeyNotFoundException();
             string senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
 
             usuarioRepositorio.TrocarSenha(emailUsuario, senha);
 
             emailService.EnviarEmail(emailUsuario, "Senha Atualizada", "A sua senha foi atualizada com sucesso.");
 
-            usuarioRepositorio.removerUuidRedefinicaoSenha(dadosRedefinicaoSenha.Uuid);
+            usuarioRepositorio.RemoverUuidRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao);
         }
 
         public void RecuperarSenha(UsuarioDTO usuarioDto)
@@ -103,17 +103,12 @@ namespace service
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDto);
             UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
 
-            string Uuid = Guid.NewGuid().ToString();
+            string UuidAutenticacao = Guid.NewGuid().ToString();
 
-            usuarioRepositorio.InserirDadosRecuperacao(Uuid, usuarioBanco.Id);
+            usuarioRepositorio.InserirDadosRecuperacao(UuidAutenticacao, usuarioBanco.Id);
 
-            string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(Uuid)}";
+            string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(UuidAutenticacao)}";
             emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
-        }
-
-        public int? ObterIdRedefinicaoSenha(string uuid)
-        {
-            throw new NotImplementedException();
         }
     }
 }

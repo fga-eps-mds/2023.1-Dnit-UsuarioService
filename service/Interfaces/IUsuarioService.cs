@@ -14,7 +14,6 @@ namespace service.Interfaces
         public bool ValidaLogin(UsuarioDTO usuarioDTO);
         public void TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
         public void RecuperarSenha(UsuarioDTO usuarioDto);
-        public int? ObterIdRedefinicaoSenha(string uuid);
         public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
         public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
     }

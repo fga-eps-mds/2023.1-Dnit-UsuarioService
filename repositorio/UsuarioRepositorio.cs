@@ -88,7 +88,7 @@ namespace repositorio
             return email;
         }
 
-        public void removerUuidRedefinicaoSenha(string uuid)
+        public void RemoverUuidRedefinicaoSenha(string uuid)
         {
             var sqlBuscarDados = @"DELETE FROM public.recuperacao_senha WHERE uuid = @Uuid";
 
