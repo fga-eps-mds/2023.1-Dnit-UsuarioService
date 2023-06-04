@@ -7,6 +7,7 @@ namespace dominio.Mapper
         public AutoMapperConfig()
         {
             CreateMap<UsuarioDTO, UsuarioDnit>();
+            CreateMap<RedefinicaoSenhaDTO, RedefinicaoSenha>();
             CreateMap<UsuarioDTO, UsuarioTerceiro>();
         }
     }

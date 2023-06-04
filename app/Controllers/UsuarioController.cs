@@ -5,6 +5,7 @@ using service;
 using service.Interfaces;
 using System.Diagnostics;
 using System.Web;
+using repositorio.Interfaces;
 
 namespace app.Controllers
 {
@@ -15,13 +16,14 @@ namespace app.Controllers
 
         private readonly IUsuarioService usuarioService;
 
+
         public UsuarioController(IUsuarioService usuarioService)
         {
             this.usuarioService = usuarioService;
         }
         
         [HttpPost("login")]
-        public IActionResult Obter([FromBody] UsuarioDTO usuarioDTO)
+        public IActionResult Logar([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
@@ -39,17 +41,61 @@ namespace app.Controllers
         [HttpPost("cadastrarUsuarioDnit")]
         public IActionResult CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.CadastrarUsuarioDnit(usuarioDTO);
+            try
+            {
+                usuarioService.CadastrarUsuarioDnit(usuarioDTO);
 
-            return Ok();
+                return StatusCode(201, new NoContentResult());
+
+            } catch (Exception ex)
+            {
+                 return Conflict(ex.Message);
+
+            }
+
         }
 
         [HttpPost("cadastrarUsuarioTerceiro")]
         public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.CadastrarUsuarioTerceiro(usuarioDTO);
+            try
+            {
+                usuarioService.CadastrarUsuarioTerceiro(usuarioDTO);
 
-            return Ok();
+                return StatusCode(201, new NoContentResult());
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+        [HttpPut("recuperarSenha")]
+        public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
+        {
+            try
+            {
+                usuarioService.RecuperarSenha(usuarioDto);
+                return Ok();
+            }
+            catch(KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPut("redefinirSenha")]
+        public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
+        {
+            try
+            {
+                usuarioService.TrocaSenha(redefinirSenhaDto);
+                return Ok();
+            }
+            catch(KeyNotFoundException)
+            {
+                return NotFound();
+            }
         }
     }
 }

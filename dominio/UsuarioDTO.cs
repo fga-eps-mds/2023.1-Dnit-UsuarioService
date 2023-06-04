@@ -12,6 +12,6 @@ namespace dominio
         public string Senha { get; set; }
         public string Nome { get; set; }
         public int? UF { get; set; }
-        public int CNPJ { get; set; }
+        public string? CNPJ { get; set; }
     }
 }
