@@ -8,6 +8,6 @@ namespace dominio
 {
     public class UsuarioTerceiro : Usuario
     {
-        public int CNPJ { get; set; }
+        public string CNPJ { get; set; }
     }
 }

@@ -35,7 +35,7 @@ namespace service
             usuarioRepositorio.CadastrarUsuarioDnit(usuario);
         }
 
-        public string EncriptarSenha(string senha)
+        private string EncriptarSenha(string senha)
         {
             string salt = BCryptNet.GenerateSalt();
 
@@ -51,32 +51,33 @@ namespace service
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
-        public UsuarioDnit? Obter(string email)
+        private Usuario? Obter(string email)
         {
-            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(email);
+            Usuario? usuario = usuarioRepositorio.ObterUsuario(email);
 
-            if (usuario == null) throw new KeyNotFoundException();
+            if (usuario == null)
+                throw new KeyNotFoundException();
 
             return usuario;
         }
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
+            var usuarioEntrada = mapper.Map<Usuario>(usuarioDTO);
 
-            UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
+            Usuario? usuarioBanco = Obter(usuarioEntrada.Email);
 
-            return ValidaSenha(usuarioEntrada, usuarioBanco);
+            return ValidaSenha(usuarioEntrada.Senha, usuarioBanco.Senha);
         }
 
-        private bool ValidaSenha(UsuarioDnit usuarioEntrada, UsuarioDnit usuarioBanco)
+        private bool ValidaSenha(string senhaUsuarioEntrada, string senhaUsuarioBanco)
         {
-            if (BCryptNet.Verify(usuarioEntrada.Senha, usuarioBanco.Senha))
+            if (BCryptNet.Verify(senhaUsuarioEntrada, senhaUsuarioBanco))
                 return true;
 
             throw new UnauthorizedAccessException();
         }
-        public string GerarLinkDeRecuperacao(string UuidAutenticacao)
+        private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
             string baseUrl = "https://dnit.vercel.app/login";
             string link = $"{baseUrl}?token={UuidAutenticacao}";
@@ -101,7 +102,7 @@ namespace service
         public void RecuperarSenha(UsuarioDTO usuarioDto)
         {
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDto);
-            UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
+            Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
             string UuidAutenticacao = Guid.NewGuid().ToString();
 
