@@ -43,7 +43,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"2023.1-DNIT-UsuarioService" /o:"yandrade1305" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./test/TestResults/coverage.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"2023.1-DNIT-UsuarioService" /o:"fga-eps-mds" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./test/TestResults/coverage.xml"
           dotnet build
           dotnet test test --no-build --verbosity normal --logger "trx;LogFileName=coverage.xml"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
