@@ -5,6 +5,7 @@ using repositorio.Interfaces;
 using service;
 using service.Interfaces;
 using System;
+using System.Collections.Generic;
 using test.Stub;
 using Xunit;
 
@@ -104,6 +105,173 @@ namespace test
             Exception exception = Assert.Throws<InvalidOperationException>(cadastrarUsuario);
 
             Assert.Equal("Email já cadastrado.", exception.Message);
+        }
+
+        [Fact]
+        public void ValidaLogin_QuandoUsuarioCorretoForPassado_DeveRealizarLogin()
+        {
+            UsuarioStub usuarioStub = new();
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            Usuario usuarioValidoLogin = usuarioStub.RetornarUsuarioValidoLogin();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioValidoLogin);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            Assert.True(usuarioService.ValidaLogin(usuarioDnitDTO));
+        }
+
+        [Fact]
+        public void ValidaLogin_QuandoUsuarioInvalidoForPassado_NaoDeveRealizarLogin()
+        {
+            UsuarioStub usuarioStub = new();
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            Usuario usuarioInvalidoLogin = usuarioStub.RetornarUsuarioInvalidoLogin();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioInvalidoLogin);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            Action validarLogin = () => usuarioService.ValidaLogin(usuarioDnitDTO);
+
+            Assert.Throws<UnauthorizedAccessException>(validarLogin);
+        }
+
+        [Fact]
+        public void ValidaLogin_QuandoUsuarioInexistenteForPassado_NaoDeveRealizarLogin()
+        {
+            UsuarioStub usuarioStub = new();
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            Usuario usuarioInvalidoLogin = usuarioStub.RetornarUsuarioInvalidoLogin();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            Action validarLogin = () => usuarioService.ValidaLogin(usuarioDnitDTO);
+
+            Assert.Throws<KeyNotFoundException>(validarLogin);
+        }
+
+        [Fact]
+        public void RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
+        {
+            UsuarioStub usuarioStub = new();
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            UsuarioDnit usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+
+            usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioDNIT);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            usuarioService.RecuperarSenha(usuarioDnitDTO);
+
+            emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public void RecuperarSenha_QuandoUsuarioNaoExistir_DeveLancarException()
+        {
+            UsuarioStub usuarioStub = new();
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            UsuarioDnit usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+
+            usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            Action validarLogin = () => usuarioService.RecuperarSenha(usuarioDnitDTO);
+
+            Assert.Throws<KeyNotFoundException>(validarLogin);
+        }
+
+        [Fact]
+        public void TrocaSenha_QuandoUuidForValido_DeveTrocarSenha()
+        {
+            UsuarioStub usuarioStub = new();
+            RedefinicaoSenhaStub redefinicaoSenhaStub = new();
+            string emailRedefinicaoSenha = "usuarioTeste@gmail.com";
+
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            UsuarioDnit usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
+            RedefinicaoSenha redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<RedefinicaoSenha>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
+
+            usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+
+            usuarioRepositorio.Setup(x => x.ObterEmailRedefinicaoSenha(It.IsAny<string>())).Returns(emailRedefinicaoSenha);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            usuarioService.TrocaSenha(redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO());
+
+            emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+            usuarioRepositorio.Verify(x => x.RemoverUuidRedefinicaoSenha(It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public void TrocaSenha_QuandoUuidNaoForValido_DeveLancarException()
+        {
+            UsuarioStub usuarioStub = new();
+            RedefinicaoSenhaStub redefinicaoSenhaStub = new();
+
+            UsuarioDTO usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            UsuarioDnit usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
+            RedefinicaoSenha redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
+
+            Mock<IMapper> mapper = new();
+            Mock<IUsuarioRepositorio> usuarioRepositorio = new();
+            Mock<IEmailService> emailService = new();
+
+            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<RedefinicaoSenha>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
+
+            usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+
+            usuarioRepositorio.Setup(x => x.ObterEmailRedefinicaoSenha(It.IsAny<string>())).Returns(value: null);
+
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+
+            Action trocarSenha = () => usuarioService.TrocaSenha(redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO());
+
+            Assert.Throws<KeyNotFoundException>(trocarSenha);
+
+            emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            usuarioRepositorio.Verify(x => x.RemoverUuidRedefinicaoSenha(It.IsAny<string>()), Times.Never);
         }
     }
 }

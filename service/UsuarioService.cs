@@ -63,11 +63,9 @@ namespace service
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<Usuario>(usuarioDTO);
+            Usuario? usuarioBanco = Obter(usuarioDTO.Email);
 
-            Usuario? usuarioBanco = Obter(usuarioEntrada.Email);
-
-            return ValidaSenha(usuarioEntrada.Senha, usuarioBanco.Senha);
+            return ValidaSenha(usuarioDTO.Senha, usuarioBanco.Senha);
         }
 
         private bool ValidaSenha(string senhaUsuarioEntrada, string senhaUsuarioBanco)
@@ -77,17 +75,10 @@ namespace service
 
             throw new UnauthorizedAccessException();
         }
-        private string GerarLinkDeRecuperacao(string UuidAutenticacao)
-        {
-            string baseUrl = "https://dnit.vercel.app/login";
-            string link = $"{baseUrl}?token={UuidAutenticacao}";
 
-            return link;
-        }
-
-        public void TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
+        public void TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDTO)
         {
-            var dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDto);
+            RedefinicaoSenha dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDTO);
 
             string emailUsuario = usuarioRepositorio.ObterEmailRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao) ?? throw new KeyNotFoundException();
             string senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
@@ -99,9 +90,9 @@ namespace service
             usuarioRepositorio.RemoverUuidRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao);
         }
 
-        public void RecuperarSenha(UsuarioDTO usuarioDto)
+        public void RecuperarSenha(UsuarioDTO usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDto);
+            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
             Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
             string UuidAutenticacao = Guid.NewGuid().ToString();
@@ -109,7 +100,15 @@ namespace service
             usuarioRepositorio.InserirDadosRecuperacao(UuidAutenticacao, usuarioBanco.Id);
 
             string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(UuidAutenticacao)}";
+
             emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
+        }
+        private string GerarLinkDeRecuperacao(string UuidAutenticacao)
+        {
+            string baseUrl = "https://dnit.vercel.app/login";
+            string link = $"{baseUrl}?token={UuidAutenticacao}";
+
+            return link;
         }
     }
 }

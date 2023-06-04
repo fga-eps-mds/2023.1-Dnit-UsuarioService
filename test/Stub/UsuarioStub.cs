@@ -53,7 +53,7 @@ namespace test.Stub
             return new Usuario
             {
                 Email = "usuarioteste@gmail.com",
-                Senha = "senha1234",
+                Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
                 Nome = "Usuario Dnit"
             };
         }
@@ -63,7 +63,7 @@ namespace test.Stub
             return new Usuario
             {
                 Email = "usuarioteste@gmail.com",
-                Senha = "senha1234",
+                Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J68",
                 Nome = "Usuario Dnit"
             };
         }

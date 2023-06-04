@@ -19,7 +19,7 @@ namespace repositorio
         }
 
        
-        public Usuario ObterUsuario(string email)
+        public Usuario? ObterUsuario(string email)
         {
             var sqlBuscarEmail = @"SELECT id, email, senha, nome FROM public.usuario WHERE email = @Email";
 
