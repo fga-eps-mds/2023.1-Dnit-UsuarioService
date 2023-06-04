@@ -3,6 +3,7 @@ using dominio;
 using dominio.Enums;
 using repositorio.Contexto;
 using repositorio.Interfaces;
+using System;
 using System.Collections.Generic;
 using static repositorio.Contexto.ResolverContexto;
 
@@ -18,7 +19,7 @@ namespace repositorio
         }
 
        
-        public UsuarioDnit ObterUsuario(string email)
+        public Usuario? ObterUsuario(string email)
         {
             var sqlBuscarEmail = @"SELECT id, email, senha, nome FROM public.usuario WHERE email = @Email";
 
@@ -27,9 +28,9 @@ namespace repositorio
                 Email = email
             };
 
-            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sqlBuscarEmail, parametro);
+            var usuario = contexto?.Conexao.QuerySingleOrDefault<Usuario>(sqlBuscarEmail, parametro);
 
-            return usuarioDnit;
+            return usuario;
         }
 
         public void CadastrarUsuarioDnit(UsuarioDnit usuario)
@@ -57,6 +58,10 @@ namespace repositorio
                 };
 
                 contexto?.Conexao.Execute(sqlInserirUnidadeFederativaUsuario, parametrosUnidadeFederativaUsuario);
+            }
+            else
+            {
+                throw new InvalidOperationException("Email já cadastrado.");
             }
         }
 
@@ -139,6 +144,10 @@ namespace repositorio
                 };
 
                 contexto?.Conexao.Execute(sqlInserirEmpresa, parametrosEmpresa);
+            }
+            else
+            {
+                throw new InvalidOperationException("Email já cadastrado.");
             }
         }
 

@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Todo.List": {
+    "UsuarioService": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

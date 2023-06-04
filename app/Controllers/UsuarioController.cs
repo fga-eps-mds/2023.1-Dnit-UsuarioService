@@ -41,17 +41,33 @@ namespace app.Controllers
         [HttpPost("cadastrarUsuarioDnit")]
         public IActionResult CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.CadastrarUsuarioDnit(usuarioDTO);
+            try
+            {
+                usuarioService.CadastrarUsuarioDnit(usuarioDTO);
 
-            return Ok();
+                return StatusCode(201, new NoContentResult());
+
+            } catch (Exception ex)
+            {
+                 return Conflict(ex.Message);
+
+            }
+
         }
 
         [HttpPost("cadastrarUsuarioTerceiro")]
         public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTO usuarioDTO)
         {
-            usuarioService.CadastrarUsuarioTerceiro(usuarioDTO);
+            try
+            {
+                usuarioService.CadastrarUsuarioTerceiro(usuarioDTO);
 
-            return Ok();
+                return StatusCode(201, new NoContentResult());
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
         }
 
         [HttpPut("recuperarSenha")]

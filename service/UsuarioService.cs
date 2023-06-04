@@ -35,7 +35,7 @@ namespace service
             usuarioRepositorio.CadastrarUsuarioDnit(usuario);
         }
 
-        public string EncriptarSenha(string senha)
+        private string EncriptarSenha(string senha)
         {
             string salt = BCryptNet.GenerateSalt();
 
@@ -51,42 +51,34 @@ namespace service
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
-        public UsuarioDnit? Obter(string email)
+        private Usuario? Obter(string email)
         {
-            UsuarioDnit? usuario = usuarioRepositorio.ObterUsuario(email);
+            Usuario? usuario = usuarioRepositorio.ObterUsuario(email);
 
-            if (usuario == null) throw new KeyNotFoundException();
+            if (usuario == null)
+                throw new KeyNotFoundException();
 
             return usuario;
         }
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
+            Usuario? usuarioBanco = Obter(usuarioDTO.Email);
 
-            UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
-
-            return ValidaSenha(usuarioEntrada, usuarioBanco);
+            return ValidaSenha(usuarioDTO.Senha, usuarioBanco.Senha);
         }
 
-        private bool ValidaSenha(UsuarioDnit usuarioEntrada, UsuarioDnit usuarioBanco)
+        private bool ValidaSenha(string senhaUsuarioEntrada, string senhaUsuarioBanco)
         {
-            if (BCryptNet.Verify(usuarioEntrada.Senha, usuarioBanco.Senha))
+            if (BCryptNet.Verify(senhaUsuarioEntrada, senhaUsuarioBanco))
                 return true;
 
             throw new UnauthorizedAccessException();
         }
-        public string GerarLinkDeRecuperacao(string UuidAutenticacao)
-        {
-            string baseUrl = "https://dnit.vercel.app/login";
-            string link = $"{baseUrl}?token={UuidAutenticacao}";
 
-            return link;
-        }
-
-        public void TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDto)
+        public void TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDTO)
         {
-            var dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDto);
+            RedefinicaoSenha dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenha>(redefinicaoSenhaDTO);
 
             string emailUsuario = usuarioRepositorio.ObterEmailRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao) ?? throw new KeyNotFoundException();
             string senha = EncriptarSenha(dadosRedefinicaoSenha.Senha);
@@ -98,17 +90,25 @@ namespace service
             usuarioRepositorio.RemoverUuidRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao);
         }
 
-        public void RecuperarSenha(UsuarioDTO usuarioDto)
+        public void RecuperarSenha(UsuarioDTO usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDto);
-            UsuarioDnit usuarioBanco = Obter(usuarioEntrada.Email);
+            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
+            Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
             string UuidAutenticacao = Guid.NewGuid().ToString();
 
             usuarioRepositorio.InserirDadosRecuperacao(UuidAutenticacao, usuarioBanco.Id);
 
             string mensagem = $"Recebemos uma solicitação para recuperar a sua senha.\n\n{GerarLinkDeRecuperacao(UuidAutenticacao)}";
+
             emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
+        }
+        private string GerarLinkDeRecuperacao(string UuidAutenticacao)
+        {
+            string baseUrl = "https://dnit.vercel.app/login";
+            string link = $"{baseUrl}?token={UuidAutenticacao}";
+
+            return link;
         }
     }
 }
