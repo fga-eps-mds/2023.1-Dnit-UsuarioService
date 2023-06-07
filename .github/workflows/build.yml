@@ -14,10 +14,10 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 11
-          distribution: 'zulu'
+          distribution: 'zulu' # Alternative distribution options are available.
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Cache SonarCloud packages
         uses: actions/cache@v3
         with:
@@ -39,11 +39,10 @@ jobs:
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"2023.1-DNIT-UsuarioService" /o:"fga-eps-mds" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="./test/TestResults/coverage.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"fga-eps-mds_2023.1-Dnit-Back" /o:"fga-eps-mds-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build app
-          dotnet test test --no-build --verbosity normal --logger "trx;LogFileName=coverage.xml"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
