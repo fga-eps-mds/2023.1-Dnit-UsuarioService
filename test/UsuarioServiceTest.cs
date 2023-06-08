@@ -60,7 +60,7 @@ namespace test
         }
 
         [Fact]
-        public void CadastrarUsuarioDnit_QuandoUsuarioDnitJáExistenteForPassado_DeveLançarExececaoFalandoQueEmailJaExiste()
+        public void CadastrarUsuarioDnit_QuandoUsuarioDnitJaExistenteForPassado_DeveLancarExececaoFalandoQueEmailJaExiste()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
@@ -72,7 +72,7 @@ namespace test
             Mock<IEmailService> emailService = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
-            usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>())).Throws(new InvalidOperationException("Email já cadastrado."));
+            usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>())).Throws(new InvalidOperationException("Email jï¿½ cadastrado."));
 
             IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
 
@@ -80,11 +80,11 @@ namespace test
 
             Exception exception = Assert.Throws<InvalidOperationException>(cadastrarUsuario);
 
-            Assert.Equal("Email já cadastrado.", exception.Message);
+            Assert.Equal("Email jï¿½ cadastrado.", exception.Message);
         }
 
         [Fact]
-        public void CadastrarUsuarioTerceiro_QuandoUsuarioTerceiroJáExistenteForPassado_DeveLançarExececaoFalandoQueEmalJaExiste()
+        public void CadastrarUsuarioTerceiro_QuandoUsuarioTerceiroJaExistenteForPassado_DeveLancarExececaoFalandoQueEmalJaExiste()
         {
             UsuarioStub usuarioStub = new();
             var usuarioTerceiro = usuarioStub.RetornarUsuarioTerceiro();
@@ -96,7 +96,7 @@ namespace test
             Mock<IEmailService> emailService = new();
 
             mapper.Setup(x => x.Map<UsuarioTerceiro>(It.IsAny<UsuarioDTO>())).Returns(usuarioTerceiro);
-            usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>())).Throws(new InvalidOperationException("Email já cadastrado."));
+            usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>())).Throws(new InvalidOperationException("Email jï¿½ cadastrado."));
 
             IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
 
@@ -104,7 +104,7 @@ namespace test
 
             Exception exception = Assert.Throws<InvalidOperationException>(cadastrarUsuario);
 
-            Assert.Equal("Email já cadastrado.", exception.Message);
+            Assert.Equal("Email jï¿½ cadastrado.", exception.Message);
         }
 
         [Fact]
