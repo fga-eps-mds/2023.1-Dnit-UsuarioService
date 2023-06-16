@@ -99,10 +99,10 @@ namespace service
 
             usuarioRepositorio.InserirDadosRecuperacao(UuidAutenticacao, usuarioBanco.Id);
 
-            string mensagem = $"Olá!!\n\n
-            Recebemos uma solicitação para redefinir a sua senha.\n\n
-            Clique no link abaixo para ser direcionado a página de Redefinição de Senha\n\n 
-            {GerarLinkDeRecuperacao(UuidAutenticacao)}";
+            string mensagem = "Olá!!\n\n" +
+                              "Recebemos uma solicitação para redefinir a sua senha.\n\n" +
+                              "Clique no link abaixo para ser direcionado a página de Redefinição de Senha.\n\n" +
+                              $"{GerarLinkDeRecuperacao(UuidAutenticacao)}";
 
             emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
         }
