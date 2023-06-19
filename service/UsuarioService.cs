@@ -108,7 +108,7 @@ namespace service
         }
         private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
-            string baseUrl = "https://dnit.vercel.app/recuperarSenha";
+            string baseUrl = "https://dnit.vercel.app/redefinirSenha";
             string link = $"{baseUrl}?token={UuidAutenticacao}";
 
             return link;
