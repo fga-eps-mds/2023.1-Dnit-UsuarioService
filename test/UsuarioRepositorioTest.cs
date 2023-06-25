@@ -7,6 +7,7 @@ using System.Data;
 using repositorio.Contexto;
 using Dapper;
 using test.Stub;
+using System;
 
 namespace test
 {
@@ -20,7 +21,7 @@ namespace test
         }
     }
 
-    public class UsuarioRepositorioTest
+    public class UsuarioRepositorioTest : IDisposable
     {
         IUsuarioRepositorio repositorio;
         SqliteConnection connection;
@@ -171,6 +172,11 @@ namespace test
             Assert.Equal(usuarioTerceiro.Senha, usuarioObtido.Senha);
             Assert.Equal(usuarioTerceiro.Nome, usuarioObtido.Nome);
             Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtido.CNPJ);
+        }
+        public void Dispose()
+        {
+            connection.Close();
+            connection.Dispose();
         }
     }
 }
