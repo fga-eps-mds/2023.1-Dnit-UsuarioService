@@ -3,37 +3,25 @@ using repositorio;
 using repositorio.Interfaces;
 using dominio;
 using Microsoft.Data.Sqlite;
-using System.Data;
-using repositorio.Contexto;
 using Dapper;
 using test.Stub;
 using System;
 
 namespace test
 {
-    public class Contexto : IContexto
-    {
-        public IDbConnection Conexao { get; }
-
-        public Contexto(IDbConnection conexao)
-        {
-            Conexao = conexao;
-        }
-    }
-
     public class UsuarioRepositorioTest : IDisposable
     {
         IUsuarioRepositorio repositorio;
-        SqliteConnection connection;
+        SqliteConnection conexao;
 
         public UsuarioRepositorioTest()
         {
-            connection = new SqliteConnection("Data Source=:memory:");
-            connection.Open();
+            conexao = new SqliteConnection("Data Source=:memory:");
+            conexao.Open();
+
+            repositorio = new UsuarioRepositorio(contexto => new Contexto(conexao));
 
             string sql = @"
-            ATTACH DATABASE ':memory:' AS public;
-
             CREATE TABLE public.usuario (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 email TEXT UNIQUE,
@@ -55,9 +43,7 @@ namespace test
                         id_usuario INTEGER REFERENCES usuario (id));
             ";
 
-            connection.Execute(sql);
-
-            repositorio = new UsuarioRepositorio(contexto => new Contexto(connection));
+            conexao.Execute(sql);
         }
 
         [Fact]
@@ -89,7 +75,7 @@ namespace test
                             ON u.id = uufl.id_usuario
                          WHERE email = '{usuarioDNIT.Email}';";
 
-            UsuarioDnit? usuarioObtido = connection.QueryFirst<UsuarioDnit>(sql);
+            UsuarioDnit? usuarioObtido = conexao.QueryFirst<UsuarioDnit>(sql);
 
             Assert.Equal(usuarioDNIT.Email, usuarioObtido.Email);
             Assert.Equal(usuarioDNIT.Senha, usuarioObtido.Senha);
@@ -166,7 +152,7 @@ namespace test
                             ON u.id = ue.id_usuario
                          WHERE email = '{usuarioTerceiro.Email}';";
 
-            UsuarioTerceiro? usuarioObtido = connection.QueryFirst<UsuarioTerceiro>(sql);
+            UsuarioTerceiro? usuarioObtido = conexao.QueryFirst<UsuarioTerceiro>(sql);
 
             Assert.Equal(usuarioTerceiro.Email, usuarioObtido.Email);
             Assert.Equal(usuarioTerceiro.Senha, usuarioObtido.Senha);
@@ -175,8 +161,8 @@ namespace test
         }
         public void Dispose()
         {
-            connection.Close();
-            connection.Dispose();
+            conexao.Close();
+            conexao.Dispose();
         }
     }
 }
