@@ -111,7 +111,7 @@ namespace test
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
 
-            repositorio.InserirDadosRecuperacao(redefinicaoSenha.UuidAutenticacao, usuarioObtido.Id);
+            repositorio.InserirDadosRecuperacao(redefinicaoSenha.UuidAutenticacao, usuarioObtido!.Id);
 
             var email = repositorio.ObterEmailRedefinicaoSenha(redefinicaoSenha.UuidAutenticacao);
 
@@ -129,7 +129,7 @@ namespace test
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
 
-            repositorio.InserirDadosRecuperacao(redefinicaoSenha.UuidAutenticacao, usuarioObtido.Id);
+            repositorio.InserirDadosRecuperacao(redefinicaoSenha.UuidAutenticacao, usuarioObtido!.Id);
             repositorio.RemoverUuidRedefinicaoSenha(redefinicaoSenha.UuidAutenticacao);
 
             var email = repositorio.ObterEmailRedefinicaoSenha(redefinicaoSenha.UuidAutenticacao);
