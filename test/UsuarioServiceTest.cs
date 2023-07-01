@@ -72,7 +72,7 @@ namespace test
             Mock<IEmailService> emailService = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
-            usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>())).Throws(new InvalidOperationException("Email jï¿½ cadastrado."));
+            usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>())).Throws(new InvalidOperationException("Email já cadastrado."));
 
             IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
 
@@ -80,7 +80,7 @@ namespace test
 
             Exception exception = Assert.Throws<InvalidOperationException>(cadastrarUsuario);
 
-            Assert.Equal("Email jï¿½ cadastrado.", exception.Message);
+            Assert.Equal("Email já cadastrado.", exception.Message);
         }
 
         [Fact]
@@ -96,7 +96,7 @@ namespace test
             Mock<IEmailService> emailService = new();
 
             mapper.Setup(x => x.Map<UsuarioTerceiro>(It.IsAny<UsuarioDTO>())).Returns(usuarioTerceiro);
-            usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>())).Throws(new InvalidOperationException("Email jï¿½ cadastrado."));
+            usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>())).Throws(new InvalidOperationException("Email já cadastrado."));
 
             IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
 
@@ -104,7 +104,7 @@ namespace test
 
             Exception exception = Assert.Throws<InvalidOperationException>(cadastrarUsuario);
 
-            Assert.Equal("Email jï¿½ cadastrado.", exception.Message);
+            Assert.Equal("Email já cadastrado.", exception.Message);
         }
 
         [Fact]
