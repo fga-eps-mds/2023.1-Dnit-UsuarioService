@@ -1,6 +1,7 @@
 using app.DI;
 using dominio.Mapper;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,8 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader();
         });
 });
+
+DotNetEnv.Env.Load();
 
 var app = builder.Build();
 
