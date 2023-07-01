@@ -60,7 +60,7 @@ namespace test
         }
 
         [Fact]
-        public void CadastrarUsuarioDnit_QuandoUsuarioDnitJáExistenteForPassado_DeveLançarExececaoFalandoQueEmailJaExiste()
+        public void CadastrarUsuarioDnit_QuandoUsuarioDnitJaExistenteForPassado_DeveLancarExececaoFalandoQueEmailJaExiste()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
@@ -84,7 +84,7 @@ namespace test
         }
 
         [Fact]
-        public void CadastrarUsuarioTerceiro_QuandoUsuarioTerceiroJáExistenteForPassado_DeveLançarExececaoFalandoQueEmalJaExiste()
+        public void CadastrarUsuarioTerceiro_QuandoUsuarioTerceiroJaExistenteForPassado_DeveLancarExececaoFalandoQueEmalJaExiste()
         {
             UsuarioStub usuarioStub = new();
             var usuarioTerceiro = usuarioStub.RetornarUsuarioTerceiro();

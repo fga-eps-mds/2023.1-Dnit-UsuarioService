@@ -1,6 +1,7 @@
 using app.DI;
 using dominio.Mapper;
 using Microsoft.OpenApi.Models;
+using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,11 +39,11 @@ builder.Services.AddCors(options =>
         });
 });
 
+DotNetEnv.Env.Load();
+
 var app = builder.Build();
 
 app.UseCors("AllowAllOrigins");
-
-app.UseCors("All");
 
 app.UseSwagger();
 
