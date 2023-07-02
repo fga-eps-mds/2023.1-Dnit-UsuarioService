@@ -40,9 +40,16 @@ jobs:
       - name: Install dotnet-coverage
         shell: powershell
         run: dotnet tool install --global dotnet-coverage
-      - name: Install trx2sonar
+      - name: Clone trx2sonar
+        uses: actions/checkout@v3
+        with:
+          repository: gmarokov/dotnet-trx2sonar
+          path: dotnet-trx2sonar
+      - name: Setup trx2sonar
         shell: powershell
-        run: dotnet tool install --global dotnet-trx2sonar
+        run: |
+          dotnet restore dotnet-trx2sonar
+          dotnet build dotnet-trx2sonar --configuration Release
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -53,5 +60,5 @@ jobs:
           dotnet build
           dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
           dotnet test --logger "trx;LogFileName=results.trx" --results-directory ./TestResults/results.xml
-          dotnet-trx2sonar -d ./TestResults -o results.xml
+          ./dotnet-trx2sonar/TrxToSonar/bin/Release/net6.0/TrxToSonar -d ./TestResults -o results.xml
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
