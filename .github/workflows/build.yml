@@ -40,18 +40,18 @@ jobs:
       - name: Install dotnet-coverage
         shell: powershell
         run: dotnet tool install --global dotnet-coverage
-      - name: Install trx2junit
+      - name: Install trx2sonar
         shell: powershell
-        run: dotnet tool install --global trx2junit
+        run: dotnet tool install --global dotnet-trx2sonar
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"fga-eps-mds_2023.1-Dnit-Back" /o:"fga-eps-mds-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.junit.reportPaths=results.xml
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"fga-eps-mds_2023.1-Dnit-Back" /o:"fga-eps-mds-1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.testExecutionReportPaths=results.xml
           dotnet build
           dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-          dotnet test --logger "trx;LogFileName=results.trx" --results-directory .
-          trx2junit results.trx --output results.xml
+          dotnet test --logger "trx;LogFileName=results.trx" --results-directory ./TestResults/results.xml
+          dotnet-trx2sonar -d ./TestResults -o results.xml
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
