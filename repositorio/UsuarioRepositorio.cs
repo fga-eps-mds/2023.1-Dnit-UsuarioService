@@ -3,8 +3,6 @@ using dominio;
 using dominio.Enums;
 using repositorio.Contexto;
 using repositorio.Interfaces;
-using System;
-using System.Collections.Generic;
 using static repositorio.Contexto.ResolverContexto;
 
 namespace repositorio
@@ -44,25 +42,18 @@ namespace repositorio
                 Senha = usuario.Senha,
             };
 
-            int? usuarioId = contexto?.Conexao.ExecuteScalar<int>(sqlInserirUsuario, parametrosUsuario);
+            int? usuarioId = contexto?.Conexao.ExecuteScalar<int?>(sqlInserirUsuario, parametrosUsuario);
 
-            if (usuarioId.HasValue)
+            var sqlInserirUnidadeFederativaUsuario = @"INSERT INTO 
+                                                        public.usuario_unidade_federativa_lotacao(id_usuario, id_unidade_federativa) 
+                                                        VALUES (@IdUsuario, @IdUnidadeFederativa)";
+            var parametrosUnidadeFederativaUsuario = new
             {
-                var sqlInserirUnidadeFederativaUsuario = @"INSERT INTO 
-                                                            public.usuario_unidade_federativa_lotacao(id_usuario, id_unidade_federativa) 
-                                                            VALUES (@IdUsuario, @IdUnidadeFederativa)";
-                var parametrosUnidadeFederativaUsuario = new
-                {
-                    IdUsuario = usuarioId,
-                    IdUnidadeFederativa = usuario.UF
-                };
+                IdUsuario = usuarioId,
+                IdUnidadeFederativa = usuario.UF
+            };
 
-                contexto?.Conexao.Execute(sqlInserirUnidadeFederativaUsuario, parametrosUnidadeFederativaUsuario);
-            }
-            else
-            {
-                throw new InvalidOperationException("Email já cadastrado.");
-            }
+            contexto?.Conexao.Execute(sqlInserirUnidadeFederativaUsuario, parametrosUnidadeFederativaUsuario);
         }
 
         public UsuarioDnit TrocarSenha(string email, string senha)
@@ -131,25 +122,17 @@ namespace repositorio
                 Senha = usuarioTerceiro.Senha
             };
 
-            int? usuarioTerceiroId = contexto?.Conexao.ExecuteScalar<int>(sqlInserirUsuarioTerceiro, parametrosUsuarioTerceiro);
+            int? usuarioTerceiroId = contexto?.Conexao.ExecuteScalar<int?>(sqlInserirUsuarioTerceiro, parametrosUsuarioTerceiro);
 
-            if (usuarioTerceiroId.HasValue)
+            var sqlInserirEmpresa = @"INSERT INTO public.usuario_empresa(id_usuario, cnpj_empresa) VALUES(@IdUsuario, @CnpjEmpresa)";
+
+            var parametrosEmpresa = new
             {
-                var sqlInserirEmpresa = @"INSERT INTO public.usuario_empresa(id_usuario, cnpj_empresa) VALUES(@IdUsuario, @CnpjEmpresa)";
+                IdUsuario = usuarioTerceiroId,
+                CnpjEmpresa = usuarioTerceiro.CNPJ
+            };
 
-                var parametrosEmpresa = new
-                {
-                    IdUsuario = usuarioTerceiroId,
-                    CnpjEmpresa = usuarioTerceiro.CNPJ
-                };
-
-                contexto?.Conexao.Execute(sqlInserirEmpresa, parametrosEmpresa);
-            }
-            else
-            {
-                throw new InvalidOperationException("Email já cadastrado.");
-            }
+            contexto?.Conexao.Execute(sqlInserirEmpresa, parametrosEmpresa);
         }
-
     }
 }

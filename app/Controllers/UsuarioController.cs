@@ -1,11 +1,6 @@
-using AutoMapper;
 using dominio;
 using Microsoft.AspNetCore.Mvc;
-using service;
 using service.Interfaces;
-using System.Diagnostics;
-using System.Web;
-using repositorio.Interfaces;
 
 namespace app.Controllers
 {
@@ -13,9 +8,7 @@ namespace app.Controllers
     [Route("api/usuario")]
     public class UsuarioController : ControllerBase
     {
-
         private readonly IUsuarioService usuarioService;
-
 
         public UsuarioController(IUsuarioService usuarioService)
         {
@@ -46,13 +39,15 @@ namespace app.Controllers
                 usuarioService.CadastrarUsuarioDnit(usuarioDTO);
 
                 return StatusCode(201, new NoContentResult());
-
-            } catch (Exception ex)
-            {
-                 return Conflict(ex.Message);
-
             }
+            catch (Npgsql.PostgresException ex)
+            {
+                if (ex.SqlState == "23505") {
+                    return Conflict("Usuário já cadastrado.");
+                }
 
+                return StatusCode(500, "Houve um erro interno no servidor.");
+            }
         }
 
         [HttpPost("cadastrarUsuarioTerceiro")]
@@ -64,9 +59,14 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (Exception ex)
+            catch (Npgsql.PostgresException ex)
             {
-                return Conflict(ex.Message);
+                if (ex.SqlState == "23505")
+                {
+                    return Conflict("Usuário já cadastrado.");
+                }
+
+                return StatusCode(500, "Houve um erro interno no servidor.");
             }
         }
 

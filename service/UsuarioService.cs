@@ -5,10 +5,7 @@ using AutoMapper;
 using System.Collections.Generic;
 using System;
 using BCryptNet = BCrypt.Net.BCrypt;
-using System.Threading.Tasks;
-using System.Net.Mail;
-using System.Net;
-using System.Globalization;
+using Microsoft.Extensions.Configuration;
 
 namespace service
 {
@@ -18,12 +15,14 @@ namespace service
         private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
+        private readonly IConfiguration configuration;
 
-        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper, IEmailService emailService)
+        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper, IEmailService emailService, IConfiguration configuration)
         {
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
+            this.configuration = configuration;
         }
 
         public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
@@ -108,7 +107,8 @@ namespace service
         }
         private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
-            string baseUrl = "https://dnit.vercel.app/redefinirSenha";
+            var baseUrl = configuration["RedefinirSenhaUrl"];
+
             string link = $"{baseUrl}?token={UuidAutenticacao}";
 
             return link;
