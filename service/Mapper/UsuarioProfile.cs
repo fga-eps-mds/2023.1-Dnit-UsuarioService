@@ -6,9 +6,13 @@ namespace dominio.Mapper
     {
         public AutoMapperConfig()
         {
-            CreateMap<UsuarioDTO, UsuarioDnit>();
+            CreateMap<UsuarioDTO, UsuarioDnit>()
+                .ForMember(usuarioDnit => usuarioDnit.Id, opt => opt.Ignore());
+
             CreateMap<RedefinicaoSenhaDTO, RedefinicaoSenha>();
-            CreateMap<UsuarioDTO, UsuarioTerceiro>();
+
+            CreateMap<UsuarioDTO, UsuarioTerceiro>()
+                .ForMember(usuarioTerceiro => usuarioTerceiro.Id, opt => opt.Ignore());
         }
     }
 }

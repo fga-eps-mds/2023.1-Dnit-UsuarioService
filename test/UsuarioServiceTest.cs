@@ -1,5 +1,6 @@
 using AutoMapper;
 using dominio;
+using Microsoft.Extensions.Configuration;
 using Moq;
 using repositorio.Interfaces;
 using service;
@@ -24,10 +25,11 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             usuarioService.CadastrarUsuarioDnit(usuarioStub.RetornarUsuarioDnitDTO());
 
@@ -47,10 +49,11 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioTerceiro>(It.IsAny<UsuarioDTO>())).Returns(usuarioTerceiro);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             usuarioService.CadastrarUsuarioTerceiro(usuarioStub.RetornarUsuarioTerceiroDTO());
 
@@ -70,11 +73,12 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
             usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>())).Throws(new InvalidOperationException("Email já cadastrado."));
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Action cadastrarUsuario = () => usuarioService.CadastrarUsuarioDnit(usuarioStub.RetornarUsuarioDnitDTO());
 
@@ -94,11 +98,12 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioTerceiro>(It.IsAny<UsuarioDTO>())).Returns(usuarioTerceiro);
             usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>())).Throws(new InvalidOperationException("Email já cadastrado."));
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Action cadastrarUsuario = () => usuarioService.CadastrarUsuarioTerceiro(usuarioStub.RetornarUsuarioTerceiroDTO());
 
@@ -117,10 +122,11 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioValidoLogin);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Assert.True(usuarioService.ValidaLogin(usuarioDnitDTO));
         }
@@ -135,10 +141,11 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioInvalidoLogin);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Action validarLogin = () => usuarioService.ValidaLogin(usuarioDnitDTO);
 
@@ -155,10 +162,11 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Action validarLogin = () => usuarioService.ValidaLogin(usuarioDnitDTO);
 
@@ -175,13 +183,14 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioDNIT);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             usuarioService.RecuperarSenha(usuarioDnitDTO);
 
@@ -198,13 +207,14 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Action validarLogin = () => usuarioService.RecuperarSenha(usuarioDnitDTO);
 
@@ -225,6 +235,7 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
             mapper.Setup(x => x.Map<RedefinicaoSenha>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
@@ -234,7 +245,7 @@ namespace test
 
             usuarioRepositorio.Setup(x => x.ObterEmailRedefinicaoSenha(It.IsAny<string>())).Returns(emailRedefinicaoSenha);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             usuarioService.TrocaSenha(redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO());
 
@@ -255,6 +266,7 @@ namespace test
             Mock<IMapper> mapper = new();
             Mock<IUsuarioRepositorio> usuarioRepositorio = new();
             Mock<IEmailService> emailService = new();
+            Mock<IConfiguration> configuration = new();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
             mapper.Setup(x => x.Map<RedefinicaoSenha>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
@@ -264,7 +276,7 @@ namespace test
 
             usuarioRepositorio.Setup(x => x.ObterEmailRedefinicaoSenha(It.IsAny<string>())).Returns(value: null);
 
-            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object);
+            IUsuarioService usuarioService = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object);
 
             Action trocarSenha = () => usuarioService.TrocaSenha(redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO());
 
