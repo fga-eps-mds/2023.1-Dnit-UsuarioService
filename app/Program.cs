@@ -17,8 +17,8 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "DNIT",
-        Description = "Backend DNIT"
+        Title = "UsuarioService",
+        Description = "Microserivo UsuarioService"
     });
 });
 
