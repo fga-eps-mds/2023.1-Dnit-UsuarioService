@@ -109,7 +109,7 @@ Para documentar os endpoints estamos utilizando o Swagger. Caso queira visualiza
 http://localhost:7083/swagger/index.html
 ```
 
-![swagger-usuarioservice](https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService/assets/54676096/2b2b5fef-7b52-4f40-ab91-c391aaae5d76)
+<img src="https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService/assets/54676096/2b2b5fef-7b52-4f40-ab91-c391aaae5d76" alt="swagger-usuarioservice" style="width:800px;">
 
 
 ### Licença
@@ -122,6 +122,3 @@ O projeto DnitUsuarioService está sob as regras aplicadas na licença [AGPL-3.0
 <a href="https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=fga-eps-mds/2023.1-Dnit-UsuarioService" />
 </a>
-
-
-
