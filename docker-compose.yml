@@ -4,5 +4,5 @@ services:
     build:
       context: .
     ports:
-      - "8001:8001"
+      - "7083:7083"
     container_name: usuarioService

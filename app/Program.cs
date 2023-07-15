@@ -11,6 +11,11 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(7083);
+});
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
