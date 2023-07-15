@@ -11,14 +11,19 @@ builder.Services.AddAutoMapper(typeof(AutoMapperConfig));
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(7083);
+});
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "DNIT",
-        Description = "Backend DNIT"
+        Title = "UsuarioService",
+        Description = "Microserivo UsuarioService"
     });
 });
 

@@ -60,6 +60,25 @@ git clone https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService.git
 ```
 
 ### Como Rodar
+### Utilizando docker-compose
+
+#### Pré-requisitos
+- Docker
+- Docker-compose
+
+#### Windows 
+Rode o seguinte comando na pasta da aplicação.
+```bash
+docker-compose build && docker-compose up
+```
+
+
+#### Linux ou MacOS
+Rode o seguinte comando na pasta da aplicação.
+```bash
+sudo docker-compose build && sudo docker-compose up
+```
+
 #### Usando Visual Studio
 
 Para rodar uma aplicação usando Visual Studio, basta clicar no arquivo com extenção 'sln' e em seguida clicar no ícone para rodar aplicação conforme mostra abaixo:
@@ -78,7 +97,28 @@ dotnet run
 
 ### Encerrando a aplicação
 
-No terminal em que a aplicação esta rodando, digite simultaneamente as teclas **ctrl**+**c**. Caso esteja utilizando o Visual Studio, clique no ícone quadrado vermelho <br>
+- No terminal em que a aplicação esta rodando, digite simultaneamente as teclas **ctrl**+**c**. 
+- Caso esteja utilizando o Visual Studio, clique no ícone quadrado vermelho <br>.
 
 ![parar](https://github.com/fga-eps-mds/2023.1-Dnit-EscolaService/assets/54676096/45aedf91-bfb3-4475-afeb-6111a6feabe8)
 
+### Documentação endpoints
+
+Para documentar os endpoints estamos utilizando o Swagger. Caso queira visualizar, basta abrir a rota: 
+```bash
+http://localhost:7083/swagger/index.html
+```
+
+<img src="https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService/assets/54676096/2b2b5fef-7b52-4f40-ab91-c391aaae5d76" alt="swagger-usuarioservice" style="width:800px;">
+
+
+### Licença
+
+O projeto DnitUsuarioService está sob as regras aplicadas na licença [AGPL-3.0](https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService/blob/main/LICENSE
+)
+
+## Contribuidores
+
+<a href="https://github.com/fga-eps-mds/2023.1-Dnit-UsuarioService/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=fga-eps-mds/2023.1-Dnit-UsuarioService" />
+</a>
