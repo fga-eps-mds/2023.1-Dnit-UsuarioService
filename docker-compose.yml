@@ -6,3 +6,5 @@ services:
     ports:
       - "7083:7083"
     container_name: usuarioService
+    env_file:
+      - .env
