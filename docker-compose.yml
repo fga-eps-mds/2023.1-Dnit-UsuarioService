@@ -1,10 +1,36 @@
 version: "3.0"
 services:
-  usuario-service:
-    build:
-      context: .
+#  usuario-service:
+#    build:
+#      context: .
+#    ports:
+#      - "7083:7083"
+#    container_name: usuarioService
+#    env_file:
+#      - .env
+  
+  postgres:
+    container_name: dnit-pg-database
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: fga1234
     ports:
-      - "7083:7083"
-    container_name: usuarioService
-    env_file:
-      - .env
+      - "5432:5432"
+    volumes:
+      - pg-data-volume:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: dnit-pg-admin
+    image: dpage/pgadmin4
+    ports:
+      - "5555:80"
+    volumes:
+      - pg-admin-volume:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dnit@fga.com
+      PGADMIN_DEFAULT_PASSWORD: fga1234
+
+volumes:
+  pg-data-volume:
+  pg-admin-volume:
