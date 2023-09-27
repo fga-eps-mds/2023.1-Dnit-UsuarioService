@@ -15,9 +15,9 @@ services:
     env_file:
       - .env
   
-  postgres:
-    container_name: dnit-pg-database
-    image: postgres:15
+  dnit-usuario-db:
+    container_name: dnit-usuario-db
+    image: postgres:15.4
     restart: always
     environment:
       POSTGRES_PASSWORD: 1234
