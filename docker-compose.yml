@@ -5,7 +5,7 @@ services:
       context: .
     ports:
       - "7083:7083"
-    container_name: usuarioService
+    container_name: usuario-service
     volumes:
       - ./app:/app/app
       - ./dominio:/app/dominio
