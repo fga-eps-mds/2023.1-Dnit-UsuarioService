@@ -5,6 +5,38 @@ services:
       context: .
     ports:
       - "7083:7083"
-    container_name: usuarioService
+    container_name: usuario-service
+    volumes:
+      - ./app:/app/app
+      - ./dominio:/app/dominio
+      - ./repositorio:/app/repositorio
+      - ./service:/app/service
+      - ./test:/app/test
     env_file:
       - .env
+  
+  dnit-usuario-db:
+    container_name: dnit-usuario-db
+    image: postgres:15.4
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data-volume:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: dnit-pg-admin
+    image: dpage/pgadmin4
+    ports:
+      - "5555:80"
+    volumes:
+      - pg-admin-volume:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dnit@fga.com
+      PGADMIN_DEFAULT_PASSWORD: fga1234
+
+volumes:
+  pg-data-volume:
+  pg-admin-volume:
