@@ -10,12 +10,14 @@ namespace app.Entidades
         public int Id { get; set; }
 
         [Required, MaxLength(150)]
-        public string nome { get; set; }
+        public string Nome { get; set; }
 
         [Required, MaxLength(50)]
-        public string email { get; set; }
+        public string Email { get; set; }
         
         [Required, MaxLength(200)]
-        public string senha { get; set; }
+        public string Senha { get; set; }
+
+        public List<RedefinicaoSenha> RedefinicaoSenha { get; set; }
     }
 }
