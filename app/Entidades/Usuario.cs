@@ -10,6 +10,9 @@ namespace app.Entidades
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Required]
+        public UF UfLotacao { get; set; }
+
         [Required, MaxLength(150)]
         public string Nome { get; set; }
 
