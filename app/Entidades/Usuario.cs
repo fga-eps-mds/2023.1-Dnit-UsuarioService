@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography.X509Certificates;
 
 namespace app.Entidades
 {
@@ -19,5 +20,7 @@ namespace app.Entidades
         public string Senha { get; set; }
 
         public List<RedefinicaoSenha> RedefinicaoSenha { get; set; }
+        
+        public List<Empresa> Empresas { get; set; }
     }
 }

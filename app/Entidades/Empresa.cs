@@ -7,9 +7,11 @@ namespace app.Entidades
     {
         [Key, MaxLength(14)]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public string Cnpj { get; set;}
+        public string Cnpj { get; set; }
 
         [Required, MaxLength(200)]
-        public string RazaoSocial { get; set;}
+        public string RazaoSocial { get; set; }
+
+        public List<Usuario> Usuarios { get; set; }
     }
 }

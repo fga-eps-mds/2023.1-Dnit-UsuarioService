@@ -32,6 +32,16 @@ namespace app.Entidades
                 .HasOne(r => r.Usuario)
                 .WithMany(u => u.RedefinicaoSenha)
                 .HasForeignKey(r => r.IdUsuario);
+
+            modelBuilder.Entity<Empresa>()
+                .HasMany(e => e.Usuarios)
+                .WithMany(u => u.Empresas)
+                .UsingEntity(em => 
+                {
+                    em.Property<int>("UsuariosId").HasColumnName("IdUsuario");
+                    em.Property<string>("EmpresasCnpj").HasColumnName("CnpjEmpresa");
+                    em.ToTable("UsuarioEmpresa");
+                });
         }
     }
 }
