@@ -1,4 +1,3 @@
-using dominio;
 using Microsoft.EntityFrameworkCore;
 
 namespace app.Entidades
@@ -6,6 +5,8 @@ namespace app.Entidades
     public class AppDbContext : DbContext
     {
         private readonly IConfiguration configuration;
+
+        public DbSet<Usuario> Usuario { get; set; }
 
         public AppDbContext (IConfiguration configuration)
         {
