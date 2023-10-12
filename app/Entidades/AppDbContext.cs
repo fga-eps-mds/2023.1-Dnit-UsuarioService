@@ -8,6 +8,7 @@ namespace app.Entidades
 
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<RedefinicaoSenha> RedefinicaoSenha { get; set; }
+        public DbSet<Empresa> Empresa { get; set; }
 
         public AppDbContext (IConfiguration configuration)
         {
