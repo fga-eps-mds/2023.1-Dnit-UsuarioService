@@ -1,6 +1,6 @@
 ﻿using app.Entidades;
-using service;
-using service.Interfaces;
+using app.Services;
+using app.Services.Interfaces;
 
 namespace app.DI
 {

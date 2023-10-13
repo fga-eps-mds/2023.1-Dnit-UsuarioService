@@ -1,7 +1,7 @@
 using app.DI;
 using app.Entidades;
+using app.Services.Mapper;
 using Microsoft.EntityFrameworkCore;
-using dominio.Mapper;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,15 +24,13 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "UsuarioService",
-        Description = "Microserivo UsuarioService"
+        Description = "Microserviço UsuarioService"
     });
 });
 
 builder.Services.AddConfigServices(builder.Configuration);
 
 builder.Services.AddConfigRepositorios();
-
-builder.Services.AddContexto(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
