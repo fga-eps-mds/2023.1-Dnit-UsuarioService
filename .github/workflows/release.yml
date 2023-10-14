@@ -29,7 +29,7 @@ jobs:
       - name: Send metrics to doc repo
         uses: dmnemec/copy_file_to_another_repo_action@v1.1.1
         env:
-          API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
+          API_TOKEN_GITHUB: ${{ secrets.GIT_TOKEN }}
         with:
           source_file: ${{ steps.name.outputs.file_name }}.json
           destination_repo: 'fga-eps-mds/2023.2-Dnit-DOC'
