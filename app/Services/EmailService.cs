@@ -9,11 +9,10 @@ namespace app.Services
     {
         public void EnviarEmail(string emailDestinatario, string assunto, string corpo)
         {
-
             MailMessage mensagem = new MailMessage();
 
-            string emailRemetente = Environment.GetEnvironmentVariable("EMAIL_SERVICE_ADDRESS");
-            string senhaRemetente = Environment.GetEnvironmentVariable("EMAIL_SERVICE_PASSWORD");
+            string emailRemetente = DotNetEnv.Env.GetString("EMAIL_SERVICE_ADDRESS");
+            string senhaRemetente = DotNetEnv.Env.GetString("EMAIL_SERVICE_PASSWORD");
 
             mensagem.From = new MailAddress(emailRemetente);
             mensagem.Subject = assunto;
@@ -27,6 +26,7 @@ namespace app.Services
                 EnableSsl = true,
 
             };
+
             clienteSmtp.Send(mensagem);
         }
     }

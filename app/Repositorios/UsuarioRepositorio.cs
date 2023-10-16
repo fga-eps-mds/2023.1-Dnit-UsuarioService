@@ -3,157 +3,97 @@ using Dapper;
 using api.Usuarios;
 using api.Senhas;
 using app.Repositorios.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
 
 namespace app.Repositorios
 {
     public class UsuarioRepositorio : IUsuarioRepositorio
     {
         private readonly AppDbContext dbContext;
+        private readonly IMapper mapper;
 
-        public UsuarioRepositorio(AppDbContext dbContext)
+        public UsuarioRepositorio(AppDbContext dbContext, IMapper mapper)
         {
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
        
         public UsuarioModel? ObterUsuario(string email)
-        {
-            // !! Não ajustado ainda, retorna objeto vazio;
-
-            /* var sqlBuscarEmail = @"SELECT id, email, senha, nome FROM public.usuario WHERE email = @Email";
-
-            var parametro = new
-            {
-                Email = email
-            };
-
-            var usuario = contexto?.Conexao.QuerySingleOrDefault<Usuario>(sqlBuscarEmail, parametro); */
-
-            var mock = new UsuarioModel();
-
-            return mock;
+        {            
+            var query = dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
+            
+            return mapper.Map<UsuarioModel>(query);
         }
 
         public void CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
-
-            // !! Método não ajustado
-
-            /* var sqlInserirUsuario = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha) RETURNING id";
-
-            var parametrosUsuario = new
+            var novoUsuario = new Usuario
             {
                 Nome = usuario.Nome,
                 Email = usuario.Email,
                 Senha = usuario.Senha,
+                UfLotacao = usuario.UfLotacao
             };
 
-            int? usuarioId = contexto?.Conexao.ExecuteScalar<int?>(sqlInserirUsuario, parametrosUsuario);
-
-            var sqlInserirUnidadeFederativaUsuario = @"INSERT INTO 
-                                                        public.usuario_unidade_federativa_lotacao(id_usuario, id_unidade_federativa) 
-                                                        VALUES (@IdUsuario, @IdUnidadeFederativa)";
-            var parametrosUnidadeFederativaUsuario = new
-            {
-                IdUsuario = usuarioId,
-                IdUnidadeFederativa = usuario.UF
-            };
-
-            contexto?.Conexao.Execute(sqlInserirUnidadeFederativaUsuario, parametrosUnidadeFederativaUsuario); */
+            dbContext.Add(novoUsuario);
         }
 
-        public UsuarioDnit TrocarSenha(string email, string senha)
+        public UsuarioModel? TrocarSenha(string email, string senha)
         {
-            // !! Não ajustado ainda, retorna objeto vazio;
+            var usuario = dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
 
-            /* var sqlTrocarSenha = @"UPDATE public.usuario SET senha = @Senha WHERE email = @Email";
-
-            var parametro = new
+            if (usuario != null)
             {
-                Email = email,
-                Senha = senha
-            };
-            var usuarioDnit = contexto?.Conexao.QuerySingleOrDefault<UsuarioDnit>(sqlTrocarSenha, parametro);*/
+                usuario.Senha = senha;
+            }
 
-            var mock = new UsuarioDnit();
-
-            return mock;
+            return mapper.Map<UsuarioModel>(usuario);
         }
 
         public string? ObterEmailRedefinicaoSenha(string uuid)
         {
-            // !! Não ajustado ainda, retorna string generica;
+            var query = from rs in dbContext.RedefinicaoSenha
+                        join u in dbContext.Usuario on rs.IdUsuario equals u.Id
+                        where rs.Uuid == uuid
+                        select u.Email;
 
-            /* var sqlBuscarDados = @"SELECT u.email FROM public.RedefinicaoSenha rs INNER JOIN public.usuario u ON rs.id_usuario = u.id WHERE uuid = @Uuid";
-
-            var parametro = new
-            {
-                Uuid = uuid,
-            };
-
-            string? email = contexto?.Conexao.QuerySingleOrDefault<string>(sqlBuscarDados, parametro); */
-
-            var mock = "foo";
-
-            return mock;
+            return query.FirstOrDefault();
         }
 
         public void RemoverUuidRedefinicaoSenha(string uuid)
         {
-            // !! Método não ajustado
+            var registro = dbContext.RedefinicaoSenha.Where(rs => rs.Uuid == uuid).FirstOrDefault();
 
-            /* var sqlBuscarDados = @"DELETE FROM public.RedefinicaoSenha WHERE uuid = @Uuid";
-
-            var parametro = new
-            {
-                Uuid = uuid,
-            };
-
-            contexto?.Conexao.Execute(sqlBuscarDados, parametro); */
+            dbContext.RedefinicaoSenha.Remove(registro);
         }
 
-        public RedefinicaoSenhaModel InserirDadosRecuperacao(string uuid, int idUsuario)
+        public void InserirDadosRecuperacao(string uuid, int idUsuario)
         {
-            // !! Não ajustado ainda, retorna objeto vazio;
-
-            /* var sqlInserirDadosRecuperacao = @"INSERT INTO public.RedefinicaoSenha(uuid, id_usuario) VALUES(@Uuid, @IdUsuario) RETURNING id";
-
-            var parametro = new
-            {
+            var newRs = new RedefinicaoSenha
+            {                
                 Uuid = uuid,
-                IdUsuario = idUsuario
+                IdUsuario = idUsuario,
             };
 
-            var dadosRedefinicao = contexto?.Conexao.QuerySingleOrDefault<RedefinicaoSenha>(sqlInserirDadosRecuperacao, parametro); */
-
-            var mock = new RedefinicaoSenhaModel();
-
-            return mock;
+            dbContext.RedefinicaoSenha.Add(newRs);
         }
 
         public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
         {
-            // !! Método não ajustado
+            var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 
-            /* var sqlInserirUsuarioTerceiro = @"INSERT INTO public.usuario(nome, email, senha) VALUES(@Nome, @Email, @Senha) RETURNING id";
+            List<Empresa> empresas = new List<Empresa>{ empresa };
 
-            var parametrosUsuarioTerceiro = new
+            var novoUsuarioTerceiro = new Usuario
             {
                 Nome = usuarioTerceiro.Nome,
                 Email = usuarioTerceiro.Email,
-                Senha = usuarioTerceiro.Senha
+                Senha = usuarioTerceiro.Senha,
+                Empresas = empresas
             };
 
-            int? usuarioTerceiroId = contexto?.Conexao.ExecuteScalar<int?>(sqlInserirUsuarioTerceiro, parametrosUsuarioTerceiro);
-
-            var sqlInserirEmpresa = @"INSERT INTO public.usuario_empresa(id_usuario, cnpj_empresa) VALUES(@IdUsuario, @CnpjEmpresa)";
-
-            var parametrosEmpresa = new
-            {
-                IdUsuario = usuarioTerceiroId,
-                CnpjEmpresa = usuarioTerceiro.CNPJ
-            };
-
-            contexto?.Conexao.Execute(sqlInserirEmpresa, parametrosEmpresa); */
+            dbContext.Usuario.Add(novoUsuarioTerceiro);
         }
     }
 }

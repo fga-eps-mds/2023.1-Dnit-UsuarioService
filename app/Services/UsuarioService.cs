@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using BCryptNet = BCrypt.Net.BCrypt;
 using Microsoft.Extensions.Configuration;
+using app.Entidades;
 
 namespace app.Services
 {
@@ -17,22 +18,33 @@ namespace app.Services
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
         private readonly IConfiguration configuration;
+        private readonly AppDbContext dbContext;
 
-        public UsuarioService(IUsuarioRepositorio usuarioRepositorio, IMapper mapper, IEmailService emailService, IConfiguration configuration)
+        public UsuarioService
+        (
+            IUsuarioRepositorio usuarioRepositorio, 
+            IMapper mapper, 
+            IEmailService emailService, 
+            IConfiguration configuration,
+            AppDbContext dbContext
+        )
         {
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
             this.configuration = configuration;
+            this.dbContext = dbContext;
         }
 
-        public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
+        public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
             usuarioRepositorio.CadastrarUsuarioDnit(usuario);
+
+            await dbContext.SaveChangesAsync();
         }
 
         private string EncriptarSenha(string senha)
@@ -76,7 +88,7 @@ namespace app.Services
             throw new UnauthorizedAccessException();
         }
 
-        public void TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDTO)
+        public async Task TrocaSenha(RedefinicaoSenhaDTO redefinicaoSenhaDTO)
         {
             RedefinicaoSenhaModel dadosRedefinicaoSenha = mapper.Map<RedefinicaoSenhaModel>(redefinicaoSenhaDTO);
 
@@ -88,11 +100,14 @@ namespace app.Services
             emailService.EnviarEmail(emailUsuario, "Senha Atualizada", "A sua senha foi atualizada com sucesso.");
 
             usuarioRepositorio.RemoverUuidRedefinicaoSenha(dadosRedefinicaoSenha.UuidAutenticacao);
+
+            await dbContext.SaveChangesAsync();
         }
 
-        public void RecuperarSenha(UsuarioDTO usuarioDTO)
+        public async Task RecuperarSenha(UsuarioDTO usuarioDTO)
         {
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
+
             UsuarioModel usuarioBanco = Obter(usuarioEntrada.Email);
 
             string UuidAutenticacao = Guid.NewGuid().ToString();
@@ -105,6 +120,8 @@ namespace app.Services
                               $"{GerarLinkDeRecuperacao(UuidAutenticacao)}";
 
             emailService.EnviarEmail(usuarioBanco.Email, "Link de Recuperação", mensagem);
+
+            await dbContext.SaveChangesAsync();
         }
         private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {

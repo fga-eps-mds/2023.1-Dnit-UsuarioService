@@ -2,24 +2,21 @@
 using app.Entidades;
 using api;
 using app.Repositorios.Interfaces;
+using AutoMapper;
 
 namespace app.Repositorios
 {
     public class UnidadeFederativaRepositorio : IUnidadeFederativaRepositorio
     {
-        private readonly AppDbContext dbContext;
-        public UnidadeFederativaRepositorio(AppDbContext dbContext)
+        private readonly IMapper mapper;
+        public UnidadeFederativaRepositorio(IMapper mapper)
         {
-            this.dbContext = dbContext;
+            this.mapper = mapper;
         }
 
         public IEnumerable<UfModel> ObterDominio()
         {
-            //Não ajustada ainda, retorna lista vazia
-            
-            var mock = new List<UfModel>();
-
-            return mock;
+            return Enum.GetValues<UF>().Select(uf => mapper.Map<UfModel>(uf)).OrderBy(uf => uf.Sigla);;
         }
     }
 }

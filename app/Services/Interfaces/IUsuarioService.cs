@@ -6,9 +6,9 @@ namespace app.Services.Interfaces
     public interface IUsuarioService
     {
         public bool ValidaLogin(UsuarioDTO usuarioDTO);
-        public void TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
-        public void RecuperarSenha(UsuarioDTO usuarioDto);
-        public void CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
+        public Task TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
+        public Task RecuperarSenha(UsuarioDTO usuarioDto);
+        public Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
         public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
     }
 }

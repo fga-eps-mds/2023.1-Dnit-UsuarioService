@@ -33,11 +33,11 @@ namespace app.Controllers
         }
 
         [HttpPost("cadastrarUsuarioDnit")]
-        public IActionResult CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
+        public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
-                usuarioService.CadastrarUsuarioDnit(usuarioDTO);
+                await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
 
                 return StatusCode(201, new NoContentResult());
             }
@@ -72,11 +72,11 @@ namespace app.Controllers
         }
 
         [HttpPut("recuperarSenha")]
-        public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
+        public async Task<IActionResult> RecuperarSenhaAsync([FromBody] UsuarioDTO usuarioDto)
         {
             try
             {
-                usuarioService.RecuperarSenha(usuarioDto);
+                await usuarioService.RecuperarSenha(usuarioDto);
                 return Ok();
             }
             catch(KeyNotFoundException)
@@ -86,11 +86,12 @@ namespace app.Controllers
         }
 
         [HttpPut("redefinirSenha")]
-        public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
+        public async Task<IActionResult> RedefinirSenhaAsync([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
         {
             try
             {
-                usuarioService.TrocaSenha(redefinirSenhaDto);
+                await usuarioService.TrocaSenha(redefinirSenhaDto);
+                
                 return Ok();
             }
             catch(KeyNotFoundException)
