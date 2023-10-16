@@ -21,7 +21,7 @@ jobs:
           METRICS_URL: ${{ secrets.METRICS_URL }}
 
       - name: Uploads file
-      - uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.name.outputs.file_name }}.json
           path: ${{ steps.name.outputs.file_name }}.json
