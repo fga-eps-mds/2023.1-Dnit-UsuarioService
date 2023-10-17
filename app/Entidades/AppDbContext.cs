@@ -9,6 +9,9 @@ namespace app.Entidades
         public DbSet<RedefinicaoSenha> RedefinicaoSenha { get; set; }
         public DbSet<Empresa> Empresa { get; set; }
 
+        public DbSet<Perfil> Perfis { get; set; }
+        public DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
+
         public AppDbContext (DbContextOptions<AppDbContext> options) : base (options)
         { }
 
@@ -44,6 +47,16 @@ namespace app.Entidades
                     em.Property<string>("EmpresasCnpj").HasColumnName("CnpjEmpresa");
                     em.ToTable("UsuarioEmpresa");
                 });
+
+            modelBuilder.Entity<Perfil>()
+                .HasMany(p => p.PerfilPermissoes)
+                .WithOne(pp => pp.Perfil)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Usuario>()
+                .HasOne(u => u.Perfil)
+                .WithMany(p => p.Usuarios)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

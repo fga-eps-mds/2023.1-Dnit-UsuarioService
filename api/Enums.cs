@@ -59,4 +59,31 @@ namespace api
         [Description("Distrito Federal")]
         DF
     }
+
+    public enum Permissao
+    {
+        [Description("Sem permissões")]
+        None = 0,
+        [Description("Cadastrar Empresa")]
+        CadastrarEmpresa = 1,
+        [Description("Editar Empresa")]
+        EditarEmpresa = 2,
+        [Description("Remover Empresa")]
+        RemoverEmpresa = 3,
+
+        [Description("Cadastrar Escola")]
+        CadastrarEscola = 4,
+        [Description("Editar Escola")]
+        EditarEscola = 5,
+        [Description("Remover Escola")]
+        RemoverEscola = 6,
+
+        [Description("Cadastrar Perfil")]
+        CadastrarPerfil = 7,
+        [Description("Editar Perfil")]
+        EditarPerfil = 8,
+        [Description("Remover Perfil")]
+        RemoverPerfil = 9,
+
+    }
 }
