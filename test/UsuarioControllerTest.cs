@@ -1,12 +1,14 @@
 ﻿using app.Controllers;
-using dominio;
+using api.Usuarios;
+using api.Senhas;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
-using service.Interfaces;
+using app.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using test.Stub;
 using Xunit;
+using System.Threading.Tasks;
 
 namespace test
 {
@@ -66,7 +68,7 @@ namespace test
         }
 
         [Fact]
-        public void CadastrarUsuarioDnit_QuandoUsuarioForCadastrado_DeveRetornarCreated()
+        public async void CadastrarUsuarioDnit_QuandoUsuarioForCadastrado_DeveRetornarCreated()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -75,7 +77,7 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.CadastrarUsuarioDnit(usuarioDTO);
+            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
             usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
             var objeto = Assert.IsType<ObjectResult>(resultado);
@@ -84,7 +86,7 @@ namespace test
         }
 
         [Fact]
-        public void CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
+        public async void CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -96,14 +98,14 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.CadastrarUsuarioDnit(usuarioDTO);
+            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
             usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
             var objeto = Assert.IsType<ConflictObjectResult>(resultado);
         }
 
         [Fact]
-        public void CadastrarUsuarioDnit_QuandoCadastroFalhar_DeveRetornarErroInterno()
+        public async void CadastrarUsuarioDnit_QuandoCadastroFalhar_DeveRetornarErroInterno()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -115,7 +117,7 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.CadastrarUsuarioDnit(usuarioDTO);
+            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
             usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
             var objeto = Assert.IsType<ObjectResult>(resultado);
@@ -182,7 +184,7 @@ namespace test
         }
 
         [Fact]
-        public void RecuperarSenha_QuandoRecuperacaoForValidada_DeveRetornarOk()
+        public async void RecuperarSenha_QuandoRecuperacaoForValidada_DeveRetornarOk()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -191,14 +193,14 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.RecuperarSenha(usuarioDTO);
+            var resultado = await controller.RecuperarSenhaAsync(usuarioDTO);
 
             usuarioServiceMock.Verify(service => service.RecuperarSenha(usuarioDTO), Times.Once);
             Assert.IsType<OkResult>(resultado);
         }
 
         [Fact]
-        public void RecuperarSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
+        public async Task RecuperarSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFoundAsync()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -208,14 +210,14 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.RecuperarSenha(usuarioDTO);
+            var resultado = await controller.RecuperarSenhaAsync(usuarioDTO);
 
             usuarioServiceMock.Verify(service => service.RecuperarSenha(usuarioDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
         }
 
         [Fact]
-        public void RedefinirSenha_QuandoRedefinicaoForConcluida_DeveRetornarOk()
+        public async void RedefinirSenha_QuandoRedefinicaoForConcluida_DeveRetornarOk()
         {
             RedefinicaoSenhaStub redefinicaoSenhaStub = new();
             var redefinicaoSenhaDTO = redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO();
@@ -224,14 +226,14 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.RedefinirSenha(redefinicaoSenhaDTO);
+            var resultado = await controller.RedefinirSenhaAsync(redefinicaoSenhaDTO);
 
             usuarioServiceMock.Verify(service => service.TrocaSenha(redefinicaoSenhaDTO), Times.Once);
             Assert.IsType<OkResult>(resultado);
         }
 
         [Fact]
-        public void RedefinirSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
+        public async void RedefinirSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
         {
             RedefinicaoSenhaStub redefinicaoSenhaStub = new();
             var redefinicaoSenhaDTO = redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO();
@@ -241,7 +243,7 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object);
 
-            var resultado = controller.RedefinirSenha(redefinicaoSenhaDTO);
+            var resultado = await controller.RedefinirSenhaAsync(redefinicaoSenhaDTO);
 
             usuarioServiceMock.Verify(service => service.TrocaSenha(redefinicaoSenhaDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);

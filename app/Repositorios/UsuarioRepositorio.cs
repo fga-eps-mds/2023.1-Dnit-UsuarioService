@@ -5,6 +5,7 @@ using api.Senhas;
 using app.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Npgsql;
 
 namespace app.Repositorios
 {
@@ -36,7 +37,7 @@ namespace app.Repositorios
                 UfLotacao = usuario.UfLotacao
             };
 
-            dbContext.Add(novoUsuario);
+            dbContext.Add(novoUsuario);            
         }
 
         public UsuarioModel? TrocarSenha(string email, string senha)

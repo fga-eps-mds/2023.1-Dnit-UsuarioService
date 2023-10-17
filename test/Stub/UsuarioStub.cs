@@ -1,4 +1,5 @@
-﻿using dominio;
+﻿using api.Usuarios;
+using api;
 
 namespace test.Stub
 {
@@ -11,7 +12,7 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
-                UF = 27
+                UfLotacao = UF.DF
             };
         }
 
@@ -33,7 +34,18 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
-                UF = 27
+                UfLotacao = UF.DF
+            };
+        }
+
+        public UsuarioDTO RetornarUsuarioSenhaErrada()
+        {
+            return new UsuarioDTO
+            {
+                Email = "usuarioteste@gmail.com",
+                Senha = "senha1234",
+                Nome = "Usuario Dnit",
+                UfLotacao = UF.DF
             };
         }
 
@@ -48,9 +60,9 @@ namespace test.Stub
             };
         }
 
-        public Usuario RetornarUsuarioValidoLogin()
+        public UsuarioModel RetornarUsuarioValidoLogin()
         {
-            return new Usuario
+            return new UsuarioModel
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
@@ -58,9 +70,9 @@ namespace test.Stub
             };
         }
 
-        public Usuario RetornarUsuarioInvalidoLogin()
+        public UsuarioModel RetornarUsuarioInvalidoLogin()
         {
-            return new Usuario
+            return new UsuarioModel
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J68",

@@ -1,4 +1,4 @@
-﻿using dominio;
+﻿using api.Senhas;
 
 namespace test.Stub
 {
@@ -13,9 +13,9 @@ namespace test.Stub
             };
         }
 
-        public RedefinicaoSenha ObterRedefinicaoSenha()
+        public RedefinicaoSenhaModel ObterRedefinicaoSenha()
         {
-            return new RedefinicaoSenha
+            return new RedefinicaoSenhaModel
             {
                 Senha = "senha1234",
                 UuidAutenticacao = "123e4567-e89b-12d3-a456-426655440000"

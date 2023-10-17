@@ -1,5 +1,5 @@
 using api.Usuarios;
-using api.Senhas;
+using app.Entidades;
 
 namespace app.Repositorios.Interfaces
 {
