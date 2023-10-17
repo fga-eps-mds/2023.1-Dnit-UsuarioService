@@ -4,19 +4,13 @@ namespace app.Entidades
 {
     public class AppDbContext : DbContext
     {
-        private readonly IConfiguration configuration;
 
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<RedefinicaoSenha> RedefinicaoSenha { get; set; }
         public DbSet<Empresa> Empresa { get; set; }
 
-        public AppDbContext (IConfiguration configuration)
-        {
-            this.configuration = configuration;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSql"));
+        public AppDbContext (DbContextOptions<AppDbContext> options) : base (options)
+        { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -24,6 +18,10 @@ namespace app.Entidades
 
             modelBuilder.Entity<Usuario>()
                 .Property(u => u.Id).ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Usuario>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
             
             modelBuilder.Entity<RedefinicaoSenha>()
                 .Property(r => r.Id).ValueGeneratedOnAdd();
@@ -32,6 +30,10 @@ namespace app.Entidades
                 .HasOne(r => r.Usuario)
                 .WithMany(u => u.RedefinicaoSenha)
                 .HasForeignKey(r => r.IdUsuario);
+
+            modelBuilder.Entity<Empresa>()
+                .HasIndex(e => e.Cnpj)
+                .IsUnique();
 
             modelBuilder.Entity<Empresa>()
                 .HasMany(e => e.Usuarios)
