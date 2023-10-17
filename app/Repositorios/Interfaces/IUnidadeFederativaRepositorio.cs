@@ -1,5 +1,4 @@
 ﻿using api;
-using System.Collections.Generic;
 
 namespace app.Repositorios.Interfaces
 {

@@ -1,58 +1,37 @@
-﻿using Xunit;
-using repositorio;
-using repositorio.Interfaces;
-using dominio;
-using Microsoft.Data.Sqlite;
-using Dapper;
+﻿using app.Repositorios;
+using app.Repositorios.Interfaces;
+using api.Usuarios;
 using test.Stub;
-using System;
+using test.Fixtures;
+using app.Entidades;
+using Xunit.Abstractions;
+using Xunit.Microsoft.DependencyInjection.Abstracts;
+using System.Linq;
+using AutoMapper;
 
 namespace test
 {
-    public class UsuarioRepositorioTest : IDisposable
+    public class UsuarioRepositorioTest : TestBed<Base>, IDisposable
     {
         IUsuarioRepositorio repositorio;
-        SqliteConnection conexao;
+        AppDbContext dbContext;
+        IMapper mapper;
 
-        public UsuarioRepositorioTest()
+        public UsuarioRepositorioTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
-            conexao = new SqliteConnection("Data Source=:memory:");
-            conexao.Open();
-
-            repositorio = new UsuarioRepositorio(contexto => new Contexto(conexao));
-
-            string sql = @"
-            CREATE TABLE public.usuario (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT UNIQUE,
-                senha TEXT,
-                nome TEXT
-            );
-
-            CREATE TABLE public.usuario_unidade_federativa_lotacao (
-                        id_usuario INTEGER REFERENCES usuario (id),
-                        id_unidade_federativa INTEGER);
-
-            CREATE TABLE public.usuario_empresa (
-                        id_usuario INTEGER REFERENCES usuario (id),
-                        cnpj_empresa INTEGER);
-
-            CREATE TABLE public.recuperacao_senha (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        uuid TEXT,
-                        id_usuario INTEGER REFERENCES usuario (id));
-            ";
-
-            conexao.Execute(sql);
+            dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
+            repositorio = fixture.GetService<IUsuarioRepositorio>(testOutputHelper)!;
+            mapper = fixture.GetService<IMapper>(testOutputHelper)!;
         }
 
         [Fact]
-        public void ObterUsuario_QuandoEmailForPassado_DeveRetornarUsuarioCorrespondente()
+        public async void ObterUsuario_QuandoEmailForPassado_DeveRetornarUsuarioCorrespondente()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario("usuarioteste@gmail.com");
 
@@ -62,38 +41,36 @@ namespace test
         }
 
         [Fact]
-        public void CadastrarUsuarioDnit_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
+        public async void CadastrarUsuarioDnit_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await dbContext.SaveChangesAsync();
 
-            var sql = $@"SELECT u.id, u.email, u.senha, u.nome, uufl.id_unidade_federativa uf
-                         FROM public.usuario u
-                         JOIN public.usuario_unidade_federativa_lotacao uufl
-                            ON u.id = uufl.id_usuario
-                         WHERE email = '{usuarioDNIT.Email}';";
+            var usuarioObtido = dbContext.Usuario.Where(u => u.Email == usuarioDNIT.Email).FirstOrDefault();
+            UsuarioDTO usuarioObtidoDTO = mapper.Map<UsuarioDTO>(usuarioObtido);
 
-            UsuarioDnit? usuarioObtido = conexao.QueryFirst<UsuarioDnit>(sql);
-
-            Assert.Equal(usuarioDNIT.Email, usuarioObtido.Email);
-            Assert.Equal(usuarioDNIT.Senha, usuarioObtido.Senha);
-            Assert.Equal(usuarioDNIT.Nome, usuarioObtido.Nome);
-            Assert.Equal(usuarioDNIT.UF, usuarioObtido.UF);
+            Assert.Equal(usuarioDNIT.Email, usuarioObtidoDTO.Email);
+            Assert.Equal(usuarioDNIT.Senha, usuarioObtidoDTO.Senha);
+            Assert.Equal(usuarioDNIT.Nome, usuarioObtidoDTO.Nome);
+            Assert.Equal(usuarioDNIT.UfLotacao, usuarioObtidoDTO.UfLotacao);
         }
 
         [Fact]
-        public void TrocarSenha_QuandoNovaSenhaForPassada_DeveAtualizarSenhaDoUsuario()
+        public async void TrocarSenha_QuandoNovaSenhaForPassada_DeveAtualizarSenhaDoUsuario()
         {
             UsuarioStub usuarioStub = new();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await dbContext.SaveChangesAsync();
 
             string novaSenha = "NovaSenha";
 
             repositorio.TrocarSenha(usuarioDNIT.Email, novaSenha);
+            await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
 
@@ -101,7 +78,7 @@ namespace test
         }
 
         [Fact]
-        public void ObterEmailRedefinicaoSenha_QuandoUuidForPassado_DeveRetornarEmailCorrespondente()
+        public async void ObterEmailRedefinicaoSenha_QuandoUuidForPassado_DeveRetornarEmailCorrespondente()
         {
             UsuarioStub usuarioStub = new();
             RedefinicaoSenhaStub redefinicaoSenhaStub = new();
@@ -109,9 +86,12 @@ namespace test
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await dbContext.SaveChangesAsync();
+
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
 
             repositorio.InserirDadosRecuperacao(redefinicaoSenha.UuidAutenticacao, usuarioObtido!.Id);
+            await dbContext.SaveChangesAsync();
 
             var email = repositorio.ObterEmailRedefinicaoSenha(redefinicaoSenha.UuidAutenticacao);
 
@@ -119,7 +99,7 @@ namespace test
         }
 
         [Fact]
-        public void RemoverUuidRedefinicaoSenha_QuandoUuidForPassado_DeveRemoverUuidDoBanco()
+        public async void RemoverUuidRedefinicaoSenha_QuandoUuidForPassado_DeveRemoverUuidDoBanco()
         {
             UsuarioStub usuarioStub = new();
             RedefinicaoSenhaStub redefinicaoSenhaStub = new();
@@ -127,10 +107,15 @@ namespace test
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await dbContext.SaveChangesAsync();
+
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
 
             repositorio.InserirDadosRecuperacao(redefinicaoSenha.UuidAutenticacao, usuarioObtido!.Id);
+            await dbContext.SaveChangesAsync();
+
             repositorio.RemoverUuidRedefinicaoSenha(redefinicaoSenha.UuidAutenticacao);
+            await dbContext.SaveChangesAsync();
 
             var email = repositorio.ObterEmailRedefinicaoSenha(redefinicaoSenha.UuidAutenticacao);
 
@@ -139,30 +124,37 @@ namespace test
 
 
         [Fact]
-        public void CadastrarUsuarioTerceiro_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
+        public async void CadastrarUsuarioTerceiro_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
         {
             UsuarioStub usuarioStub = new();
             var usuarioTerceiro = usuarioStub.RetornarUsuarioTerceiro();
 
+            var empresa = new Empresa
+            {
+                Cnpj = usuarioTerceiro.CNPJ,
+                RazaoSocial = "Empresa1"  
+            };
+
+            dbContext.Empresa.Add(empresa);
+            await dbContext.SaveChangesAsync();
+
             repositorio.CadastrarUsuarioTerceiro(usuarioTerceiro);
+            await dbContext.SaveChangesAsync();
 
-            var sql = $@"SELECT u.id, u.email, u.senha, u.nome, ue.cnpj_empresa cnpj
-                         FROM public.usuario u
-                         JOIN public.usuario_empresa ue
-                            ON u.id = ue.id_usuario
-                         WHERE email = '{usuarioTerceiro.Email}';";
+            var usuarioObtido = repositorio.ObterUsuario(usuarioTerceiro.Email);
+            UsuarioDTO usuarioObtidoDTO = mapper.Map<UsuarioDTO>(usuarioObtido);
 
-            UsuarioTerceiro? usuarioObtido = conexao.QueryFirst<UsuarioTerceiro>(sql);
-
-            Assert.Equal(usuarioTerceiro.Email, usuarioObtido.Email);
-            Assert.Equal(usuarioTerceiro.Senha, usuarioObtido.Senha);
-            Assert.Equal(usuarioTerceiro.Nome, usuarioObtido.Nome);
-            Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtido.CNPJ);
+            Assert.Equal(usuarioTerceiro.Email, usuarioObtidoDTO.Email);
+            Assert.Equal(usuarioTerceiro.Senha, usuarioObtidoDTO.Senha);
+            Assert.Equal(usuarioTerceiro.Nome, usuarioObtidoDTO.Nome);
+            Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtidoDTO.CNPJ);
         }
+
         public void Dispose()
         {
-            conexao.Close();
-            conexao.Dispose();
+            dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.Empresa);
+            dbContext.SaveChanges();
         }
     }
 }

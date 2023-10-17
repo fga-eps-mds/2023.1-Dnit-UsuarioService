@@ -16,7 +16,7 @@ namespace app.Repositorios
 
         public IEnumerable<UfModel> ObterDominio()
         {
-            return Enum.GetValues<UF>().Select(uf => mapper.Map<UfModel>(uf)).OrderBy(uf => uf.Sigla);;
+            return Enum.GetValues<UF>().Select(uf => mapper.Map<UfModel>(uf)).OrderBy(uf => uf.Sigla);
         }
     }
 }
