@@ -12,6 +12,9 @@ namespace app.Services.Mapper
     {
         public AutoMapperConfig()
         {
+            CreateMap<Usuario, UsuarioDTO>()
+                .ForMember(dto => dto.CNPJ, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
+                
             CreateMap<Usuario, UsuarioModel>();
 
             CreateMap<UF, UfModel>()
