@@ -198,7 +198,7 @@ namespace test
             Mock<IEmailService> emailService = new();
             Mock<IConfiguration> configuration = new();
 
-            var usuarioRetorno = mapper.Object.Map<Usuario>(usuarioDNIT);
+            var usuarioRetorno = usuarioStub.RetornarUsuarioDnitBanco();
 
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 

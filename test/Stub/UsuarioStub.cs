@@ -39,6 +39,17 @@ namespace test.Stub
             };
         }
 
+        public Usuario RetornarUsuarioDnitBanco()
+        {
+            return new Usuario
+            {
+                Email = "usuarioteste@gmail.com",
+                Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
+                Nome = "Usuario Dnit",
+                UfLotacao = UF.DF
+            };
+        }
+
         public UsuarioDTO RetornarUsuarioSenhaErrada()
         {
             return new UsuarioDTO
