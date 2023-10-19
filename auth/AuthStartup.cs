@@ -36,6 +36,8 @@ namespace auth
             });
 
             services.AddAuthorization();
+
+            services.AddControllers(o => o.Filters.Add(typeof(AuthExceptionHandler)));
         }
     }
 }

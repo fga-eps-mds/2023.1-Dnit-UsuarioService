@@ -1,4 +1,5 @@
 ﻿using auth;
+using EnumsNET;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,7 +22,7 @@ namespace app.Services
         public void Require<TPermission>(ClaimsPrincipal user, TPermission permission) where TPermission : struct
         {
             if (!HasPermission(user, permission))
-                throw new UnauthorizedAccessException($"O usuário não tem a permissão: {permission}");
+                throw new AuthForbiddenException($"O usuário não tem a permissão: {Enums.AsStringUnsafe(permission, EnumFormat.Description)} ({permission})");
         }
 
         public bool HasPermission<TPermission>(ClaimsPrincipal user, TPermission permission) where TPermission : struct
@@ -72,6 +73,7 @@ namespace app.Services
             var permissions = permissionsText?.Split(PERMISSIONS_SEPARATOR);
 #pragma warning disable S2589 // Boolean expressions should not be gratuitous
             return permissions?
+                .Where(p => !string.IsNullOrWhiteSpace(p))?
                 .Select(long.Parse)?
                 .Where(p => p > 0)?
                 .Select(p => {
