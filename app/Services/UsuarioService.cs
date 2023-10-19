@@ -63,9 +63,9 @@ namespace app.Services
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
-        private UsuarioModel? Obter(string email)
+        private Usuario? Obter(string email)
         {
-            UsuarioModel? usuario = usuarioRepositorio.ObterUsuario(email);
+            Usuario? usuario = usuarioRepositorio.ObterUsuario(email);
 
             if (usuario == null)
                 throw new KeyNotFoundException();
@@ -75,7 +75,7 @@ namespace app.Services
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            UsuarioModel? usuarioBanco = Obter(usuarioDTO.Email);
+            Usuario? usuarioBanco = Obter(usuarioDTO.Email);
 
             return ValidaSenha(usuarioDTO.Senha, usuarioBanco.Senha);
         }
@@ -108,7 +108,7 @@ namespace app.Services
         {
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
 
-            UsuarioModel usuarioBanco = Obter(usuarioEntrada.Email);
+            Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
             string UuidAutenticacao = Guid.NewGuid().ToString();
 

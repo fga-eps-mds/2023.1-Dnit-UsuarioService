@@ -14,6 +14,12 @@ namespace app.Services.Mapper
         {
             CreateMap<Usuario, UsuarioDTO>()
                 .ForMember(dto => dto.CNPJ, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
+
+            CreateMap<UsuarioDnit, Usuario>();
+
+            CreateMap<UsuarioModel, UsuarioDTO>()
+                .ForMember(dto => dto.CNPJ, opt => opt.Ignore())
+                .ForMember(dto => dto.UfLotacao, opt => opt.Ignore());
                 
             CreateMap<Usuario, UsuarioModel>();
 

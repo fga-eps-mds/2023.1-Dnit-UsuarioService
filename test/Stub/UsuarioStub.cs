@@ -1,4 +1,5 @@
 ﻿using api.Usuarios;
+using app.Entidades;
 using api;
 
 namespace test.Stub
@@ -60,9 +61,9 @@ namespace test.Stub
             };
         }
 
-        public UsuarioModel RetornarUsuarioValidoLogin()
+        public Usuario RetornarUsuarioValidoLogin()
         {
-            return new UsuarioModel
+            return new Usuario
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
@@ -70,9 +71,9 @@ namespace test.Stub
             };
         }
 
-        public UsuarioModel RetornarUsuarioInvalidoLogin()
+        public Usuario RetornarUsuarioInvalidoLogin()
         {
-            return new UsuarioModel
+            return new Usuario
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J68",

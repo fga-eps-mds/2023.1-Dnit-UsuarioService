@@ -5,7 +5,7 @@ namespace app.Repositorios.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        public UsuarioModel? ObterUsuario(string email);
+        public Usuario? ObterUsuario(string email);
         public UsuarioModel? TrocarSenha(string senha, string email);
         public void InserirDadosRecuperacao(string uuid, int idUsuario);
         public string? ObterEmailRedefinicaoSenha(string uuid);
