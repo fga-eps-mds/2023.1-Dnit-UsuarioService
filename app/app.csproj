@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\api\api.csproj" />
+    <ProjectReference Include="..\auth\auth.csproj" />
   </ItemGroup>
   
 </Project>

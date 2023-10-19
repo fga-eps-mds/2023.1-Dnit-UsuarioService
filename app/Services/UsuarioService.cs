@@ -6,6 +6,7 @@ using AutoMapper;
 using BCryptNet = BCrypt.Net.BCrypt;
 using app.Entidades;
 using api;
+using auth;
 
 namespace app.Services
 {
@@ -17,7 +18,7 @@ namespace app.Services
         private readonly IEmailService emailService;
         private readonly IConfiguration configuration;
         private readonly AppDbContext dbContext;
-        private readonly AutenticacaoService autenticacaoService;
+        private readonly AuthService autenticacaoService;
 
         public UsuarioService
         (
@@ -26,7 +27,7 @@ namespace app.Services
             IEmailService emailService, 
             IConfiguration configuration,
             AppDbContext dbContext,
-            AutenticacaoService autenticacaoService
+            AuthService autenticacaoService
         )
         {
             this.usuarioRepositorio = usuarioRepositorio;
@@ -71,7 +72,12 @@ namespace app.Services
 
             ValidaSenha(senha, usuario.Senha);
 
-            var (token, expiraEm) = autenticacaoService.GerarToken(usuario);
+            var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
+            {
+                Id = usuario.Id,
+                Name = usuario.Nome,
+                Permissions = usuario.Perfil?.Permissoes?.ToList(),
+            });
 
             return new LoginModel()
             {
