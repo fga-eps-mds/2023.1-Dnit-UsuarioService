@@ -12,7 +12,7 @@ using app.Entidades;
 namespace app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231017232136_Perfil")]
+    [Migration("20231019025721_Perfil")]
     partial class Perfil
     {
         /// <inheritdoc />
@@ -138,7 +138,7 @@ namespace app.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
-                    b.Property<Guid>("PerfilId")
+                    b.Property<Guid?>("PerfilId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Senha")
@@ -201,8 +201,7 @@ namespace app.Migrations
                     b.HasOne("app.Entidades.Perfil", "Perfil")
                         .WithMany("Usuarios")
                         .HasForeignKey("PerfilId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Perfil");
                 });
