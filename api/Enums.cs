@@ -65,9 +65,9 @@ namespace api
         [Description("Sem permissões")]
         None = 0,
         [Description("Cadastrar Empresa")]
-        CadastrarEmpresa = 1,
+        EmpresaCadastrar = 1,
         [Description("Editar Empresa")]
-        EditarEmpresa = 2,
+        EmpresaEditar = 2,
         [Description("Remover Empresa")]
         RemoverEmpresa = 3,
 
@@ -84,6 +84,5 @@ namespace api
         EditarPerfil = 8,
         [Description("Remover Perfil")]
         RemoverPerfil = 9,
-
     }
 }
