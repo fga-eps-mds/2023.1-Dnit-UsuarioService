@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace api
 {
@@ -60,6 +61,7 @@ namespace api
         DF
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Permissao
     {
         [Description("Sem permissões")]

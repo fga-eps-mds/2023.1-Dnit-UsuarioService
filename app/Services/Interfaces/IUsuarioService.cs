@@ -5,6 +5,7 @@ namespace app.Services.Interfaces
 {
     public interface IUsuarioService
     {
+        public Task<LoginModel> AutenticarUsuarioAsync(string email, string senha);
         public bool ValidaLogin(UsuarioDTO usuarioDTO);
         public Task TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
         public Task RecuperarSenha(UsuarioDTO usuarioDto);

@@ -3,11 +3,9 @@ using api.Senhas;
 using app.Repositorios.Interfaces;
 using app.Services.Interfaces;
 using AutoMapper;
-using System.Collections.Generic;
-using System;
 using BCryptNet = BCrypt.Net.BCrypt;
-using Microsoft.Extensions.Configuration;
 using app.Entidades;
+using api;
 
 namespace app.Services
 {
@@ -19,6 +17,7 @@ namespace app.Services
         private readonly IEmailService emailService;
         private readonly IConfiguration configuration;
         private readonly AppDbContext dbContext;
+        private readonly AutenticacaoService autenticacaoService;
 
         public UsuarioService
         (
@@ -26,7 +25,8 @@ namespace app.Services
             IMapper mapper, 
             IEmailService emailService, 
             IConfiguration configuration,
-            AppDbContext dbContext
+            AppDbContext dbContext,
+            AutenticacaoService autenticacaoService
         )
         {
             this.usuarioRepositorio = usuarioRepositorio;
@@ -34,6 +34,7 @@ namespace app.Services
             this.emailService = emailService;
             this.configuration = configuration;
             this.dbContext = dbContext;
+            this.autenticacaoService = autenticacaoService;
         }
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
@@ -61,6 +62,24 @@ namespace app.Services
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
+        }
+
+        public async Task<LoginModel> AutenticarUsuarioAsync(string email, string senha)
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(email, includePerfil: true)
+                ?? throw new KeyNotFoundException();
+
+            ValidaSenha(senha, usuario.Senha);
+
+            var (token, expiraEm) = autenticacaoService.GerarToken(usuario);
+
+            return new LoginModel()
+            {
+                Token = token,
+                ExpiraEm = expiraEm,
+                TokenAtualizacao = "",
+                Permissoes = usuario.Perfil?.Permissoes?.ToList(),
+            };
         }
 
         private UsuarioModel? Obter(string email)

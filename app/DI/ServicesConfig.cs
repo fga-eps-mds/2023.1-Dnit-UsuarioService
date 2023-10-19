@@ -5,6 +5,7 @@ using app.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Runtime.CompilerServices;
 
 namespace app.DI
 {
@@ -14,8 +15,14 @@ namespace app.DI
         {
             services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSql")));
             services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<AutenticacaoService>();
             services.AddScoped<IEmailService, EmailService>();
 
+            services.AddAppAuthorization(configuration);
+        }
+
+        public static void AddAppAuthorization(this IServiceCollection services, IConfiguration configuration)
+        {
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

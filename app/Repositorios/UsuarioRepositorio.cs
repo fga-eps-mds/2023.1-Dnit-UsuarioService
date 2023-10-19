@@ -27,6 +27,18 @@ namespace app.Repositorios
             return mapper.Map<UsuarioModel>(query);
         }
 
+        public async Task<Usuario?> ObterUsuarioAsync(string email, bool includePerfil = false)
+        {
+            var query = dbContext.Usuario.AsQueryable();
+
+            if (includePerfil)
+            {
+                query = query.Include(u => u.Perfil).ThenInclude(p => p.PerfilPermissoes);
+            }
+
+            return await query.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+        }
+
         public void CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
             var novoUsuario = new Usuario
