@@ -10,13 +10,27 @@ namespace app.Services
     public class AuthService
     {
         private readonly AuthConfig authConfig;
+        private const string CLAIM_PERMISSIONS = "permissions";
+        private const char PERMISSIONS_SEPARATOR = ',';
 
         public AuthService(IOptions<AuthConfig> authConfig)
         {
             this.authConfig = authConfig.Value;
         }
 
-        public (string Token, DateTime ExpiresAt) GenerateToken<TEnum>(AuthUserModel<TEnum> user) where TEnum : struct
+        public void Require<TPermission>(ClaimsPrincipal user, TPermission permission) where TPermission : struct
+        {
+            if (!HasPermission(user, permission))
+                throw new UnauthorizedAccessException($"O usuário não tem a permissão: {permission}");
+        }
+
+        public bool HasPermission<TPermission>(ClaimsPrincipal user, TPermission permission) where TPermission : struct
+        {
+            var permissionsText = user.Claims.FirstOrDefault(c => c.Type == CLAIM_PERMISSIONS)?.Value;
+            return DecodePermissions<TPermission>(permissionsText)?.Any(p => permission.Equals(p)) ?? false;
+        }
+
+        public (string Token, DateTime ExpiresAt) GenerateToken<TPermission>(AuthUserModel<TPermission> user) where TPermission : struct
         {
             var issuer = authConfig.Issuer;
             var audience = authConfig.Audience;
@@ -30,7 +44,7 @@ namespace app.Services
                     new Claim("id", user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Name),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("permissions", EncodePermissions(user.Permissions))
+                    new Claim(CLAIM_PERMISSIONS, EncodePermissions(user.Permissions))
                 }),
                 Expires = expiraEm,
                 Issuer = issuer,
@@ -45,10 +59,33 @@ namespace app.Services
             return (stringToken, expiraEm);
         }
 
-        private string EncodePermissions<TEnum>(List<TEnum>? permissions) where TEnum : struct
+        private string EncodePermissions<TPermission>(List<TPermission>? permissions) where TPermission : struct
         {
             var hasPermissions = permissions?.Any() ?? false;
-            return hasPermissions ? string.Join(',', permissions!.Select(p => p.ToLong())) : "";
+            return hasPermissions ? string.Join(PERMISSIONS_SEPARATOR, permissions!.Select(p => ToLong(p))) : "";
+        }
+
+        private IEnumerable<TPermission?>? DecodePermissions<TPermission>(string? permissionsText) where TPermission : struct
+        {
+            var permissionValues = ((TPermission[])Enum.GetValues(typeof(TPermission))).ToDictionary(p => ToLong(p));
+            
+            var permissions = permissionsText?.Split(PERMISSIONS_SEPARATOR);
+#pragma warning disable S2589 // Boolean expressions should not be gratuitous
+            return permissions?
+                .Select(long.Parse)?
+                .Where(p => p > 0)?
+                .Select(p => {
+                    TPermission result;
+                    return permissionValues.TryGetValue(p, out result) ? result : (TPermission?)null;
+                })?
+                .Where(p => p.HasValue)?
+                .Select(p => (TPermission?)Convert.ChangeType(p, typeof(TPermission)))?
+                .Where(p => p != null);
+#pragma warning restore S2589 // Boolean expressions should not be gratuitous
+        }
+
+        private long ToLong<TPermission>(TPermission p) where TPermission : struct {
+            return (long)Convert.ChangeType(p, typeof(long));
         }
     }
 }

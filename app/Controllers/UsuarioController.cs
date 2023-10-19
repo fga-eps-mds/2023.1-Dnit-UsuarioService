@@ -3,6 +3,9 @@ using api.Senhas;
 using Microsoft.AspNetCore.Mvc;
 using app.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using app.Services;
+using api;
 
 namespace app.Controllers
 {
@@ -11,12 +14,23 @@ namespace app.Controllers
     public class UsuarioController : ControllerBase
     {
         private readonly IUsuarioService usuarioService;
+        private readonly AuthService authService;
 
         public UsuarioController(
-            IUsuarioService usuarioService
+            IUsuarioService usuarioService,
+            AuthService authService
         )
         {
             this.usuarioService = usuarioService;
+            this.authService = authService;
+        }
+
+        [HttpGet("auth/teste")]
+        [Authorize]
+        public async Task<int> Teste()
+        {
+            authService.Require(User, Permissao.PerfilEditar);
+            return 42;
         }
 
         [HttpPost("login")]

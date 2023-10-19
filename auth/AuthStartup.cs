@@ -37,9 +37,5 @@ namespace auth
 
             services.AddAuthorization();
         }
-
-        public static long ToLong<T>(this T x) where T : struct {
-            return (long)Convert.ChangeType(x, typeof(long));
-        }
     }
 }
