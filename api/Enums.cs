@@ -64,27 +64,25 @@ namespace api
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Permissao
     {
-        [Description("Sem permissões")]
-        None = 0,
-        [Description("Cadastrar Empresa")]
-        EmpresaCadastrar = 1,
-        [Description("Editar Empresa")]
-        EmpresaEditar = 2,
-        [Description("Remover Empresa")]
-        RemoverEmpresa = 3,
-
         [Description("Cadastrar Escola")]
-        CadastrarEscola = 4,
+        EscolaCadastrar = 1000,
         [Description("Editar Escola")]
-        EditarEscola = 5,
+        EscolaEditar = 1001,
         [Description("Remover Escola")]
-        RemoverEscola = 6,
+        EscolaRemover = 1002,
 
-        [Description("Cadastrar Perfil")]
-        CadastrarPerfil = 7,
-        [Description("Editar Perfil")]
-        EditarPerfil = 8,
-        [Description("Remover Perfil")]
-        RemoverPerfil = 9,
+        [Description("Cadastrar Empresa")]
+        EmpresaCadastrar = 2000,
+        [Description("Editar Empresa")]
+        EmpresaEditar = 2001,
+        [Description("Remover Empresa")]
+        EmpresaRemover = 2002,
+        
+        [Description("Cadastrar Perfil de Usuário")]
+        PerfilCadastrar = 3000,
+        [Description("Editar Perfil de Usuário")]
+        PerfilEditar = 3001,
+        [Description("Remover Perfil de Usuário")]
+        RemoverPerfil = 3002,
     }
 }
