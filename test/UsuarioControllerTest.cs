@@ -25,7 +25,7 @@ namespace test
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.Logar(usuarioDTO);
 
@@ -42,7 +42,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             usuarioServiceMock.Setup(service => service.ValidaLogin(It.IsAny<UsuarioDTO>())).Throws(new UnauthorizedAccessException());
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.Logar(usuarioDTO);
 
@@ -59,7 +59,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             usuarioServiceMock.Setup(service => service.ValidaLogin(It.IsAny<UsuarioDTO>())).Throws(new KeyNotFoundException());
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.Logar(usuarioDTO);
 
@@ -75,7 +75,7 @@ namespace test
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
@@ -96,7 +96,7 @@ namespace test
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
@@ -115,7 +115,7 @@ namespace test
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
@@ -133,7 +133,7 @@ namespace test
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.CadastrarUsuarioTerceiro(usuarioDTO);
 
@@ -154,7 +154,7 @@ namespace test
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.CadastrarUsuarioTerceiro(usuarioDTO);
 
@@ -173,7 +173,7 @@ namespace test
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.CadastrarUsuarioTerceiro(usuarioDTO);
 
@@ -191,7 +191,7 @@ namespace test
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RecuperarSenhaAsync(usuarioDTO);
 
@@ -208,7 +208,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             usuarioServiceMock.Setup(service => service.RecuperarSenha(It.IsAny<UsuarioDTO>())).Throws(new KeyNotFoundException());
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RecuperarSenhaAsync(usuarioDTO);
 
@@ -224,7 +224,7 @@ namespace test
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RedefinirSenhaAsync(redefinicaoSenhaDTO);
 
@@ -241,7 +241,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             usuarioServiceMock.Setup(service => service.TrocaSenha(It.IsAny<RedefinicaoSenhaDTO>())).Throws(new KeyNotFoundException());
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RedefinirSenhaAsync(redefinicaoSenhaDTO);
 

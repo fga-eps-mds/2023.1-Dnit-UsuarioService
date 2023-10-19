@@ -26,7 +26,7 @@ namespace app.Entidades
         
         public List<Empresa> Empresas { get; set; }
 
-        public Guid PerfilId { get; set; }
-        public Perfil Perfil { get; set; }
+        public Guid? PerfilId { get; set; }
+        public Perfil? Perfil { get; set; }
     }
 }
