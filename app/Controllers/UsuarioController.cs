@@ -27,7 +27,7 @@ namespace app.Controllers
 
         [HttpGet("auth/teste")]
         [Authorize]
-        public async Task<int> Teste()
+        public int Teste()
         {
             authService.Require(User, Permissao.PerfilEditar);
             return 42;
