@@ -32,5 +32,11 @@
   <ItemGroup>
     <ProjectReference Include="..\api\api.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <SonarQubeSetting Include="sonar.exclusions">
+      <Value>**\Migrations\**</Value>
+    </SonarQubeSetting>
+  </ItemGroup>
   
 </Project>
