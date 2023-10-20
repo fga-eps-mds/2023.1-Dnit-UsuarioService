@@ -70,6 +70,8 @@ namespace api
         EscolaEditar = 1001,
         [Description("Remover Escola")]
         EscolaRemover = 1002,
+        [Description("Visualizar Escola")]
+        EscolaVisualizar = 1003,
 
         [Description("Cadastrar Empresa")]
         EmpresaCadastrar = 2000,
