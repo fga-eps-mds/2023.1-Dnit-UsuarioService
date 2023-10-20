@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace auth
@@ -11,6 +12,8 @@ namespace auth
     {
         public static void AddAuth(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddAuthSwagger(configuration);
+
             services.Configure<AuthConfig>(configuration.GetSection("Auth"));
 
             services.AddSingleton<AuthService>();
@@ -38,6 +41,40 @@ namespace auth
             services.AddAuthorization();
 
             services.AddControllers(o => o.Filters.Add(typeof(AuthExceptionHandler)));
+        }
+
+        public static void AddAuthSwagger(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "Please enter into field the word 'Bearer' following by space and JWT",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                        Reference = new OpenApiReference
+                            {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                            },
+                            Scheme = JwtBearerDefaults.AuthenticationScheme,
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
+            });
         }
     }
 }
