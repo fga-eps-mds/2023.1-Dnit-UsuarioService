@@ -12,7 +12,7 @@ namespace auth
             {
                 context.Result = new JsonResult(new { Details = apiException.Message })
                 {
-                    StatusCode = (int)HttpStatusCode.Unauthorized,
+                    StatusCode = (int)HttpStatusCode.Forbidden,
                 };
                 context.ExceptionHandled = true;
             }
