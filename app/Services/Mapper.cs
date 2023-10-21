@@ -5,7 +5,7 @@ using app.Entidades;
 using api;
 using EnumsNET;
 using api.Perfis;
-
+using System.Text.RegularExpressions;
 
 namespace app.Services.Mapper
 {
@@ -36,6 +36,11 @@ namespace app.Services.Mapper
                 .ForMember(p => p.Permissoes, opt => opt.Ignore())
                 .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
                 .ForMember(p => p.Usuarios, opt => opt.Ignore());
+
+            CreateMap<Permissao, PermissaoModel>()
+                .ForMember(model => model.Id, opt => opt.MapFrom(p => (int)p))
+                .ForMember(model => model.Descricao, opt => opt.MapFrom(p => p.AsString(EnumFormat.Description)))
+                .ForMember(model => model.Categoria, opt => opt.MapFrom(p => Regex.Match(p.ToString(), @"^([A-Z][a-z]+)")));
 
             CreateMap<Perfil, PerfilModel>()
                 .ForMember(model => model.Permissoes, opt => opt.MapFrom(p => p.Permissoes));

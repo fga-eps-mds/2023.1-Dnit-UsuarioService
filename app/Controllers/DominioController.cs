@@ -5,6 +5,7 @@ using app.Repositorios;
 using app.Repositorios.Interfaces;
 using app.Services;
 using app.Services.Interfaces;
+using AutoMapper;
 
 namespace app.Controllers
 {
@@ -14,12 +15,13 @@ namespace app.Controllers
     {
         private readonly IUnidadeFederativaRepositorio unidadeFederativaRepositorio;
 
-        public DominioController(IUnidadeFederativaRepositorio unidadeFederativaRepositorio)
+        private readonly IMapper mapper;
+
+        public DominioController(IUnidadeFederativaRepositorio unidadeFederativaRepositorio, IMapper mapper)
         {
             this.unidadeFederativaRepositorio = unidadeFederativaRepositorio;
+            this.mapper = mapper;
         }
-
-
 
         [HttpGet("unidadeFederativa")]
         public IActionResult ObterLista()
@@ -28,6 +30,19 @@ namespace app.Controllers
 
             return  new OkObjectResult(listaUnidadeFederativa);
         }
+
+        [HttpGet("permissoes")]
+        public IActionResult ObterListaDePermissoes(int pageIndex, int pageSize)
+        {
+            var lista = Enum.GetValues<Permissao>()
+                .Select(p => mapper.Map<PermissaoModel>(p))
+                .OrderBy(p => p.Categoria)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize);
+                
+            return Ok(lista);
+        }
+        
 
 
     }
