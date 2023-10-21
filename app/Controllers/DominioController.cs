@@ -49,15 +49,8 @@ namespace app.Controllers
                 };
                 lista.Add(model);
             }
+            
             return Ok(lista);
-            /* try
-            {
-                
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Houve um erro interno no servidor.");
-            } */            
         }
     }
 }

@@ -33,6 +33,7 @@ namespace app.Services.Mapper
                 .ForMember(usuarioTerceiro => usuarioTerceiro.Id, opt => opt.Ignore());
 
             CreateMap<PerfilDTO, Perfil>()
+                .ForMember(p => p.Id, opt => opt.Ignore())
                 .ForMember(p => p.Permissoes, opt => opt.Ignore())
                 .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
                 .ForMember(p => p.Usuarios, opt => opt.Ignore());
