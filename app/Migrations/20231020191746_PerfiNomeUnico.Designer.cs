@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using app.Entidades;
@@ -11,9 +12,11 @@ using app.Entidades;
 namespace app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231020191746_PerfiNomeUnico")]
+    partial class PerfiNomeUnico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,7 +59,7 @@ namespace app.Migrations
                     b.HasIndex("Cnpj")
                         .IsUnique();
 
-                    b.ToTable("Empresa", (string)null);
+                    b.ToTable("Empresa");
                 });
 
             modelBuilder.Entity("app.Entidades.Perfil", b =>
@@ -75,7 +78,7 @@ namespace app.Migrations
                     b.HasIndex("Nome")
                         .IsUnique();
 
-                    b.ToTable("Perfis", (string)null);
+                    b.ToTable("Perfis");
                 });
 
             modelBuilder.Entity("app.Entidades.PerfilPermissao", b =>
@@ -94,7 +97,7 @@ namespace app.Migrations
 
                     b.HasIndex("PerfilId");
 
-                    b.ToTable("PerfilPermissoes", (string)null);
+                    b.ToTable("PerfilPermissoes");
                 });
 
             modelBuilder.Entity("app.Entidades.RedefinicaoSenha", b =>
@@ -117,7 +120,7 @@ namespace app.Migrations
 
                     b.HasIndex("IdUsuario");
 
-                    b.ToTable("RedefinicaoSenha", (string)null);
+                    b.ToTable("RedefinicaoSenha");
                 });
 
             modelBuilder.Entity("app.Entidades.Usuario", b =>
@@ -156,7 +159,7 @@ namespace app.Migrations
 
                     b.HasIndex("PerfilId");
 
-                    b.ToTable("Usuario", (string)null);
+                    b.ToTable("Usuario");
                 });
 
             modelBuilder.Entity("EmpresaUsuario", b =>
