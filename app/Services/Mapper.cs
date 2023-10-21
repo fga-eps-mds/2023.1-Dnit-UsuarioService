@@ -4,6 +4,7 @@ using api.Usuarios;
 using app.Entidades;
 using api;
 using EnumsNET;
+using api.Perfis;
 
 
 namespace app.Services.Mapper
@@ -30,6 +31,14 @@ namespace app.Services.Mapper
 
             CreateMap<UsuarioDTO, UsuarioTerceiro>()
                 .ForMember(usuarioTerceiro => usuarioTerceiro.Id, opt => opt.Ignore());
+
+            CreateMap<PerfilDTO, Perfil>()
+                .ForMember(p => p.Permissoes, opt => opt.Ignore())
+                .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
+                .ForMember(p => p.Usuarios, opt => opt.Ignore());
+
+            CreateMap<Perfil, PerfilModel>()
+                .ForMember(model => model.Permissoes, opt => opt.MapFrom(p => p.Permissoes));
         }
     }
 }
