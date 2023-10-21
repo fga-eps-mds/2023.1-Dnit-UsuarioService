@@ -162,7 +162,7 @@ namespace app.Services
             {
                 Id = usuario.Id,
                 Name = usuario.Nome,
-                Permissions = usuario.Perfil?.Permissoes?.ToList(),
+                Permissions = usuario.Perfil?.Permissoes?.ToList() ?? new(),
             });
 
             var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
@@ -173,7 +173,7 @@ namespace app.Services
 
             return new LoginModel()
             {
-                Token = token,
+                Token = "Bearer " + token,
                 ExpiraEm = expiraEm,
                 TokenAtualizacao = tokenAtualizacao,
                 Permissoes = usuario.Perfil?.Permissoes?.ToList(),

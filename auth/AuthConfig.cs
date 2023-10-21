@@ -2,6 +2,7 @@
 {
     public class AuthConfig
     {
+        public bool Enabled { get; set; } = false;
         public string Key { get; set; }
         public string Issuer { get; set; }
         public string Audience { get; set; }

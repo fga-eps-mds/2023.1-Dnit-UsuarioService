@@ -23,6 +23,9 @@ namespace app.Services
 
         public void Require<TPermission>(ClaimsPrincipal user, TPermission permission) where TPermission : struct
         {
+            if (!authConfig.Enabled)
+                return;
+            
             if (!HasPermission(user, permission))
                 throw new AuthForbiddenException($"O usuário não tem a permissão: {Enums.AsStringUnsafe(permission, EnumFormat.Description)} ({permission})");
         }
