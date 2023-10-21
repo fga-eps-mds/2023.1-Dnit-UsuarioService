@@ -1,6 +1,7 @@
 using System.Text.RegularExpressions;
 using api;
 using app.Repositorios.Interfaces;
+using EnumsNET;
 
 namespace app.Repositorios
 {
@@ -25,10 +26,25 @@ namespace app.Repositorios
             return categorias.ToList();
         }
 
-        public List<Permissao> ObterPermissoesPortCategoria(string categoria)
-        {
+        public List<string[]> ObterPermissoesPortCategoria(string categoria)
+        {   
             var permissoes = Enum.GetValues<Permissao>().Where(p => categoria == Regex.Match(p.ToString(), pattern).ToString());
-            return permissoes.ToList();
+            
+            List<string[]> listaDetalhada = new();
+            //List<Tuple<Permissao, string>> listaDetalhada = new();
+
+            foreach(var permissao in permissoes)
+            {
+                var par = new string[2]
+                {
+                    permissao.ToString(),
+                    permissao.AsString(EnumFormat.Description)
+                };
+
+                listaDetalhada.Add(par);
+            }
+
+            return listaDetalhada;
         }
     }
 }

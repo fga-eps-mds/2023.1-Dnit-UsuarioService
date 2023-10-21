@@ -5,7 +5,6 @@ using app.Entidades;
 using api;
 using EnumsNET;
 using api.Perfis;
-using System.Text.RegularExpressions;
 
 namespace app.Services.Mapper
 {
