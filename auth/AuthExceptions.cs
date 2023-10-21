@@ -1,11 +1,13 @@
 ﻿namespace auth {
-    public class AuthException : Exception
+    public abstract class AuthException : Exception
     {
-        public AuthException(string message) : base(message) { }
+        protected AuthException(string message) : base(message) { }
+        protected AuthException() { }
     }
 
     public class AuthForbiddenException : AuthException
     {
+        public AuthForbiddenException() { }
         public AuthForbiddenException(string message): base(message) { }
     }
 }

@@ -10,6 +10,15 @@ namespace auth
 {
     public static class AuthStartup
     {
+        private static bool CustomLifetimeValidator(DateTime? notBefore, DateTime? expires, SecurityToken tokenToValidate, TokenValidationParameters @param)
+        {
+            if (expires != null)
+            {
+                return expires > DateTime.UtcNow;
+            }
+            return false;
+        }
+
         public static void AddAuth(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthSwagger(configuration);
@@ -33,7 +42,8 @@ namespace auth
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuracaoAutenticaco["Key"]!)),
                     ValidateIssuer = bool.Parse(configuracaoAutenticaco["ValidateIssuer"] ?? "false"),
                     ValidateAudience = bool.Parse(configuracaoAutenticaco["ValidateAudience"] ?? "false"),
-                    ValidateLifetime = false,
+                    ValidateLifetime = true,
+                    LifetimeValidator = CustomLifetimeValidator,
                     ValidateIssuerSigningKey = bool.Parse(configuracaoAutenticaco["ValidateIssuerSigningKey"] ?? "false")
                 };
             });

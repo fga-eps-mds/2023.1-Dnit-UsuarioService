@@ -67,25 +67,12 @@ namespace app.Services
 
         public async Task<LoginModel> AutenticarUsuarioAsync(string email, string senha)
         {
-            var usuario = await usuarioRepositorio.ObterUsuarioAsync(email, includePerfil: true)
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(email: email, includePerfil: true)
                 ?? throw new KeyNotFoundException();
 
             ValidaSenha(senha, usuario.Senha);
 
-            var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
-            {
-                Id = usuario.Id,
-                Name = usuario.Nome,
-                Permissions = usuario.Perfil?.Permissoes?.ToList(),
-            });
-
-            return new LoginModel()
-            {
-                Token = token,
-                ExpiraEm = expiraEm,
-                TokenAtualizacao = "",
-                Permissoes = usuario.Perfil?.Permissoes?.ToList(),
-            };
+            return await CriarTokenAsync(usuario);
         }
 
         private UsuarioModel? Obter(string email)
@@ -155,6 +142,42 @@ namespace app.Services
             string link = $"{baseUrl}?token={UuidAutenticacao}";
 
             return link;
+        }
+
+        public async Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto)
+        {
+            var usuarioId = autenticacaoService.GetUserId(atualizarTokenDto.Token);
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId, includePerfil: true);
+
+            if (usuario?.TokenAtualizacao != atualizarTokenDto.TokenAtualizacao || !usuario.TokenAtualizacaoExpiracao.HasValue || usuario.TokenAtualizacaoExpiracao.Value <= DateTimeOffset.Now)
+            {
+                throw new AuthForbiddenException("Token expirado. Realize o login novamente.");
+            }
+            return await CriarTokenAsync(usuario);
+        }
+
+        private async Task<LoginModel> CriarTokenAsync(Usuario usuario)
+        {
+            var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
+            {
+                Id = usuario.Id,
+                Name = usuario.Nome,
+                Permissions = usuario.Perfil?.Permissoes?.ToList(),
+            });
+
+            var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
+
+            usuario.TokenAtualizacao = tokenAtualizacao;
+            usuario.TokenAtualizacaoExpiracao = tokenAtualizacaoExpiracao;
+            await dbContext.SaveChangesAsync();
+
+            return new LoginModel()
+            {
+                Token = token,
+                ExpiraEm = expiraEm,
+                TokenAtualizacao = tokenAtualizacao,
+                Permissoes = usuario.Perfil?.Permissoes?.ToList(),
+            };
         }
     }
 }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace auth
+﻿namespace auth
 {
     public class AuthConfig
     {
@@ -13,6 +7,7 @@ namespace auth
         public string Audience { get; set; }
         public bool ValidateIssuer { get; set; }
         public bool ValidateIssuerSigningKey { get; set; }
-        public int ExpireMinutes { get; set; }
+        public int ExpireMinutes { get; set; } = 10;
+        public int RefreshTokenExpireMinutes { get; set; } = 120;
     }
 }

@@ -11,5 +11,6 @@ namespace app.Services.Interfaces
         public Task RecuperarSenha(UsuarioDTO usuarioDto);
         public Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
         public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
+        Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto);
     }
 }

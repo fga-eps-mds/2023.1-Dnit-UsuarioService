@@ -28,5 +28,8 @@ namespace app.Entidades
 
         public Guid? PerfilId { get; set; }
         public Perfil? Perfil { get; set; }
+
+        public string? TokenAtualizacao { get; set; }
+        public DateTime? TokenAtualizacaoExpiracao { get; set; }
     }
 }

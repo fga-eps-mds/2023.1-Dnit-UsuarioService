@@ -5,13 +5,13 @@ namespace app.Repositorios.Interfaces
 {
     public interface IUsuarioRepositorio
     {
-        public UsuarioModel? ObterUsuario(string email);
-        Task<Usuario?> ObterUsuarioAsync(string email, bool includePerfil = false);
-        public UsuarioModel? TrocarSenha(string senha, string email);
-        public void InserirDadosRecuperacao(string uuid, int idUsuario);
-        public string? ObterEmailRedefinicaoSenha(string uuid);
-        public void RemoverUuidRedefinicaoSenha(string uuid);
-        public void CadastrarUsuarioDnit(UsuarioDnit usuario);
-        public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro);
+        UsuarioModel? ObterUsuario(string email);
+        Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false);
+        UsuarioModel? TrocarSenha(string senha, string email);
+        void InserirDadosRecuperacao(string uuid, int idUsuario);
+        string? ObterEmailRedefinicaoSenha(string uuid);
+        void RemoverUuidRedefinicaoSenha(string uuid);
+        void CadastrarUsuarioDnit(UsuarioDnit usuario);
+        void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro);
     }
 }

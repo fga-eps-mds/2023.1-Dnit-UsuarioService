@@ -51,6 +51,13 @@ namespace app.Controllers
             }
         }
 
+        [HttpPost("atualizarToken")]
+        public async Task<LoginModel> AtualizarToken([FromBody] AtualizarTokenDto atualizarTokenDto)
+        {
+            return await usuarioService.AtualizarTokenAsync(atualizarTokenDto);
+        }
+
+
         [HttpPost("cadastrarUsuarioDnit")]
         public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
