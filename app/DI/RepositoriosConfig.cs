@@ -1,5 +1,5 @@
-﻿using repositorio;
-using repositorio.Interfaces;
+﻿using app.Repositorios;
+using app.Repositorios.Interfaces;
 
 namespace app.DI
 {

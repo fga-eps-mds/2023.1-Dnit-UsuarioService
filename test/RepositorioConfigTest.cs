@@ -1,7 +1,7 @@
 ﻿using app.DI;
 using Microsoft.Extensions.DependencyInjection;
-using repositorio.Interfaces;
-using repositorio;
+using app.Repositorios.Interfaces;
+using app.Repositorios;
 using Xunit;
 
 namespace test

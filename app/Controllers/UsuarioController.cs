@@ -1,6 +1,7 @@
-using dominio;
+using api.Usuarios;
+using api.Senhas;
 using Microsoft.AspNetCore.Mvc;
-using service.Interfaces;
+using app.Services.Interfaces;
 
 namespace app.Controllers
 {
@@ -32,18 +33,18 @@ namespace app.Controllers
         }
 
         [HttpPost("cadastrarUsuarioDnit")]
-        public IActionResult CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
+        public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
-                usuarioService.CadastrarUsuarioDnit(usuarioDTO);
+                await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
 
                 return StatusCode(201, new NoContentResult());
             }
             catch (Npgsql.PostgresException ex)
             {
                 if (ex.SqlState == "23505") {
-                    return Conflict("Usuário já cadastrado.");
+                    return Conflict("Usuï¿½rio jï¿½ cadastrado.");
                 }
 
                 return StatusCode(500, "Houve um erro interno no servidor.");
@@ -63,7 +64,7 @@ namespace app.Controllers
             {
                 if (ex.SqlState == "23505")
                 {
-                    return Conflict("Usuário já cadastrado.");
+                    return Conflict("Usuï¿½rio jï¿½ cadastrado.");
                 }
 
                 return StatusCode(500, "Houve um erro interno no servidor.");
@@ -71,11 +72,11 @@ namespace app.Controllers
         }
 
         [HttpPut("recuperarSenha")]
-        public IActionResult RecuperarSenha([FromBody] UsuarioDTO usuarioDto)
+        public async Task<IActionResult> RecuperarSenhaAsync([FromBody] UsuarioDTO usuarioDto)
         {
             try
             {
-                usuarioService.RecuperarSenha(usuarioDto);
+                await usuarioService.RecuperarSenha(usuarioDto);
                 return Ok();
             }
             catch(KeyNotFoundException)
@@ -85,11 +86,12 @@ namespace app.Controllers
         }
 
         [HttpPut("redefinirSenha")]
-        public IActionResult RedefinirSenha([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
+        public async Task<IActionResult> RedefinirSenhaAsync([FromBody] RedefinicaoSenhaDTO redefinirSenhaDto)
         {
             try
             {
-                usuarioService.TrocaSenha(redefinirSenhaDto);
+                await usuarioService.TrocaSenha(redefinirSenhaDto);
+                
                 return Ok();
             }
             catch(KeyNotFoundException)

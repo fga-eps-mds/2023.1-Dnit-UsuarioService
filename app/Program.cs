@@ -1,7 +1,8 @@
 using app.DI;
-using dominio.Mapper;
+using app.Entidades;
+using app.Services.Mapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using DotNetEnv;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,15 +24,13 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "UsuarioService",
-        Description = "Microserivo UsuarioService"
+        Description = "Microserviço UsuarioService"
     });
 });
 
 builder.Services.AddConfigServices(builder.Configuration);
 
 builder.Services.AddConfigRepositorios();
-
-builder.Services.AddContexto(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -59,5 +58,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider
+        .GetRequiredService<AppDbContext>();
+
+    dbContext.Database.Migrate();
+}
 
 app.Run();
