@@ -26,7 +26,6 @@ namespace app.Services
             foreach(var permissao in permissoes)
             {
                 var novoPermissaoPerfil = perfilRepositorio.AdicionaPermissaoAoPerfil(novoPerfil.Id, permissao);
-                novoPerfil.PerfilPermissoes!.Add(novoPermissaoPerfil);
             }
 
             dbContext.SaveChanges();
@@ -63,7 +62,6 @@ namespace app.Services
             foreach(var permissao in permissoes)
             {
                 var novoPerfilPermissao = perfilRepositorio.AdicionaPermissaoAoPerfil(perfil.Id, permissao);
-                perfilDb.PerfilPermissoes!.Add(novoPerfilPermissao);
             }
 
             dbContext.SaveChanges();

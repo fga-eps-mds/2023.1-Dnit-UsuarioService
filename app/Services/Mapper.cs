@@ -23,7 +23,6 @@ namespace app.Services.Mapper
                 .ForMember(model => model.Sigla, opt => opt.MapFrom(uf => uf.ToString()))
                 .ForMember(model => model.Nome, opt => opt.MapFrom(uf => uf.AsString(EnumFormat.Description)));
 
-
             CreateMap<UsuarioDTO, UsuarioDnit>()
                 .ForMember(usuarioDnit => usuarioDnit.Id, opt => opt.Ignore());
 
@@ -38,8 +37,7 @@ namespace app.Services.Mapper
                 .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
                 .ForMember(p => p.Usuarios, opt => opt.Ignore());
 
-            CreateMap<Perfil, PerfilModel>()
-                .ForMember(model => model.Permissoes, opt => opt.MapFrom(p => p.Permissoes));
+            CreateMap<Perfil, PerfilModel>();
         }
     }
 }
