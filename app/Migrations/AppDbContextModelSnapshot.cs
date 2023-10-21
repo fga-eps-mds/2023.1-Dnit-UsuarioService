@@ -72,9 +72,6 @@ namespace app.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Nome")
-                        .IsUnique();
-
                     b.ToTable("Perfis", (string)null);
                 });
 
