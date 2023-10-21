@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace app.Services
@@ -12,6 +13,7 @@ namespace app.Services
     {
         private readonly AuthConfig authConfig;
         private const string CLAIM_PERMISSIONS = "permissions";
+        private const string CLAIM_ID = "id";
         private const char PERMISSIONS_SEPARATOR = ',';
 
         public AuthService(IOptions<AuthConfig> authConfig)
@@ -31,6 +33,17 @@ namespace app.Services
             return DecodePermissions<TPermission>(permissionsText)?.Any(p => permission.Equals(p)) ?? false;
         }
 
+        public int GetUserId(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var id = tokenHandler.ReadJwtToken(token).Claims.FirstOrDefault(c => c.Type == CLAIM_ID);
+            if (id != null)
+            {
+                return int.Parse(id.Value);
+            }
+            throw new AuthForbiddenException("Token inválido");
+        }
+
         public (string Token, DateTime ExpiresAt) GenerateToken<TPermission>(AuthUserModel<TPermission> user) where TPermission : struct
         {
             var issuer = authConfig.Issuer;
@@ -42,7 +55,7 @@ namespace app.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim("id", user.Id.ToString()),
+                    new Claim(CLAIM_ID, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Name),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(CLAIM_PERMISSIONS, EncodePermissions(user.Permissions))
@@ -58,6 +71,14 @@ namespace app.Services
             tokenHandler.WriteToken(token);
             var stringToken = tokenHandler.WriteToken(token);
             return (stringToken, expiraEm);
+        }
+
+        public (string RefreshToken, DateTime ExpiresAt) GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return (Convert.ToBase64String(randomNumber), DateTime.UtcNow.AddMinutes(authConfig.RefreshTokenExpireMinutes));
         }
 
         private string EncodePermissions<TPermission>(List<TPermission>? permissions) where TPermission : struct
