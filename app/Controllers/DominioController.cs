@@ -15,11 +15,14 @@ namespace app.Controllers
     {
         private readonly IUnidadeFederativaRepositorio unidadeFederativaRepositorio;
 
+        private readonly IPermissaoRepositorio permissaoRepositorio;
+
         private readonly IMapper mapper;
 
-        public DominioController(IUnidadeFederativaRepositorio unidadeFederativaRepositorio, IMapper mapper)
+        public DominioController(IUnidadeFederativaRepositorio unidadeFederativaRepositorio, IMapper mapper, IPermissaoRepositorio permissaoRepositorio)
         {
             this.unidadeFederativaRepositorio = unidadeFederativaRepositorio;
+            this.permissaoRepositorio = permissaoRepositorio;
             this.mapper = mapper;
         }
 
@@ -32,18 +35,29 @@ namespace app.Controllers
         }
 
         [HttpGet("permissoes")]
-        public IActionResult ObterListaDePermissoes(int pageIndex, int pageSize)
+        public IActionResult ObterListaDePermissoes()
         {
-            var lista = Enum.GetValues<Permissao>()
-                .Select(p => mapper.Map<PermissaoModel>(p))
-                .OrderBy(p => p.Categoria)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize);
-                
+            var categorias = permissaoRepositorio.ObterCategorias();
+
+            List<PermissaoModel> lista = new();
+            foreach(var categoria in categorias)
+            {
+                PermissaoModel model = new ()
+                {
+                    Categoria = categoria,
+                    Permisoes = permissaoRepositorio.ObterPermissoesPortCategoria(categoria)
+                };
+                lista.Add(model);
+            }
             return Ok(lista);
+            /* try
+            {
+                
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Houve um erro interno no servidor.");
+            } */            
         }
-        
-
-
     }
 }

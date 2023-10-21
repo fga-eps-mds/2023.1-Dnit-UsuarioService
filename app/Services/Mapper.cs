@@ -37,11 +37,6 @@ namespace app.Services.Mapper
                 .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
                 .ForMember(p => p.Usuarios, opt => opt.Ignore());
 
-            CreateMap<Permissao, PermissaoModel>()
-                .ForMember(model => model.Id, opt => opt.MapFrom(p => (int)p))
-                .ForMember(model => model.Descricao, opt => opt.MapFrom(p => p.AsString(EnumFormat.Description)))
-                .ForMember(model => model.Categoria, opt => opt.MapFrom(p => Regex.Match(p.ToString(), @"^([A-Z][a-z]+)")));
-
             CreateMap<Perfil, PerfilModel>()
                 .ForMember(model => model.Permissoes, opt => opt.MapFrom(p => p.Permissoes));
         }
