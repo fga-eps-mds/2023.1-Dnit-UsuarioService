@@ -85,6 +85,8 @@ namespace api
         [Description("Editar Perfil de Usuário")]
         PerfilEditar = 3001,
         [Description("Remover Perfil de Usuário")]
-        RemoverPerfil = 3002,
+        PerfilRemover = 3002,
+        [Description("Visualizar perfis")]
+        PerfilVisualizar = 3003,
     }
 }
