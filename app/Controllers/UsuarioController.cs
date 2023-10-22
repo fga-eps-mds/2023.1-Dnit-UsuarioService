@@ -6,13 +6,12 @@ using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
 using System.Data.Common;
-using app.Entidades;
 
 namespace app.Controllers
 {
     [ApiController]
     [Route("api/usuario")]
-    public class UsuarioController : AppControllerBase
+    public class UsuarioController : AppController
     {
         private readonly IUsuarioService usuarioService;
         private readonly AuthService authService;

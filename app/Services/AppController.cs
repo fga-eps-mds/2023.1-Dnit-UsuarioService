@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace app.Entidades
+namespace app.Services
 {
-    public class AppControllerBase : ControllerBase
+    public class AppController : ControllerBase
     {
         public ClaimsPrincipal? AppUsuario { get; set; }
-
         public ClaimsPrincipal Usuario => AppUsuario ?? User;
     }
 }
