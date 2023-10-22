@@ -1,8 +1,10 @@
+using api;
 using api.Perfis;
 using app.Entidades;
 using app.Services;
 using app.Services.Interfaces;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,10 +25,11 @@ namespace app.Controllers
             this.mapper = mapper;
         }
 
+        [Authorize]
         [HttpPost()]
         public IActionResult CriarPerfil([FromBody] PerfilDTO perfilDTO)
         {
-            //verificar se o user tem permissão
+            authService.Require(User, Permissao.PerfilCadastrar);
 
             var perfil = mapper.Map<Perfil>(perfilDTO);
 
@@ -44,10 +47,13 @@ namespace app.Controllers
             }
         }
 
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> EditarPerfil(Guid id, [FromBody] PerfilDTO perfilDTO)
         {
-            //verificar se o user tem permissão
+            
+            authService.Require(User, Permissao.PerfilEditar);
+
             Perfil perfil = mapper.Map<Perfil>(perfilDTO);
             perfil.Id = id;
 
@@ -69,10 +75,12 @@ namespace app.Controllers
             }
         }
 
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> ExcluirPerfil(Guid id)
         {
-            //verificar se o user tem permissao
+            authService.Require(User, Permissao.PerfilRemover);
+
             try{
                 await perfilService.ExcluirPerfil(id);
                 return Ok("Perfil excluido");
@@ -80,15 +88,22 @@ namespace app.Controllers
             catch(KeyNotFoundException){
                 return NotFound("Perfil não encontrado");
             }
+            catch(InvalidOperationException e)
+            {
+                return StatusCode(400, e.Message);
+            }
             catch(Exception)
             {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }            
         }
 
+        [Authorize]
         [HttpGet()]
         public async Task<IActionResult> ListarPerfis(int pageIndex, int pageSize)
         {
+            authService.Require(User, Permissao.PerfilVisualizar);
+
             try
             {
                 var pagina = await perfilService.ListarPerfisAsync(pageIndex, pageSize);
@@ -97,9 +112,9 @@ namespace app.Controllers
 
                 return Ok(paginaRetorno);
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                return StatusCode(500, "Houve um erro interno no servidor.");
+                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
             }
         }
     }
