@@ -35,12 +35,21 @@ namespace test.Stub
         {
             List<Perfil> lista = new();
 
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < n; i++)
             {
                 lista.Add(RetornaPerfil("PerfilTeste_" + i.ToString()));
             }
 
             return lista;
+        }
+
+        public static PerfilDTO RetornaPerfilDTO(string nome = "Perfil Teste")
+        {
+            return new PerfilDTO
+            {
+                Nome = nome,
+                Permissoes = new List<Permissao>(){Permissao.EmpresaCadastrar, Permissao.PerfilCadastrar}
+            };
         }
     }
 }

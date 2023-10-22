@@ -33,10 +33,12 @@ namespace test.Fixtures
             services.AddScoped<IEmailService, EmailService>();
             services.AddAutoMapper(typeof(AutoMapperConfig));
             services.AddScoped<IPermissaoService, PermissaoService>();
+            services.AddScoped<IPerfilService, PerfilService>();
 
             // Controllers
             services.AddScoped<DominioController>();
             services.AddScoped<UsuarioController>();
+            services.AddScoped<PerfilController>();
         }
 
         protected override ValueTask DisposeAsyncCore() => new();
