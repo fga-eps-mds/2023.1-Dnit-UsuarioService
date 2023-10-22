@@ -15,8 +15,21 @@ namespace app.Services.Mapper
         {
             CreateMap<Usuario, UsuarioDTO>()
                 .ForMember(dto => dto.CNPJ, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
+
+            CreateMap<UsuarioDnit, Usuario>()
+                .ForMember(u => u.RedefinicaoSenha, opt => opt.Ignore())
+                .ForMember(u => u.Empresas, opt => opt.Ignore())
+                .ForMember(u => u.Perfil, opt => opt.Ignore())
+                .ForMember(u => u.PerfilId, opt => opt.Ignore())
+                .ForMember(u => u.TokenAtualizacao, opt => opt.Ignore())
+                .ForMember(u => u.TokenAtualizacaoExpiracao, opt => opt.Ignore());
+
+            CreateMap<UsuarioModel, UsuarioDTO>()
+                .ForMember(dto => dto.CNPJ, opt => opt.Ignore())
+                .ForMember(dto => dto.UfLotacao, opt => opt.Ignore());
                 
-            CreateMap<Usuario, UsuarioModel>();
+            CreateMap<Usuario, UsuarioModel>()
+                .ForMember(dto => dto.Cnpj, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
 
             CreateMap<UF, UfModel>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(uf => (int)uf))
@@ -35,7 +48,8 @@ namespace app.Services.Mapper
                 .ForMember(p => p.Id, opt => opt.Ignore())
                 .ForMember(p => p.Permissoes, opt => opt.Ignore())
                 .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
-                .ForMember(p => p.Usuarios, opt => opt.Ignore());
+                .ForMember(p => p.Usuarios, opt => opt.Ignore())
+                .ForMember(p => p.Tipo, opt => opt.Ignore());
 
             CreateMap<Perfil, PerfilModel>()
                 .ForMember(model => model.Permissoes, opt => opt.MapFrom

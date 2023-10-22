@@ -2,16 +2,16 @@ using api.Usuarios;
 using api.Senhas;
 using Microsoft.AspNetCore.Mvc;
 using app.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
+using System.Data.Common;
 
 namespace app.Controllers
 {
     [ApiController]
     [Route("api/usuario")]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : AppController
     {
         private readonly IUsuarioService usuarioService;
         private readonly AuthService authService;
@@ -23,14 +23,6 @@ namespace app.Controllers
         {
             this.usuarioService = usuarioService;
             this.authService = authService;
-        }
-
-        [HttpGet("auth/teste")]
-        [Authorize]
-        public int Teste()
-        {
-            authService.Require(User, Permissao.PerfilEditar);
-            return 42;
         }
 
         [HttpPost("login")]
@@ -51,6 +43,14 @@ namespace app.Controllers
             }
         }
 
+        [HttpGet("permissoes")]
+        [Authorize]
+        public async Task<List<Permissao>> ListarPermissoes()
+        {
+            var userId = authService.GetUserId(Usuario);
+            return await usuarioService.ListarPermissoesAsync(userId);
+        }
+
         [HttpPost("atualizarToken")]
         public async Task<LoginModel> AtualizarToken([FromBody] AtualizarTokenDto atualizarTokenDto)
         {
@@ -67,7 +67,7 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbUpdateException)
+            catch (DbException)
             {
                 return Conflict("Usuário já cadastrado.");
             }
@@ -86,7 +86,7 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbUpdateException)
+            catch (DbException)
             {
                 return Conflict("Usuário já cadastrado.");
             }

@@ -42,7 +42,7 @@ namespace test
 
             Assert.NotNull(perfilDb);
             Assert.Equal(perfilDTO.Nome, perfilDb.Nome);
-            Assert.Equal(2, perfilDb.Permissoes.Count());
+            Assert.Equal(1, perfilDb.Permissoes.Count());
         }
 
         [Fact] 

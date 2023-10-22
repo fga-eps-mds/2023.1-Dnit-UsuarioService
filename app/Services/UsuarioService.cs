@@ -7,6 +7,8 @@ using BCryptNet = BCrypt.Net.BCrypt;
 using app.Entidades;
 using api;
 using auth;
+using Microsoft.Extensions.Options;
+using app.Configuracoes;
 
 namespace app.Services
 {
@@ -16,26 +18,29 @@ namespace app.Services
         private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
-        private readonly IConfiguration configuration;
+        private readonly SenhaConfig senhaConfig;
         private readonly AppDbContext dbContext;
         private readonly AuthService autenticacaoService;
+        private readonly AuthConfig authConfig;
 
         public UsuarioService
         (
             IUsuarioRepositorio usuarioRepositorio, 
             IMapper mapper, 
             IEmailService emailService, 
-            IConfiguration configuration,
+            IOptions<SenhaConfig> senhaConfig,
             AppDbContext dbContext,
-            AuthService autenticacaoService
+            AuthService autenticacaoService,
+            IOptions<AuthConfig> authConfig
         )
         {
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
-            this.configuration = configuration;
+            this.senhaConfig = senhaConfig.Value;
             this.dbContext = dbContext;
             this.autenticacaoService = autenticacaoService;
+            this.authConfig = authConfig.Value;
         }
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
@@ -75,9 +80,9 @@ namespace app.Services
             return await CriarTokenAsync(usuario);
         }
 
-        private UsuarioModel? Obter(string email)
+        private Usuario? Obter(string email)
         {
-            UsuarioModel? usuario = usuarioRepositorio.ObterUsuario(email);
+            Usuario? usuario = usuarioRepositorio.ObterUsuario(email);
 
             if (usuario == null)
                 throw new KeyNotFoundException();
@@ -87,7 +92,7 @@ namespace app.Services
 
         public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
-            UsuarioModel? usuarioBanco = Obter(usuarioDTO.Email);
+            Usuario? usuarioBanco = Obter(usuarioDTO.Email);
 
             return ValidaSenha(usuarioDTO.Senha, usuarioBanco.Senha);
         }
@@ -120,7 +125,7 @@ namespace app.Services
         {
             var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
 
-            UsuarioModel usuarioBanco = Obter(usuarioEntrada.Email);
+            Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
             string UuidAutenticacao = Guid.NewGuid().ToString();
 
@@ -137,7 +142,7 @@ namespace app.Services
         }
         private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
-            var baseUrl = configuration["RedefinirSenhaUrl"];
+            var baseUrl = senhaConfig.RedefinirSenhaUrl;
 
             string link = $"{baseUrl}?token={UuidAutenticacao}";
 
@@ -158,11 +163,18 @@ namespace app.Services
 
         private async Task<LoginModel> CriarTokenAsync(Usuario usuario)
         {
+            var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
+
+            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrador
+                permissoes = Enum.GetValues<Permissao>().ToList();
+
+            permissoes = new() { Permissao.EscolaVisualizar, Permissao.UpsVisualizar, Permissao.EscolaCadastrar };
+
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
                 Id = usuario.Id,
                 Name = usuario.Nome,
-                Permissions = usuario.Perfil?.Permissoes?.ToList(),
+                Permissions = permissoes,
             });
 
             var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
@@ -173,11 +185,17 @@ namespace app.Services
 
             return new LoginModel()
             {
-                Token = token,
+                Token = "Bearer " + token,
                 ExpiraEm = expiraEm,
                 TokenAtualizacao = tokenAtualizacao,
-                Permissoes = usuario.Perfil?.Permissoes?.ToList(),
+                Permissoes = permissoes,
             };
+        }
+
+        public async Task<List<Permissao>> ListarPermissoesAsync(int userId)
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(userId, includePerfil: true);
+            return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
     }
 }

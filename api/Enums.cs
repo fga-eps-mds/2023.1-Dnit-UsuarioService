@@ -73,12 +73,12 @@ namespace api
         [Description("Visualizar Escola")]
         EscolaVisualizar = 1003,
 
-        [Description("Cadastrar Empresa")]
-        EmpresaCadastrar = 2000,
-        [Description("Editar Empresa")]
-        EmpresaEditar = 2001,
-        [Description("Remover Empresa")]
-        EmpresaRemover = 2002,
+        //[Description("Cadastrar Empresa")]
+        //EmpresaCadastrar = 2000,
+        //[Description("Editar Empresa")]
+        //EmpresaEditar = 2001,
+        //[Description("Remover Empresa")]
+        //EmpresaRemover = 2002,
         
         [Description("Cadastrar Perfil de Usuário")]
         PerfilCadastrar = 3000,
@@ -91,12 +91,16 @@ namespace api
         
         [Description("Calcular UPS de sinistros")]
         UpsCalcularSinistro = 5000,
-        [Description("Caluclar UPS de escolas")]
+        [Description("Calcular UPS de escolas")]
         UpsCalcularEscola = 5001,
+        [Description("Visualizar UPS")]
+        UpsVisualizar = 5002,
+
         [Description("Cadastrar rodovia")]
-        RodoviaCadastrar = 5002,
+        RodoviaCadastrar = 6000,
+
         [Description("Cadastrar sinistro")]
-        SinistroCadastrar = 5003,
+        SinistroCadastrar = 7000,
     }
 
     public enum TipoPerfil

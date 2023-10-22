@@ -1,5 +1,6 @@
 ﻿using app.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -51,6 +52,11 @@ namespace auth
             services.AddAuthorization();
 
             services.AddControllers(o => o.Filters.Add(typeof(AuthExceptionHandler)));
+
+            if (!bool.Parse(configuration.GetSection("Auth")["Enabled"] ?? bool.FalseString))
+            {
+                services.AddSingleton<IAuthorizationHandler, AllowAnonymous>();
+            }
         }
 
         public static void AddAuthSwagger(this IServiceCollection services, IConfiguration configuration)
@@ -85,6 +91,17 @@ namespace auth
                     }
                 });
             });
+        }
+    }
+
+    public class AllowAnonymous : IAuthorizationHandler
+    {
+        public Task HandleAsync(AuthorizationHandlerContext context)
+        {
+            foreach (IAuthorizationRequirement requirement in context.PendingRequirements.ToList())
+                context.Succeed(requirement);
+
+            return Task.CompletedTask;
         }
     }
 }

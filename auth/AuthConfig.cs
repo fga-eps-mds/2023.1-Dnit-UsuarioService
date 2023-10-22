@@ -2,7 +2,8 @@
 {
     public class AuthConfig
     {
-        public string Key { get; set; }
+        public bool Enabled { get; set; } = false;
+        public string Key { get; set; } = "chave secreta chave secreta chave secreta chave secreta chave secreta chave secreta";
         public string Issuer { get; set; }
         public string Audience { get; set; }
         public bool ValidateIssuer { get; set; }

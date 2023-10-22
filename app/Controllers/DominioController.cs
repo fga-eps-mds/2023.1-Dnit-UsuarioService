@@ -5,12 +5,13 @@ using app.Services.Interfaces;
 using app.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using app.Services;
 
 namespace app.Controllers
 {
     [ApiController]
     [Route("api/dominio")]
-    public class DominioController : ControllerBase
+    public class DominioController : AppController
     {
         private readonly IUnidadeFederativaRepositorio unidadeFederativaRepositorio;
         private readonly IPermissaoService PermissaoService;

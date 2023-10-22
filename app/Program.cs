@@ -28,6 +28,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddConfiguracoes(builder.Configuration);
+
 builder.Services.AddConfigServices(builder.Configuration);
 
 builder.Services.AddConfigRepositorios();

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace api.Usuarios
+﻿namespace api.Usuarios
 {
     public class UsuarioModel
     {
@@ -12,5 +6,6 @@ namespace api.Usuarios
         public string Email { get; set; }
         public string Senha { get; set; }
         public string Nome { get; set; }
+        public string Cnpj { get; set; }
     }
 }

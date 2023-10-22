@@ -48,7 +48,7 @@ namespace test.Stub
             return new PerfilDTO
             {
                 Nome = nome,
-                Permissoes = new List<Permissao>(){Permissao.EmpresaCadastrar, Permissao.PerfilCadastrar}
+                Permissoes = new List<Permissao>(){Permissao.PerfilCadastrar}
             };
         }
     }
