@@ -1,11 +1,8 @@
 using app.Entidades;
-using Dapper;
 using api.Usuarios;
-using api.Senhas;
 using app.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Npgsql;
 
 namespace app.Repositorios
 {

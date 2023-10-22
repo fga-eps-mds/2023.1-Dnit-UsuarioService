@@ -6,12 +6,13 @@ using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
 using System.Data.Common;
+using app.Entidades;
 
 namespace app.Controllers
 {
     [ApiController]
     [Route("api/usuario")]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : AppControllerBase
     {
         private readonly IUsuarioService usuarioService;
         private readonly AuthService authService;
@@ -47,7 +48,7 @@ namespace app.Controllers
         [Authorize]
         public async Task<List<Permissao>> ListarPermissoes()
         {
-            var userId = authService.GetUserId(User);
+            var userId = authService.GetUserId(Usuario);
             return await usuarioService.ListarPermissoesAsync(userId);
         }
 
@@ -71,7 +72,7 @@ namespace app.Controllers
             {
                 return Conflict("Usuário já cadastrado.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }

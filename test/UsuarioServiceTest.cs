@@ -15,6 +15,7 @@ using Xunit.Microsoft.DependencyInjection.Abstracts;
 using Microsoft.Extensions.Options;
 using auth;
 using System.Threading.Tasks;
+using app.Configuracoes;
 
 namespace test
 {
@@ -25,7 +26,6 @@ namespace test
         Mock<IMapper> mapper;
         Mock<IUsuarioRepositorio> usuarioRepositorio;
         Mock<IEmailService> emailService;
-        Mock<IConfiguration> configuration;
         AuthService authService;
         Mock<IOptions<AuthConfig>> authConfig;
         IUsuarioService usuarioServiceMock;
@@ -37,12 +37,12 @@ namespace test
             mapper = new Mock<IMapper>();
             usuarioRepositorio = new Mock<IUsuarioRepositorio>();
             emailService = new Mock<IEmailService>();
-            configuration = new Mock<IConfiguration>();
+            var senhaConfig = new SenhaConfig();
             authConfig = new Mock<IOptions<AuthConfig>>();
             authService = new AuthService(authConfig.Object);
             
 
-            usuarioServiceMock = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, configuration.Object, dbContext, authService, authConfig.Object);
+            usuarioServiceMock = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, Options.Create(senhaConfig), dbContext, authService, authConfig.Object);
         }
 
         [Fact]

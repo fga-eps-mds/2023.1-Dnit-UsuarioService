@@ -6,12 +6,12 @@ namespace app.Services.Interfaces
 {
     public interface IUsuarioService
     {
-        public Task<LoginModel> AutenticarUsuarioAsync(string email, string senha);
-        public bool ValidaLogin(UsuarioDTO usuarioDTO);
-        public Task TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
-        public Task RecuperarSenha(UsuarioDTO usuarioDto);
-        public Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
-        public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
+        Task<LoginModel> AutenticarUsuarioAsync(string email, string senha);
+        bool ValidaLogin(UsuarioDTO usuarioDTO);
+        Task TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
+        Task RecuperarSenha(UsuarioDTO usuarioDto);
+        Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
+        void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
         Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto);
         Task<List<Permissao>> ListarPermissoesAsync(int userId);
     }

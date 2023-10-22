@@ -1,6 +1,4 @@
-﻿using Dapper;
-using app.Entidades;
-using api;
+﻿using api;
 using app.Repositorios.Interfaces;
 using AutoMapper;
 

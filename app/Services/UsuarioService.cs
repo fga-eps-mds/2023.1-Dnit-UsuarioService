@@ -8,6 +8,7 @@ using app.Entidades;
 using api;
 using auth;
 using Microsoft.Extensions.Options;
+using app.Configuracoes;
 
 namespace app.Services
 {
@@ -17,7 +18,7 @@ namespace app.Services
         private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
-        private readonly IConfiguration configuration;
+        private readonly SenhaConfig senhaConfig;
         private readonly AppDbContext dbContext;
         private readonly AuthService autenticacaoService;
         private readonly AuthConfig authConfig;
@@ -27,7 +28,7 @@ namespace app.Services
             IUsuarioRepositorio usuarioRepositorio, 
             IMapper mapper, 
             IEmailService emailService, 
-            IConfiguration configuration,
+            IOptions<SenhaConfig> senhaConfig,
             AppDbContext dbContext,
             AuthService autenticacaoService,
             IOptions<AuthConfig> authConfig
@@ -36,7 +37,7 @@ namespace app.Services
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
-            this.configuration = configuration;
+            this.senhaConfig = senhaConfig.Value;
             this.dbContext = dbContext;
             this.autenticacaoService = autenticacaoService;
             this.authConfig = authConfig.Value;
@@ -141,7 +142,7 @@ namespace app.Services
         }
         private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
-            var baseUrl = configuration["RedefinirSenhaUrl"];
+            var baseUrl = senhaConfig.RedefinirSenhaUrl;
 
             string link = $"{baseUrl}?token={UuidAutenticacao}";
 
