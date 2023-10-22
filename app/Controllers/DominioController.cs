@@ -1,11 +1,10 @@
-﻿using app.Entidades;
-using api;
+﻿using api;
 using Microsoft.AspNetCore.Mvc;
-using app.Repositorios;
 using app.Repositorios.Interfaces;
-using app.Services;
 using app.Services.Interfaces;
+using app.Services;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace app.Controllers
 {
@@ -14,15 +13,22 @@ namespace app.Controllers
     public class DominioController : ControllerBase
     {
         private readonly IUnidadeFederativaRepositorio unidadeFederativaRepositorio;
-
-        private readonly IPermissaoRepositorio permissaoRepositorio;
-
+        private readonly IPermissaoService PermissaoService;
         private readonly IMapper mapper;
+        private readonly AuthService authService;
 
-        public DominioController(IUnidadeFederativaRepositorio unidadeFederativaRepositorio, IMapper mapper, IPermissaoRepositorio permissaoRepositorio)
+
+        public DominioController
+        (
+            IUnidadeFederativaRepositorio unidadeFederativaRepositorio, 
+            IMapper mapper, 
+            IPermissaoService PermissaoService,
+            AuthService authService
+        )
         {
             this.unidadeFederativaRepositorio = unidadeFederativaRepositorio;
-            this.permissaoRepositorio = permissaoRepositorio;
+            this.PermissaoService = PermissaoService;
+            this.authService = authService;
             this.mapper = mapper;
         }
 
@@ -34,21 +40,20 @@ namespace app.Controllers
             return  new OkObjectResult(listaUnidadeFederativa);
         }
 
+        [Authorize]
         [HttpGet("permissoes")]
         public IActionResult ObterListaDePermissoes()
         {
-            var categorias = permissaoRepositorio.ObterCategorias();
-
-            List<PermissaoModel> lista = new();
-            foreach(var categoria in categorias)
+            authService.Require(User, Permissao.PerfilVisualizar);
+            
+            var categorias = PermissaoService.ObterCategorias();
+            
+            var lista = categorias.ConvertAll(c => new CategoriaPermissaoModel
             {
-                PermissaoModel model = new ()
-                {
-                    Categoria = categoria,
-                    Permisoes = permissaoRepositorio.ObterPermissoesPortCategoria(categoria)
-                };
-                lista.Add(model);
-            }
+                Categoria = c,
+                Permisoes = PermissaoService.ObterPermissoesPortCategoria(c)
+            });
+            
             
             return Ok(lista);
         }
