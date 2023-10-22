@@ -1,5 +1,6 @@
 using api;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace app.Entidades
 {
@@ -16,7 +17,11 @@ namespace app.Entidades
 
         public List<PerfilPermissao>? PerfilPermissoes { get; set; }
 
-        public IEnumerable<Permissao>? Permissoes => PerfilPermissoes?.Select(p => p.Permissao);
+        [NotMapped]
+        public List<Permissao>? PermissoesSessao { get; set; }
+
+        [NotMapped]
+        public IEnumerable<Permissao>? Permissoes => PermissoesSessao ?? PerfilPermissoes?.Select(p => p.Permissao);
 
         public List<Usuario>? Usuarios { get; set; }
     }

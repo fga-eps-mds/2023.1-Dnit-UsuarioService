@@ -165,10 +165,8 @@ namespace app.Services
         {
             var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
 
-            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrador
+            if (!authConfig.Enabled || usuario.Perfil.Tipo == TipoPerfil.Administrador)
                 permissoes = Enum.GetValues<Permissao>().ToList();
-
-            permissoes = new() { Permissao.EscolaVisualizar, Permissao.UpsVisualizar, Permissao.EscolaCadastrar };
 
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
