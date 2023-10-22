@@ -98,4 +98,11 @@ namespace api
         [Description("Cadastrar sinistro")]
         SinistroCadastrar = 5003,
     }
+
+    public enum TipoPerfil
+    {
+        Basico = 1,
+        Administrador,
+        Customizavel
+    }
 }

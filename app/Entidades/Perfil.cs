@@ -11,6 +11,9 @@ namespace app.Entidades
         [Required, MaxLength(200)]
         public string Nome { get; set; }
 
+        [Required]
+        public TipoPerfil Tipo { get; set; } = TipoPerfil.Customizavel;
+
         public List<PerfilPermissao>? PerfilPermissoes { get; set; }
 
         public IEnumerable<Permissao>? Permissoes => PerfilPermissoes?.Select(p => p.Permissao);
