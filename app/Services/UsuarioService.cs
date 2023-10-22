@@ -44,7 +44,7 @@ namespace app.Services
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
-            usuarioRepositorio.CadastrarUsuarioDnit(usuario);
+            await usuarioRepositorio.CadastrarUsuarioDnit(usuario);
 
             await dbContext.SaveChangesAsync();
         }

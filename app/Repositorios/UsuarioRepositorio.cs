@@ -1,11 +1,9 @@
 using app.Entidades;
-using Dapper;
 using api.Usuarios;
-using api.Senhas;
+using api;
 using app.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Npgsql;
 
 namespace app.Repositorios
 {
@@ -47,14 +45,16 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync();
         }
 
-        public void CadastrarUsuarioDnit(UsuarioDnit usuario)
+        public async Task CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
+
             var novoUsuario = new Usuario
             {
                 Nome = usuario.Nome,
                 Email = usuario.Email,
                 Senha = usuario.Senha,
-                UfLotacao = usuario.UfLotacao
+                UfLotacao = usuario.UfLotacao,
+                Perfil = await RecuperaPerfilBasicoAsync()
             };
 
             dbContext.Add(novoUsuario);            
@@ -100,7 +100,7 @@ namespace app.Repositorios
             dbContext.RedefinicaoSenha.Add(newRs);
         }
 
-        public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
+        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 
@@ -111,10 +111,17 @@ namespace app.Repositorios
                 Nome = usuarioTerceiro.Nome,
                 Email = usuarioTerceiro.Email,
                 Senha = usuarioTerceiro.Senha,
-                Empresas = empresas
+                Empresas = empresas,
+                Perfil = await RecuperaPerfilBasicoAsync()
             };
 
             dbContext.Usuario.Add(novoUsuarioTerceiro);
+        }
+
+        private async Task<Perfil?> RecuperaPerfilBasicoAsync()
+        {
+            return await dbContext.Perfis.Where(p => p.Tipo == TipoPerfil.Basico)
+                .FirstOrDefaultAsync();
         }
     }
 }
