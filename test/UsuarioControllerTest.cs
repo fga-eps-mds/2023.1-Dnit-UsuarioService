@@ -20,7 +20,7 @@ namespace test
         [Fact]
         public void Logar_QuandoLoginForValidado_DeveRetornarOk()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -36,7 +36,7 @@ namespace test
         [Fact]
         public void Logar_QuandoCredenciaisForemInvalidas_DeveRetornarUnauthorized()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -53,7 +53,7 @@ namespace test
         [Fact]
         public void Logar_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -70,7 +70,7 @@ namespace test
         [Fact]
         public async void CadastrarUsuarioDnit_QuandoUsuarioForCadastrado_DeveRetornarCreated()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -86,9 +86,9 @@ namespace test
         }
 
         [Fact]
-        public async void CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -107,7 +107,7 @@ namespace test
         [Fact]
         public async void CadastrarUsuarioDnit_QuandoCadastroFalhar_DeveRetornarErroInterno()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -128,7 +128,7 @@ namespace test
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoUsuarioForCadastrado_DeveRetornarCreated()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -146,7 +146,7 @@ namespace test
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -165,7 +165,7 @@ namespace test
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoCadastroFalhar_DeveRetornarErroInterno()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -186,7 +186,7 @@ namespace test
         [Fact]
         public async void RecuperarSenha_QuandoRecuperacaoForValidada_DeveRetornarOk()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -202,7 +202,7 @@ namespace test
         [Fact]
         public async Task RecuperarSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFoundAsync()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();

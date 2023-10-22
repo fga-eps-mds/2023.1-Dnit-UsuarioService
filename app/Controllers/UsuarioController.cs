@@ -2,10 +2,10 @@ using api.Usuarios;
 using api.Senhas;
 using Microsoft.AspNetCore.Mvc;
 using app.Services.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
+using System.Data.Common;
 
 namespace app.Controllers
 {
@@ -23,14 +23,6 @@ namespace app.Controllers
         {
             this.usuarioService = usuarioService;
             this.authService = authService;
-        }
-
-        [HttpGet("auth/teste")]
-        [Authorize]
-        public int Teste()
-        {
-            authService.Require(User, Permissao.PerfilEditar);
-            return 42;
         }
 
         [HttpPost("login")]
@@ -75,11 +67,11 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbUpdateException)
+            catch (DbException)
             {
                 return Conflict("Usuário já cadastrado.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }
@@ -94,7 +86,7 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbUpdateException)
+            catch (DbException)
             {
                 return Conflict("Usuário já cadastrado.");
             }
