@@ -7,6 +7,7 @@ using BCryptNet = BCrypt.Net.BCrypt;
 using app.Entidades;
 using api;
 using auth;
+using Microsoft.Extensions.Options;
 
 namespace app.Services
 {
@@ -19,6 +20,7 @@ namespace app.Services
         private readonly IConfiguration configuration;
         private readonly AppDbContext dbContext;
         private readonly AuthService autenticacaoService;
+        private readonly AuthConfig authConfig;
 
         public UsuarioService
         (
@@ -27,7 +29,8 @@ namespace app.Services
             IEmailService emailService, 
             IConfiguration configuration,
             AppDbContext dbContext,
-            AuthService autenticacaoService
+            AuthService autenticacaoService,
+            IOptions<AuthConfig> authConfig
         )
         {
             this.usuarioRepositorio = usuarioRepositorio;
@@ -36,6 +39,7 @@ namespace app.Services
             this.configuration = configuration;
             this.dbContext = dbContext;
             this.autenticacaoService = autenticacaoService;
+            this.authConfig = authConfig.Va;
         }
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
@@ -158,11 +162,16 @@ namespace app.Services
 
         private async Task<LoginModel> CriarTokenAsync(Usuario usuario)
         {
+            var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
+
+            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrado
+                permissoes = Enum.GetValues<Permissao>().ToList();
+
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
                 Id = usuario.Id,
                 Name = usuario.Nome,
-                Permissions = usuario.Perfil?.Permissoes?.ToList() ?? new(),
+                Permissions = permissoes,
             });
 
             var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
