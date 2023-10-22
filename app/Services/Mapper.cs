@@ -5,6 +5,7 @@ using app.Entidades;
 using api;
 using EnumsNET;
 using api.Perfis;
+using api.Permissoes;
 
 namespace app.Services.Mapper
 {
@@ -36,7 +37,16 @@ namespace app.Services.Mapper
                 .ForMember(p => p.PerfilPermissoes, opt => opt.Ignore())
                 .ForMember(p => p.Usuarios, opt => opt.Ignore());
 
-            CreateMap<Perfil, PerfilModel>();
+            CreateMap<Perfil, PerfilModel>()
+                .ForMember(model => model.Permissoes, opt => opt.MapFrom
+                    (
+                        perf => perf.Permissoes.Select(p => new PermissaoModel
+                            {
+                                Codigo = p,
+                                Descricao = p.AsString(EnumFormat.Description)!
+                            }).ToList()
+                    )
+                );
         }
     }
 }
