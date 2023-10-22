@@ -3,6 +3,7 @@ using app.Entidades;
 using app.Repositorios.Interfaces;
 using app.Services.Interfaces;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace app.Services
 {
@@ -86,7 +87,19 @@ namespace app.Services
 
         public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize)
         {
-            return await perfilRepositorio.ListarPerfisAsync(pageIndex, pageSize);
+            var perfis = await perfilRepositorio.ListarPerfisAsync(pageIndex, pageSize);
+            var administrador = perfis.FirstOrDefault(p => p.Tipo == TipoPerfil.Administrador);
+
+            if (administrador != null)
+            {
+                PreencherPermissoesAdministrador(administrador);
+            }
+            return perfis;
+        }
+
+        private void PreencherPermissoesAdministrador(Perfil perfil)
+        {
+            perfil.PermissoesSessao = Enum.GetValues<Permissao>().ToList();
         }
     }
 }

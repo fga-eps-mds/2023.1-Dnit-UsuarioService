@@ -99,7 +99,7 @@ namespace app.Controllers
         }
 
         [Authorize]
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> ListarPerfis(int pageIndex, int pageSize)
         {
             authService.Require(User, Permissao.PerfilVisualizar);

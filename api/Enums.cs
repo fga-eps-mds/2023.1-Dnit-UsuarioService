@@ -103,6 +103,7 @@ namespace api
         SinistroCadastrar = 7000,
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TipoPerfil
     {
         Basico = 1,
