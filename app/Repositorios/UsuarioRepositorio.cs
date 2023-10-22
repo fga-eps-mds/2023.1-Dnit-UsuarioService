@@ -17,11 +17,9 @@ namespace app.Repositorios
             this.mapper = mapper;
         }
        
-        public UsuarioModel? ObterUsuario(string email)
+        public Usuario? ObterUsuario(string email)
         {            
-            var query = dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
-            
-            return mapper.Map<UsuarioModel>(query);
+            return dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
         }
 
         public async Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false)

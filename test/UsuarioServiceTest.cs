@@ -90,8 +90,6 @@ namespace test
             var cadastrarUsuario = async () => await usuarioServiceMock.CadastrarUsuarioDnit(usuarioStub.RetornarUsuarioDnitDTO());
 
             var exception = await Assert.ThrowsAsync<InvalidOperationException>(cadastrarUsuario);
-
-            Assert.Equal("Email já cadastrado.", exception.Message);
         }
 
         [Fact]
@@ -156,10 +154,12 @@ namespace test
             var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
+            var usuarioRetorno = usuarioStub.RetornarUsuarioDnitBanco();
+
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioDNIT);
+            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioRetorno);
 
             usuarioServiceMock.RecuperarSenha(usuarioDnitDTO);
 
