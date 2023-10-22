@@ -91,8 +91,10 @@ namespace api
         
         [Description("Calcular UPS de sinistros")]
         UpsCalcularSinistro = 5000,
-        [Description("Caluclar UPS de escolas")]
+        [Description("Calcular UPS de escolas")]
         UpsCalcularEscola = 5001,
+        [Description("Visualizar UPS")]
+        UpsVisualizar = 5002,
 
         [Description("Cadastrar rodovia")]
         RodoviaCadastrar = 6000,

@@ -51,6 +51,14 @@ namespace app.Controllers
             }
         }
 
+        [HttpGet("permissoes")]
+        [Authorize]
+        public async Task<List<Permissao>> ListarPermissoes()
+        {
+            var userId = authService.GetUserId(User);
+            return await usuarioService.ListarPermissoesAsync(userId);
+        }
+
         [HttpPost("atualizarToken")]
         public async Task<LoginModel> AtualizarToken([FromBody] AtualizarTokenDto atualizarTokenDto)
         {

@@ -1,5 +1,6 @@
 ﻿using api.Usuarios;
 using api.Senhas;
+using api;
 
 namespace app.Services.Interfaces
 {
@@ -12,5 +13,6 @@ namespace app.Services.Interfaces
         public Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
         public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
         Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto);
+        Task<List<Permissao>> ListarPermissoesAsync(int userId);
     }
 }

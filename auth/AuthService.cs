@@ -47,6 +47,11 @@ namespace app.Services
             throw new AuthForbiddenException("Token inválido");
         }
 
+        public int GetUserId(ClaimsPrincipal user)
+        {
+            return int.Parse(user.Claims.First(c => c.Type == CLAIM_ID).Value);
+        }
+
         public (string Token, DateTime ExpiresAt) GenerateToken<TPermission>(AuthUserModel<TPermission> user) where TPermission : struct
         {
             var issuer = authConfig.Issuer;

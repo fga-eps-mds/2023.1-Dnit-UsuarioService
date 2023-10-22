@@ -39,7 +39,7 @@ namespace app.Services
             this.configuration = configuration;
             this.dbContext = dbContext;
             this.autenticacaoService = autenticacaoService;
-            this.authConfig = authConfig.Va;
+            this.authConfig = authConfig.Value;
         }
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
@@ -164,8 +164,10 @@ namespace app.Services
         {
             var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
 
-            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrado
+            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrador
                 permissoes = Enum.GetValues<Permissao>().ToList();
+
+            permissoes = new() { Permissao.EscolaVisualizar, Permissao.UpsVisualizar, Permissao.EscolaCadastrar };
 
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
@@ -185,8 +187,14 @@ namespace app.Services
                 Token = "Bearer " + token,
                 ExpiraEm = expiraEm,
                 TokenAtualizacao = tokenAtualizacao,
-                Permissoes = usuario.Perfil?.Permissoes?.ToList(),
+                Permissoes = permissoes,
             };
+        }
+
+        public async Task<List<Permissao>> ListarPermissoesAsync(int userId)
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(userId, includePerfil: true);
+            return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
     }
 }
