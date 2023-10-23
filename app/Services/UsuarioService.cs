@@ -3,11 +3,12 @@ using api.Senhas;
 using app.Repositorios.Interfaces;
 using app.Services.Interfaces;
 using AutoMapper;
-using System.Collections.Generic;
-using System;
 using BCryptNet = BCrypt.Net.BCrypt;
-using Microsoft.Extensions.Configuration;
 using app.Entidades;
+using api;
+using auth;
+using Microsoft.Extensions.Options;
+using app.Configuracoes;
 
 namespace app.Services
 {
@@ -17,23 +18,29 @@ namespace app.Services
         private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
-        private readonly IConfiguration configuration;
+        private readonly SenhaConfig senhaConfig;
         private readonly AppDbContext dbContext;
+        private readonly AuthService autenticacaoService;
+        private readonly AuthConfig authConfig;
 
         public UsuarioService
         (
             IUsuarioRepositorio usuarioRepositorio, 
             IMapper mapper, 
             IEmailService emailService, 
-            IConfiguration configuration,
-            AppDbContext dbContext
+            IOptions<SenhaConfig> senhaConfig,
+            AppDbContext dbContext,
+            AuthService autenticacaoService,
+            IOptions<AuthConfig> authConfig
         )
         {
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
-            this.configuration = configuration;
+            this.senhaConfig = senhaConfig.Value;
             this.dbContext = dbContext;
+            this.autenticacaoService = autenticacaoService;
+            this.authConfig = authConfig.Value;
         }
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
@@ -61,6 +68,16 @@ namespace app.Services
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
+        }
+
+        public async Task<LoginModel> AutenticarUsuarioAsync(string email, string senha)
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(email: email, includePerfil: true)
+                ?? throw new KeyNotFoundException();
+
+            ValidaSenha(senha, usuario.Senha);
+
+            return await CriarTokenAsync(usuario);
         }
 
         private Usuario? Obter(string email)
@@ -125,11 +142,60 @@ namespace app.Services
         }
         private string GerarLinkDeRecuperacao(string UuidAutenticacao)
         {
-            var baseUrl = configuration["RedefinirSenhaUrl"];
+            var baseUrl = senhaConfig.RedefinirSenhaUrl;
 
             string link = $"{baseUrl}?token={UuidAutenticacao}";
 
             return link;
+        }
+
+        public async Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto)
+        {
+            var usuarioId = autenticacaoService.GetUserId(atualizarTokenDto.Token);
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId, includePerfil: true);
+
+            if (usuario?.TokenAtualizacao != atualizarTokenDto.TokenAtualizacao || !usuario.TokenAtualizacaoExpiracao.HasValue || usuario.TokenAtualizacaoExpiracao.Value <= DateTimeOffset.Now)
+            {
+                throw new AuthForbiddenException("Token expirado. Realize o login novamente.");
+            }
+            return await CriarTokenAsync(usuario);
+        }
+
+        private async Task<LoginModel> CriarTokenAsync(Usuario usuario)
+        {
+            var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
+
+            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrador
+                permissoes = Enum.GetValues<Permissao>().ToList();
+
+            permissoes = new() { Permissao.EscolaVisualizar, Permissao.UpsVisualizar, Permissao.EscolaCadastrar };
+
+            var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
+            {
+                Id = usuario.Id,
+                Name = usuario.Nome,
+                Permissions = permissoes,
+            });
+
+            var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
+
+            usuario.TokenAtualizacao = tokenAtualizacao;
+            usuario.TokenAtualizacaoExpiracao = tokenAtualizacaoExpiracao;
+            await dbContext.SaveChangesAsync();
+
+            return new LoginModel()
+            {
+                Token = "Bearer " + token,
+                ExpiraEm = expiraEm,
+                TokenAtualizacao = tokenAtualizacao,
+                Permissoes = permissoes,
+            };
+        }
+
+        public async Task<List<Permissao>> ListarPermissoesAsync(int userId)
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(userId, includePerfil: true);
+            return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
     }
 }

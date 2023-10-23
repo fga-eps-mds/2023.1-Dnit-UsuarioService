@@ -28,6 +28,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddConfiguracoes(builder.Configuration);
+
 builder.Services.AddConfigServices(builder.Configuration);
 
 builder.Services.AddConfigRepositorios();
@@ -53,8 +55,9 @@ app.UseSwagger();
 
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

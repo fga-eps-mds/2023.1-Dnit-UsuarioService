@@ -1,11 +1,8 @@
 using app.Entidades;
-using Dapper;
 using api.Usuarios;
-using api.Senhas;
 using app.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-using Npgsql;
 
 namespace app.Repositorios
 {
@@ -22,9 +19,27 @@ namespace app.Repositorios
        
         public Usuario? ObterUsuario(string email)
         {            
-            var query = dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
-            
-            return query;
+            return dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
+        }
+
+        public async Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false)
+        {
+            var query = dbContext.Usuario.AsQueryable();
+
+            if (includePerfil)
+            {
+                query = query.Include(u => u.Perfil).ThenInclude(p => p.PerfilPermissoes);
+            }
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                query = query.Where(u => u.Email.ToLower() == email!.ToLower());
+            }
+            if (id.HasValue)
+            {
+                query = query.Where(u => u.Id == id);
+            }
+
+            return await query.FirstOrDefaultAsync();
         }
 
         public void CadastrarUsuarioDnit(UsuarioDnit usuario)

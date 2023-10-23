@@ -9,86 +9,145 @@ using System.Collections.Generic;
 using test.Stub;
 using Xunit;
 using System.Threading.Tasks;
+using Xunit.Microsoft.DependencyInjection.Abstracts;
+using test.Fixtures;
+using app.Entidades;
+using Xunit.Abstractions;
+using app.Services;
+using Microsoft.Extensions.Configuration;
+using System.Linq;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using auth;
 
 namespace test
 {
-    public class UsuarioControllerTest
+    public class UsuarioControllerTest : TestBed<Base>, IDisposable
     {
         const int CREATED = 201;
         const int INTERNAL_SERVER_ERROR = 500;
 
-        [Fact]
-        public void Logar_QuandoLoginForValidado_DeveRetornarOk()
+        UsuarioController controller;
+        AppDbContext dbContext;
+
+        public UsuarioControllerTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
-            UsuarioStub usuarioStub = new();
-            var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
+            controller = fixture.GetService<UsuarioController>(testOutputHelper)!;
+            dbContext.PopulaUsuarios(5);
+        }
 
-            Mock<IUsuarioService> usuarioServiceMock = new();
+        public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuario(UsuarioDTO usuario)
+        {
+            var resultado = await controller.Logar(usuario);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            Assert.IsType<OkObjectResult>(resultado);
 
-            var resultado = controller.Logar(usuarioDTO);
+            var login = (resultado as OkObjectResult)!.Value as LoginModel;
+            var token = login.Token.Split(" ")[1];
 
-            usuarioServiceMock.Verify(service => service.ValidaLogin(usuarioDTO), Times.Once);
-            Assert.IsType<OkResult>(resultado);
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            controller.AppUsuario = new ClaimsPrincipal(new ClaimsIdentity(jwt.Claims));
+            return (token, login.TokenAtualizacao);
         }
 
         [Fact]
-        public void Logar_QuandoCredenciaisForemInvalidas_DeveRetornarUnauthorized()
+        public async Task Logar_QuandoLoginForValidado_DeveRetornarOk()
         {
-            UsuarioStub usuarioStub = new();
-            var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
+            var usuario = dbContext.PopulaUsuarios(1).First();
 
-            Mock<IUsuarioService> usuarioServiceMock = new();
-            usuarioServiceMock.Setup(service => service.ValidaLogin(It.IsAny<UsuarioDTO>())).Throws(new UnauthorizedAccessException());
+            var resultado = await controller.Logar(usuario);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            Assert.IsType<OkObjectResult>(resultado);
 
-            var resultado = controller.Logar(usuarioDTO);
+            var login = (resultado as OkObjectResult)!.Value as LoginModel;
+            Assert.NotEmpty(login.Token);
+            var token = login.Token.Split(" ");
+            Assert.True(token[0] == "Bearer");
+            Assert.NotEmpty(token[1]);
+            Assert.NotEmpty(login.TokenAtualizacao);
+        }
 
-            usuarioServiceMock.Verify(service => service.ValidaLogin(usuarioDTO), Times.Once);
+        [Fact]
+        public async Task ListarPermissoes_QuandoTiverLogado_DeveRetornarPermissoes()
+        {
+            var usuario = dbContext.PopulaUsuarios(1, includePerfil: true).First();
+
+            await AutenticarUsuario(usuario);
+            var permissoes = await controller.ListarPermissoes();
+            Assert.NotEmpty(permissoes);
+        }
+
+        [Fact]
+        public async Task AtualizarToken_QuandoTiverValido_DeveRetornarNovoToken()
+        {
+            var usuario = dbContext.PopulaUsuarios(1, includePerfil: true).First();
+
+            var login = await AutenticarUsuario(usuario);
+            var novoLogin = await controller.AtualizarToken(new AtualizarTokenDto
+            {
+                Token = login.Token,
+                TokenAtualizacao = login.TokenAtualizacao,
+            });
+            Assert.NotEmpty(novoLogin.Token);
+            Assert.NotEmpty(novoLogin.TokenAtualizacao);
+            Assert.NotEqual(novoLogin.TokenAtualizacao, login.TokenAtualizacao);
+            Assert.NotEqual(novoLogin.Token, login.Token);
+        }
+
+        [Fact]
+        public async Task AtualizarToken_QuandoTiverInvalido_DeveRetornarNovoToken()
+        {
+            var usuario = dbContext.PopulaUsuarios(1, includePerfil: true).First();
+
+            var login = await AutenticarUsuario(usuario);
+            var atualizarTokenDto = new AtualizarTokenDto
+            {
+                Token = login.Token,
+                TokenAtualizacao = login.TokenAtualizacao + "aaaa",
+            };
+
+            await Assert.ThrowsAsync<AuthForbiddenException>(async () => await controller.AtualizarToken(atualizarTokenDto));
+        }
+
+        [Fact]
+        public async Task Logar_QuandoCredenciaisForemInvalidas_DeveRetornarUnauthorized()
+        {
+            var usuario = dbContext.PopulaUsuarios(1).First();
+            usuario.Senha = "teste";
+
+            var resultado = await controller.Logar(usuario);
+
             Assert.IsType<UnauthorizedResult>(resultado);
         }
 
         [Fact]
-        public void Logar_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
+        public async Task Logar_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
-            Mock<IUsuarioService> usuarioServiceMock = new();
-            usuarioServiceMock.Setup(service => service.ValidaLogin(It.IsAny<UsuarioDTO>())).Throws(new KeyNotFoundException());
+            var resultado = await controller.Logar(usuarioDTO);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
-
-            var resultado = controller.Logar(usuarioDTO);
-
-            usuarioServiceMock.Verify(service => service.ValidaLogin(usuarioDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
         }
 
         [Fact]
-        public async void CadastrarUsuarioDnit_QuandoUsuarioForCadastrado_DeveRetornarCreated()
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioForCadastrado_DeveRetornarCreated()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
-
-            Mock<IUsuarioService> usuarioServiceMock = new();
-
-            var controller = new UsuarioController(usuarioServiceMock.Object);
 
             var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
-            usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
             var objeto = Assert.IsType<ObjectResult>(resultado);
-
             Assert.Equal(CREATED, objeto.StatusCode);
         }
 
         [Fact]
-        public async void CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -96,7 +155,7 @@ namespace test
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
 
@@ -105,35 +164,14 @@ namespace test
         }
 
         [Fact]
-        public async void CadastrarUsuarioDnit_QuandoCadastroFalhar_DeveRetornarErroInterno()
-        {
-            UsuarioStub usuarioStub = new();
-            var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
-
-            Mock<IUsuarioService> usuarioServiceMock = new();
-            var excecao = new Npgsql.PostgresException("", "", "", "");
-
-            usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
-
-            var controller = new UsuarioController(usuarioServiceMock.Object);
-
-            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
-
-            usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
-            var objeto = Assert.IsType<ObjectResult>(resultado);
-
-            Assert.Equal(INTERNAL_SERVER_ERROR, objeto.StatusCode);
-        }
-
-        [Fact]
         public void CadastrarUsuarioTerceiro_QuandoUsuarioForCadastrado_DeveRetornarCreated()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.CadastrarUsuarioTerceiro(usuarioDTO);
 
@@ -146,7 +184,7 @@ namespace test
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
@@ -154,7 +192,7 @@ namespace test
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.CadastrarUsuarioTerceiro(usuarioDTO);
 
@@ -165,15 +203,15 @@ namespace test
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoCadastroFalhar_DeveRetornarErroInterno()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
-            var excecao = new Npgsql.PostgresException("", "", "", "");
+            var excecao = new Exception("");
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = controller.CadastrarUsuarioTerceiro(usuarioDTO);
 
@@ -186,12 +224,12 @@ namespace test
         [Fact]
         public async void RecuperarSenha_QuandoRecuperacaoForValidada_DeveRetornarOk()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RecuperarSenhaAsync(usuarioDTO);
 
@@ -202,13 +240,13 @@ namespace test
         [Fact]
         public async Task RecuperarSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFoundAsync()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
             usuarioServiceMock.Setup(service => service.RecuperarSenha(It.IsAny<UsuarioDTO>())).Throws(new KeyNotFoundException());
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RecuperarSenhaAsync(usuarioDTO);
 
@@ -224,7 +262,7 @@ namespace test
 
             Mock<IUsuarioService> usuarioServiceMock = new();
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RedefinirSenhaAsync(redefinicaoSenhaDTO);
 
@@ -241,12 +279,20 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             usuarioServiceMock.Setup(service => service.TrocaSenha(It.IsAny<RedefinicaoSenhaDTO>())).Throws(new KeyNotFoundException());
 
-            var controller = new UsuarioController(usuarioServiceMock.Object);
+            var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
             var resultado = await controller.RedefinirSenhaAsync(redefinicaoSenhaDTO);
 
             usuarioServiceMock.Verify(service => service.TrocaSenha(redefinicaoSenhaDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
+        }
+
+        public new void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Perfis);
+            dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.Empresa);
         }
     }
 }

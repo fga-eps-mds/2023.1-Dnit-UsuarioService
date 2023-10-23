@@ -2,35 +2,61 @@ using api.Usuarios;
 using api.Senhas;
 using Microsoft.AspNetCore.Mvc;
 using app.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using app.Services;
+using api;
+using System.Data.Common;
 
 namespace app.Controllers
 {
     [ApiController]
     [Route("api/usuario")]
-    public class UsuarioController : ControllerBase
+    public class UsuarioController : AppController
     {
         private readonly IUsuarioService usuarioService;
+        private readonly AuthService authService;
 
-        public UsuarioController(IUsuarioService usuarioService)
+        public UsuarioController(
+            IUsuarioService usuarioService,
+            AuthService authService
+        )
         {
             this.usuarioService = usuarioService;
+            this.authService = authService;
         }
-        
+
         [HttpPost("login")]
-        public IActionResult Logar([FromBody] UsuarioDTO usuarioDTO)
+        public async Task<IActionResult> Logar([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
-                bool verificar = usuarioService.ValidaLogin(usuarioDTO);
-                return Ok();
+                var resultado = await usuarioService.AutenticarUsuarioAsync(usuarioDTO.Email, usuarioDTO.Senha);
+                return Ok(resultado);
             }
-            catch(UnauthorizedAccessException){
+            catch (UnauthorizedAccessException)
+            {
                 return Unauthorized();
             }
-            catch(KeyNotFoundException){
+            catch (KeyNotFoundException)
+            {
                 return NotFound();
             }
         }
+
+        [HttpGet("permissoes")]
+        [Authorize]
+        public async Task<List<Permissao>> ListarPermissoes()
+        {
+            var userId = authService.GetUserId(Usuario);
+            return await usuarioService.ListarPermissoesAsync(userId);
+        }
+
+        [HttpPost("atualizarToken")]
+        public async Task<LoginModel> AtualizarToken([FromBody] AtualizarTokenDto atualizarTokenDto)
+        {
+            return await usuarioService.AtualizarTokenAsync(atualizarTokenDto);
+        }
+
 
         [HttpPost("cadastrarUsuarioDnit")]
         public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
@@ -41,12 +67,12 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (Npgsql.PostgresException ex)
+            catch (DbException)
             {
-                if (ex.SqlState == "23505") {
-                    return Conflict("Usu�rio j� cadastrado.");
-                }
-
+                return Conflict("Usuário já cadastrado.");
+            }
+            catch (Exception)
+            {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }
         }
@@ -60,13 +86,12 @@ namespace app.Controllers
 
                 return StatusCode(201, new NoContentResult());
             }
-            catch (Npgsql.PostgresException ex)
+            catch (DbException)
             {
-                if (ex.SqlState == "23505")
-                {
-                    return Conflict("Usu�rio j� cadastrado.");
-                }
-
+                return Conflict("Usuário já cadastrado.");
+            }
+            catch (Exception)
+            {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }
         }
@@ -79,7 +104,7 @@ namespace app.Controllers
                 await usuarioService.RecuperarSenha(usuarioDto);
                 return Ok();
             }
-            catch(KeyNotFoundException)
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
@@ -91,10 +116,10 @@ namespace app.Controllers
             try
             {
                 await usuarioService.TrocaSenha(redefinirSenhaDto);
-                
+
                 return Ok();
             }
-            catch(KeyNotFoundException)
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }

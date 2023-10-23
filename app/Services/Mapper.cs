@@ -17,13 +17,18 @@ namespace app.Services.Mapper
 
             CreateMap<UsuarioDnit, Usuario>()
                 .ForMember(u => u.RedefinicaoSenha, opt => opt.Ignore())
-                .ForMember(u => u.Empresas, opt => opt.Ignore());
+                .ForMember(u => u.Empresas, opt => opt.Ignore())
+                .ForMember(u => u.Perfil, opt => opt.Ignore())
+                .ForMember(u => u.PerfilId, opt => opt.Ignore())
+                .ForMember(u => u.TokenAtualizacao, opt => opt.Ignore())
+                .ForMember(u => u.TokenAtualizacaoExpiracao, opt => opt.Ignore());
 
             CreateMap<UsuarioModel, UsuarioDTO>()
                 .ForMember(dto => dto.CNPJ, opt => opt.Ignore())
                 .ForMember(dto => dto.UfLotacao, opt => opt.Ignore());
                 
-            CreateMap<Usuario, UsuarioModel>();
+            CreateMap<Usuario, UsuarioModel>()
+                .ForMember(dto => dto.Cnpj, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
 
             CreateMap<UF, UfModel>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(uf => (int)uf))

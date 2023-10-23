@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 using System.Linq;
 using AutoMapper;
+using System.Threading.Tasks;
 
 namespace test
 {
@@ -25,9 +26,9 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuario_QuandoEmailForPassado_DeveRetornarUsuarioCorrespondente()
+        public async Task ObterUsuario_QuandoEmailForPassado_DeveRetornarUsuarioCorrespondente()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
@@ -41,16 +42,16 @@ namespace test
         }
 
         [Fact]
-        public async void CadastrarUsuarioDnit_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             await dbContext.SaveChangesAsync();
 
             var usuarioObtido = dbContext.Usuario.Where(u => u.Email == usuarioDNIT.Email).FirstOrDefault();
-            UsuarioDTO usuarioObtidoDTO = mapper.Map<UsuarioDTO>(usuarioObtido);
+            var usuarioObtidoDTO = mapper.Map<UsuarioDTO>(usuarioObtido);
 
             Assert.Equal(usuarioDNIT.Email, usuarioObtidoDTO.Email);
             Assert.Equal(usuarioDNIT.Senha, usuarioObtidoDTO.Senha);
@@ -59,9 +60,9 @@ namespace test
         }
 
         [Fact]
-        public async void TrocarSenha_QuandoNovaSenhaForPassada_DeveAtualizarSenhaDoUsuario()
+        public async Task TrocarSenha_QuandoNovaSenhaForPassada_DeveAtualizarSenhaDoUsuario()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             repositorio.CadastrarUsuarioDnit(usuarioDNIT);
@@ -78,10 +79,10 @@ namespace test
         }
 
         [Fact]
-        public async void ObterEmailRedefinicaoSenha_QuandoUuidForPassado_DeveRetornarEmailCorrespondente()
+        public async Task ObterEmailRedefinicaoSenha_QuandoUuidForPassado_DeveRetornarEmailCorrespondente()
         {
-            UsuarioStub usuarioStub = new();
-            RedefinicaoSenhaStub redefinicaoSenhaStub = new();
+            var usuarioStub = new UsuarioStub();
+            var redefinicaoSenhaStub = new RedefinicaoSenhaStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
@@ -99,10 +100,10 @@ namespace test
         }
 
         [Fact]
-        public async void RemoverUuidRedefinicaoSenha_QuandoUuidForPassado_DeveRemoverUuidDoBanco()
+        public async Task RemoverUuidRedefinicaoSenha_QuandoUuidForPassado_DeveRemoverUuidDoBanco()
         {
-            UsuarioStub usuarioStub = new();
-            RedefinicaoSenhaStub redefinicaoSenhaStub = new();
+            var usuarioStub = new UsuarioStub();
+            var redefinicaoSenhaStub = new RedefinicaoSenhaStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
@@ -124,9 +125,9 @@ namespace test
 
 
         [Fact]
-        public async void CadastrarUsuarioTerceiro_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
+        public async Task CadastrarUsuarioTerceiro_QuandoUsuarioForPassado_DeveCadastrarUsuarioComDadosPassados()
         {
-            UsuarioStub usuarioStub = new();
+            var usuarioStub = new UsuarioStub();
             var usuarioTerceiro = usuarioStub.RetornarUsuarioTerceiro();
 
             var empresa = new Empresa
@@ -142,15 +143,14 @@ namespace test
             await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario(usuarioTerceiro.Email);
-            UsuarioDTO usuarioObtidoDTO = mapper.Map<UsuarioDTO>(usuarioObtido);
 
-            Assert.Equal(usuarioTerceiro.Email, usuarioObtidoDTO.Email);
-            Assert.Equal(usuarioTerceiro.Senha, usuarioObtidoDTO.Senha);
-            Assert.Equal(usuarioTerceiro.Nome, usuarioObtidoDTO.Nome);
-            Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtidoDTO.CNPJ);
+            Assert.Equal(usuarioTerceiro.Email, usuarioObtido.Email);
+            Assert.Equal(usuarioTerceiro.Senha, usuarioObtido.Senha);
+            Assert.Equal(usuarioTerceiro.Nome, usuarioObtido.Nome);
+            Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtido?.Empresas?.First()?.Cnpj);
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             dbContext.RemoveRange(dbContext.Usuario);
             dbContext.RemoveRange(dbContext.Empresa);

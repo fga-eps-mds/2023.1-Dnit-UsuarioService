@@ -5,6 +5,7 @@ using app.Repositorios.Interfaces;
 using app.Services;
 using app.Services.Interfaces;
 using app.Services.Mapper;
+using auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,8 @@ namespace test.Fixtures
             // Controllers
             services.AddScoped<DominioController>();
             services.AddScoped<UsuarioController>();
+
+            services.AddAuth(configuration);
         }
 
         protected override ValueTask DisposeAsyncCore() => new();
