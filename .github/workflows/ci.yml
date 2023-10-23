@@ -1,55 +1,79 @@
-name: Deploy AWS
-
+name: CI
 on:
-  workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - develop
   pull_request:
-    branches: [ main ]
-
+    types: [opened, synchronize, reopened]
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  ci-windows:
+    name: Build, test and analyze Windows
+    runs-on: windows-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin' 
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v3
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+      - name: Install dotnet-coverage
+        shell: powershell
+        run: dotnet tool install --global dotnet-coverage
+      - name: Clone trx2sonar
+        uses: actions/checkout@v3
+        with:
+          repository: gmarokov/dotnet-trx2sonar
+          path: dotnet-trx2sonar
+      - name: Setup trx2sonar
+        shell: powershell
+        run: |
+          dotnet restore dotnet-trx2sonar
+          dotnet build dotnet-trx2sonar --configuration Release
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: powershell
+        run: |
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"fga-eps-mds_2023.2-Dnit-UsuarioService" /o:"fga-eps-mds-1" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml /d:sonar.testExecutionReportPaths=results.xml
+          dotnet build
+          dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+          dotnet test --logger "trx;LogFileName=results.trx" --results-directory ./TestResults/results.xml
+          ./dotnet-trx2sonar/TrxToSonar/bin/Release/net6.0/TrxToSonar -d ./TestResults -o results.xml
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+  ci-linux:
+    name: Build and test Linux
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
-   
-    - name: Setup .NET Core
+    - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x'
-    
-    - name: Install dependencies
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
       run: dotnet restore
-    
     - name: Build
-      run: dotnet build --configuration Release --no-restore
-    
+      run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
-
-    - name: Publish
-      run: dotnet publish -c Release -o '${{ github.workspace }}/out'
-  
-    - name: Create email service .env
-      run: |
-        echo 'EMAIL_SERVICE_ADDRESS=${{ secrets.EMAIL_SERVICE_ADDRESS }}' > '${{ github.workspace }}/out/.env'
-        echo 'EMAIL_SERVICE_PASSWORD=${{ secrets.EMAIL_SERVICE_PASSWORD }}' >> '${{ github.workspace }}/out/.env'
-
-    - name: Zip Package
-      run: |
-        cd ${{ github.workspace }}/out 
-        zip -r ${{ github.workspace }}/out.zip * .env
-
-    - name: Deploy to EB
-      uses: einaregilsson/beanstalk-deploy@v21
-      with:
-        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        application_name: back-dnit-usuario
-        environment_name: back-dnit-usuario-env
-        region: us-east-1
-        version_label: ${{ github.run_id }}
-        version_description: ${{ github.sha }}
-        deployment_package: ${{ github.workspace }}/out.zip
+      run: dotnet test --no-build --verbosity normal

@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Title>Dnit Eps FGA authorization services</Title>
+    <PackageProjectUrl>https://github.com/fga-eps-mds/2023.2-Dnit-UsuarioService</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/fga-eps-mds/2023.2-Dnit-UsuarioService</RepositoryUrl>
+    <Version>1.0.7</Version>
+    <PackageId>DnitEpsFga.auth</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Enums.NET" Version="4.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.23" />
+	<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+	<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<SonarQubeSetting Include="sonar.exclusions">
+			<Value>AuthExceptionHandler.cs</Value>
+		</SonarQubeSetting>
+	</ItemGroup>
+
+</Project>

@@ -1,15 +1,13 @@
-﻿using dominio;
+﻿using api;
 using Microsoft.AspNetCore.Mvc;
-using repositorio;
-using repositorio.Interfaces;
-using service;
-using service.Interfaces;
+using app.Repositorios.Interfaces;
+using app.Services;
 
 namespace app.Controllers
 {
     [ApiController]
     [Route("api/dominio")]
-    public class DominioController : ControllerBase
+    public class DominioController : AppController
     {
         private readonly IUnidadeFederativaRepositorio unidadeFederativaRepositorio;
 
@@ -23,7 +21,7 @@ namespace app.Controllers
         [HttpGet("unidadeFederativa")]
         public IActionResult ObterLista()
         {
-            IEnumerable<UnidadeFederativa> listaUnidadeFederativa = unidadeFederativaRepositorio.ObterDominio();
+            IEnumerable<UfModel> listaUnidadeFederativa = unidadeFederativaRepositorio.ObterDominio();
 
             return  new OkObjectResult(listaUnidadeFederativa);
         }

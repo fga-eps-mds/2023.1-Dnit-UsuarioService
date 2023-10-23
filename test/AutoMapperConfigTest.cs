@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using dominio.Mapper;
-using Xunit;
+using app.Services.Mapper;
 
 namespace test
 {

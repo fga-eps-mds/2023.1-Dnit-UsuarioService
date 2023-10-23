@@ -1,8 +1,8 @@
 ﻿using app.DI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using service;
-using service.Interfaces;
+using app.Services;
+using app.Services.Interfaces;
 using Xunit;
 
 namespace test
