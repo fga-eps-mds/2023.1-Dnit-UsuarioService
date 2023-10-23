@@ -52,7 +52,7 @@ namespace app.Controllers
             var lista = categorias.ConvertAll(c => new CategoriaPermissaoModel
             {
                 Categoria = c,
-                Permisoes = PermissaoService.ObterPermissoesPortCategoria(c)
+                Permissoes = PermissaoService.ObterPermissoesPortCategoria(c)
             });
             
             
