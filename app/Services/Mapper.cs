@@ -61,7 +61,8 @@ namespace app.Services.Mapper
                                 Descricao = p.AsString(EnumFormat.Description)!
                             }).ToList()
                     )
-                );
+                )
+                .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()));
         }
     }
 }
