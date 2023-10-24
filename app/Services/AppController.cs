@@ -6,6 +6,6 @@ namespace app.Services
     public class AppController : ControllerBase
     {
         public ClaimsPrincipal? AppUsuario { get; set; }
-        public ClaimsPrincipal Usuario => AppUsuario ?? Usuario;
+        public ClaimsPrincipal Usuario => AppUsuario ?? User;
     }
 }
