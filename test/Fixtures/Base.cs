@@ -48,7 +48,7 @@ namespace test.Fixtures
 
         protected override IEnumerable<TestAppSettings> GetTestAppSettings()
         {
-            yield return new() { Filename = "appsettings.json", IsOptional = false };
+            yield return new() { Filename = "appsettings.Test.json", IsOptional = false };
         }
     }
 }
