@@ -54,7 +54,7 @@ namespace test
         [Fact]
         public async Task Logar_QuandoLoginForValidado_DeveRetornarOk()
         {
-            var usuario = dbContext.PopulaUsuarios(1).First();
+            var usuario = dbContext.PopulaUsuarios(1, true).First();
 
             var resultado = await controller.Logar(usuario);
 

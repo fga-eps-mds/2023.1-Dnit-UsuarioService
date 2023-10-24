@@ -45,7 +45,7 @@ namespace app.Controllers
         [HttpGet("permissoes")]
         public IActionResult ObterListaDePermissoes()
         {
-            authService.Require(User, Permissao.PerfilVisualizar);
+            authService.Require(Usuario, Permissao.PerfilVisualizar);
             
             var categorias = PermissaoService.ObterCategorias();
             
@@ -54,8 +54,7 @@ namespace app.Controllers
                 Categoria = c,
                 Permissoes = PermissaoService.ObterPermissoesPortCategoria(c)
             });
-            
-            
+                        
             return Ok(lista);
         }
     }
