@@ -66,6 +66,7 @@ namespace app.Repositorios
             var query = dbContext.Perfis.AsQueryable();
 
             query = query.Include(p => p.PerfilPermissoes);
+            query = query.Include(p => p.Usuarios);
 
             return await query
                 .OrderBy(p => p.Nome)
