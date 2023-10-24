@@ -21,7 +21,7 @@ namespace app.Services
 
             foreach(var p in permissoesOrdenadas)
             {
-                categorias.Add(Regex.Match(p, pattern).ToString());
+                categorias.Add(Regex.Match(p, pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100)).ToString());
             }
 
             return categorias.ToList();
@@ -29,7 +29,7 @@ namespace app.Services
 
         public List<PermissaoModel> ObterPermissoesPortCategoria(string categoria)
         {   
-            var permissoes = Enum.GetValues<Permissao>().Where(p => categoria == Regex.Match(p.ToString(), pattern).ToString());    
+            var permissoes = Enum.GetValues<Permissao>().Where(p => categoria == Regex.Match(p.ToString(), pattern, RegexOptions.None, TimeSpan.FromMilliseconds(100)).ToString());    
 
             return permissoes.Select(p => new PermissaoModel
                 {
