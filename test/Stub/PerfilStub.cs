@@ -19,7 +19,7 @@ namespace test.Stub
             };
         }
 
-        public static Perfil RetornaPerfil(string nome = "PerfilTeste")
+        public static Perfil RetornaPerfil(string nome = "PerfilTeste", TipoPerfil tipo = TipoPerfil.Customizavel)
         {
             return new Perfil
             {
@@ -27,13 +27,14 @@ namespace test.Stub
                 PerfilPermissoes = new List<PerfilPermissao> 
                 {
                     RetornaPerfilPermissao(), RetornaPerfilPermissao(Permissao.PerfilEditar)
-                }
+                },
+                Tipo = tipo
             };
         }
 
         public static List<Perfil> RetornaListaDePerfis(int n = 4)
         {
-            List<Perfil> lista = new();
+            var lista = new List<Perfil>();
 
             for(int i = 0; i < n; i++)
             {
@@ -50,6 +51,18 @@ namespace test.Stub
                 Nome = nome,
                 Permissoes = new List<Permissao>(){Permissao.PerfilCadastrar}
             };
+        }
+
+        public static List<PerfilDTO> RetornaListaPerfilDTO(int n = 4)
+        {
+            var lista = new List<PerfilDTO>();
+
+            for (int i = 0; i < n; i++)
+            {
+                lista.Add(RetornaPerfilDTO("Perfil" + i.ToString()));               
+            }
+
+            return lista;
         }
     }
 }

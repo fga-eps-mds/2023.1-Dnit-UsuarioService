@@ -12,7 +12,7 @@ namespace app.Controllers
 {
     [ApiController]
     [Route("api/perfil")]
-    public class PerfilController : ControllerBase
+    public class PerfilController : AppController
     {
         private readonly AuthService authService;
         private readonly IPerfilService perfilService;
@@ -29,7 +29,7 @@ namespace app.Controllers
         [HttpPost()]
         public IActionResult CriarPerfil([FromBody] PerfilDTO perfilDTO)
         {
-            authService.Require(User, Permissao.PerfilCadastrar);
+            authService.Require(Usuario, Permissao.PerfilCadastrar);
 
             var perfil = mapper.Map<Perfil>(perfilDTO);
 
@@ -52,7 +52,7 @@ namespace app.Controllers
         public async Task<IActionResult> EditarPerfil(Guid id, [FromBody] PerfilDTO perfilDTO)
         {
             
-            authService.Require(User, Permissao.PerfilEditar);
+            authService.Require(Usuario, Permissao.PerfilEditar);
 
             Perfil perfil = mapper.Map<Perfil>(perfilDTO);
             perfil.Id = id;
@@ -79,7 +79,7 @@ namespace app.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> ExcluirPerfil(Guid id)
         {
-            authService.Require(User, Permissao.PerfilRemover);
+            authService.Require(Usuario, Permissao.PerfilRemover);
 
             try{
                 await perfilService.ExcluirPerfil(id);
@@ -102,7 +102,7 @@ namespace app.Controllers
         [HttpGet]
         public async Task<IActionResult> ListarPerfis(int pageIndex, int pageSize)
         {
-            authService.Require(User, Permissao.PerfilVisualizar);
+            authService.Require(Usuario, Permissao.PerfilVisualizar);
 
             try
             {
