@@ -120,9 +120,12 @@ namespace app.Repositorios
             var query = dbContext.Usuario.AsQueryable();
 
             if (filtro.Nome != null) {
-                query = dbContext.Usuario.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
+                query = query.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
             }
 
+            if (filtro.PerfilId != null) 
+                query = query.Where(u => u.PerfilId == filtro.PerfilId);
+        
             var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
                 .Take(filtro.ItemsPorPagina)

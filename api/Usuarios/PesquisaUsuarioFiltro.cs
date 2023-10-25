@@ -6,8 +6,6 @@ namespace api.Usuarios
         public int ItemsPorPagina { get; set; } = 50;
         public string? Nome { get; set; }
         public UF? UfLotacao { get; set; }
-        
-        // string? perfilNome { get; set; }
-        // id? perfilId { get; set; }
+        public Guid? PerfilId { get; set; }
     }
 }
