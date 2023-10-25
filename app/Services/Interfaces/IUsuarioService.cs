@@ -1,6 +1,7 @@
 ﻿using api.Usuarios;
 using api.Senhas;
 using api;
+using app.Entidades;
 
 namespace app.Services.Interfaces
 {
@@ -14,5 +15,9 @@ namespace app.Services.Interfaces
         void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
         Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto);
         Task<List<Permissao>> ListarPermissoesAsync(int userId);
+        
+        
+        // ou usuário DTO?
+        Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
     }
 }

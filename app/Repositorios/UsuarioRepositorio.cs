@@ -1,8 +1,10 @@
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+
 using app.Entidades;
 using api.Usuarios;
 using app.Repositorios.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
+using api;
 
 namespace app.Repositorios
 {
@@ -16,9 +18,9 @@ namespace app.Repositorios
             this.dbContext = dbContext;
             this.mapper = mapper;
         }
-       
+
         public Usuario? ObterUsuario(string email)
-        {            
+        {
             return dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
         }
 
@@ -52,7 +54,7 @@ namespace app.Repositorios
                 UfLotacao = usuario.UfLotacao
             };
 
-            dbContext.Add(novoUsuario);            
+            dbContext.Add(novoUsuario);
         }
 
         public UsuarioModel? TrocarSenha(string email, string senha)
@@ -87,7 +89,7 @@ namespace app.Repositorios
         public void InserirDadosRecuperacao(string uuid, int idUsuario)
         {
             var newRs = new RedefinicaoSenha
-            {                
+            {
                 Uuid = uuid,
                 IdUsuario = idUsuario,
             };
@@ -99,7 +101,7 @@ namespace app.Repositorios
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 
-            List<Empresa> empresas = new List<Empresa>{ empresa };
+            List<Empresa> empresas = new List<Empresa> { empresa };
 
             var novoUsuarioTerceiro = new Usuario
             {
@@ -110,6 +112,16 @@ namespace app.Repositorios
             };
 
             dbContext.Usuario.Add(novoUsuarioTerceiro);
+        }
+
+        public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
+        {
+            var total = await dbContext.Usuario.CountAsync();
+            var usuarios = await dbContext.Usuario
+                .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
+                .Take(filtro.ItemsPorPagina)
+                .ToListAsync();
+            return new ListaPaginada<Usuario>(usuarios, filtro.Pagina, filtro.ItemsPorPagina, total);
         }
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
 using System.Data.Common;
+using app.Entidades;
 
 namespace app.Controllers
 {
@@ -23,6 +24,13 @@ namespace app.Controllers
         {
             this.usuarioService = usuarioService;
             this.authService = authService;
+        }
+
+        [HttpGet("listar")]
+        public async Task<ListaPaginada<Usuario>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
+        {
+            var usuarios = await usuarioService.ObterUsuariosAsync(filtro);
+            return usuarios;
         }
 
         [HttpPost("login")]

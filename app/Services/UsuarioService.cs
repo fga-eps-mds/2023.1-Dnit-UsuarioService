@@ -197,5 +197,10 @@ namespace app.Services
             var usuario = await usuarioRepositorio.ObterUsuarioAsync(userId, includePerfil: true);
             return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
+
+        public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
+        {
+            return await usuarioRepositorio.ObterUsuariosAsync(filtro);
+        }
     }
 }

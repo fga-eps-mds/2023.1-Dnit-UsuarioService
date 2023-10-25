@@ -133,7 +133,7 @@ namespace test
             var empresa = new Empresa
             {
                 Cnpj = usuarioTerceiro.CNPJ,
-                RazaoSocial = "Empresa1"  
+                RazaoSocial = "Empresa1"
             };
 
             dbContext.Empresa.Add(empresa);
@@ -142,7 +142,7 @@ namespace test
             repositorio.CadastrarUsuarioTerceiro(usuarioTerceiro);
             await dbContext.SaveChangesAsync();
 
-            var usuarioObtido = repositorio.ObterUsuario(usuarioTerceiro.Email);
+            var usuarioObtido = repositorio.ObterUsuario(usuarioTerceiro.Email)!;
 
             Assert.Equal(usuarioTerceiro.Email, usuarioObtido.Email);
             Assert.Equal(usuarioTerceiro.Senha, usuarioObtido.Senha);

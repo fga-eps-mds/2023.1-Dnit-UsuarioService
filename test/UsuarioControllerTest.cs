@@ -1,24 +1,22 @@
-﻿using app.Controllers;
-using api.Usuarios;
-using api.Senhas;
+﻿using Moq;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using app.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using test.Stub;
-using Xunit;
 using System.Threading.Tasks;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
-using test.Fixtures;
-using app.Entidades;
 using Xunit.Abstractions;
-using app.Services;
-using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+
+using test.Fixtures;
+using test.Stub;
 using auth;
+using app.Services.Interfaces;
+using app.Entidades;
+using app.Controllers;
+using api.Usuarios;
+using api.Senhas;
+using api;
 
 namespace test
 {
@@ -26,15 +24,37 @@ namespace test
     {
         const int CREATED = 201;
         const int INTERNAL_SERVER_ERROR = 500;
-
-        UsuarioController controller;
-        AppDbContext dbContext;
+        readonly UsuarioController controller;
+        readonly AppDbContext dbContext;
 
         public UsuarioControllerTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
             dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
             controller = fixture.GetService<UsuarioController>(testOutputHelper)!;
             dbContext.PopulaUsuarios(5);
+        }
+
+        [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
+        {
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                ItemsPorPagina = 10,
+            };
+            var usuarios = await controller.ListarAsync(filtro);
+            Assert.Equal(5, usuarios.Total);
+        }
+
+        [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUf()
+        {
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                ItemsPorPagina = 100,
+                UfLotacao = UF.DF,
+            };
+
+            var usuarios = await controller.ListarAsync(filtro);
         }
 
         public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuario(UsuarioDTO usuario)
