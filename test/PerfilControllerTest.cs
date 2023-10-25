@@ -53,6 +53,19 @@ namespace test
         }
 
         [Fact]
+        public async Task EditarPerfil_QuandoNaoExiste_DeveRetornarNotFound()
+        {
+            var perfil = PerfilStub.RetornaPerfilDTO();
+            var resposta = await perfilController.EditarPerfil(Guid.NewGuid(), perfil);
+
+            Assert.IsType<NotFoundObjectResult>(resposta);
+
+            var retorno = (resposta as NotFoundObjectResult)!.Value as string;
+
+            Assert.Equal("Perfil não encontrado", retorno);
+        }
+
+        [Fact]
         public async Task EditarPerfil_QuandoNaoTemPermissao_DeveBloquear()
         {
             var perfil = PerfilStub.RetornaPerfilDTO();
@@ -115,7 +128,7 @@ namespace test
 
             Assert.IsType<ObjectResult>(resposta);
             Assert.Equal(400, retorno.StatusCode);
-            Assert.Equal("Esse Perfil não pode ser excluido.", retorno.Value.ToString());
+            Assert.Equal("Esse Perfil não pode ser excluído.", retorno.Value.ToString());
         }
 
         [Fact]
@@ -132,7 +145,7 @@ namespace test
 
             Assert.IsType<ObjectResult>(resposta);
             Assert.Equal(400, retorno.StatusCode);
-            Assert.Equal("Esse Perfil não pode ser excluido.", retorno.Value.ToString());
+            Assert.Equal("Esse Perfil não pode ser excluído.", retorno.Value.ToString());
         }
 
         [Fact]
@@ -160,6 +173,10 @@ namespace test
         public async Task ListarPerfis_QuandoTemPermissao_DeveRetornarOk()
         {
             var lista = PerfilStub.RetornaListaPerfilDTO(5);
+            var administrador = PerfilStub.RetornaPerfil(tipo: TipoPerfil.Administrador);
+
+            dbContext.Perfis.Add(administrador);
+            dbContext.SaveChanges();
 
             lista.ForEach(p => perfilController.CriarPerfil(p));
 
@@ -170,7 +187,48 @@ namespace test
             var listaRetorno = (resposta as OkObjectResult)!.Value as List<PerfilModel>;
 
             Assert.NotEmpty(listaRetorno);
-            Assert.Equal(5, listaRetorno.Count);
+            Assert.Equal(6, listaRetorno.Count);
+        }
+
+        [Fact]
+        public async Task ObterPorId_QuandoNaoTemPermissao_DeveRetornarBloquear()
+        {
+            AutenticarUsuario(perfilController, permissoes: new());
+            await Assert.ThrowsAsync<AuthForbiddenException>(async () => await perfilController.ObterPorId(Guid.NewGuid()));
+        }
+
+        
+        [Fact]
+        public async Task ObterPorId_QuandoNaoExiste_DeveRetornarNotFound()
+        {
+            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilVisualizar});
+
+            var resposta = await perfilController.ObterPorId(Guid.NewGuid());
+
+            Assert.IsType<NotFoundObjectResult>(resposta);
+
+            var retorno = (resposta as NotFoundObjectResult)!.Value as string;
+
+            Assert.Equal("Perfil não encontrado", retorno);
+        }
+
+        [Fact]
+        public async Task ObterPorId_QuandoTemPermissao_DeveRetornarOk()
+        {
+            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilVisualizar,Permissao.PerfilCadastrar});
+            var perfil = PerfilStub.RetornaPerfilDTO();
+            var resposta = perfilController.CriarPerfil(perfil);
+            var perfilCriado = (resposta as OkObjectResult)!.Value as PerfilModel;
+
+            Assert.IsType<OkObjectResult>(resposta);
+
+            var respostaObter = await perfilController.ObterPorId(perfilCriado.Id);
+
+            Assert.IsType<OkObjectResult>(respostaObter);
+
+            var retorno = (respostaObter as OkObjectResult)!.Value as PerfilModel;
+            
+            Assert.Equal(perfilCriado.Id, retorno.Id);
         }
 
         public void Dispose()

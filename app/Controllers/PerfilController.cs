@@ -126,7 +126,7 @@ namespace app.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<ActionResult<PerfilModel>> ObterPorId(Guid id)
+        public async Task<ActionResult> ObterPorId(Guid id)
         {
             authService.Require(Usuario, Permissao.PerfilVisualizar);
 
@@ -140,7 +140,7 @@ namespace app.Controllers
             var perfilModel = mapper.Map<PerfilModel>(perfil);
             perfilModel.CategoriasPermissao = permissaoService.CategorizarPermissoes(perfil.Permissoes!.ToList());
 
-            return perfilModel;
+            return Ok(perfilModel);
         }
     }
 }
