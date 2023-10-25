@@ -94,7 +94,14 @@ namespace app.Services
 
         public async Task<Perfil?> ObterPorIdAsync(Guid id)
         {
-            return await perfilRepositorio.ObterPerfilPorIdAsync(id);
+            var perfil = await perfilRepositorio.ObterPerfilPorIdAsync(id);
+            
+            if(perfil != null && perfil.Tipo == TipoPerfil.Administrador)
+            {
+                PreencherPermissoesAdministrador(perfil);
+            }
+
+            return perfil;
         }
 
         private void PreencherPermissoesAdministrador(Perfil perfil)
