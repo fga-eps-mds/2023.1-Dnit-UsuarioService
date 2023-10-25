@@ -38,7 +38,11 @@ namespace app.Repositorios
         }
 
         public void RemovePerfil(Perfil perfil)
-        {            
+        {
+            // TODO!! Quando um perfil com usuários atribuídos for excluído,
+            //        deve-se migrar todos os usuários do perfil excluído para
+            //        o perfil básico antes de efetuar a exclusão do perfil. US02! 
+
             dbContext.Perfis.Remove(perfil);
         }
 
