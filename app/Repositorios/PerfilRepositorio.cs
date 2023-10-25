@@ -56,12 +56,17 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize)
+        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize, string? nome = null)
         {
             var query = dbContext.Perfis.AsQueryable();
 
-            query = query.Include(p => p.PerfilPermissoes);
-            query = query.Include(p => p.Usuarios);
+            query = query.Include(p => p.PerfilPermissoes)
+                         .Include(p => p.Usuarios);
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                query = query.Where(p => p.Nome.ToLower().Contains(nome.ToLower()));
+            }
 
             return await query
                 .OrderBy(p => p.Nome)
