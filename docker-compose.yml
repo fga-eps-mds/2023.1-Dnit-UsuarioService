@@ -13,9 +13,11 @@ services:
       - ./app:/app/app
       - ./test:/app/test
       - ./auth:/app/auth
+    environment:
+      - MODE=container
     env_file:
       - .env
-  
+
   dnit-usuario-db:
     container_name: dnit-usuario-db
     image: postgres:15.4

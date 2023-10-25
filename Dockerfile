@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . .
 
-CMD export MODE=container && dotnet watch --project app
+CMD dotnet watch --project app

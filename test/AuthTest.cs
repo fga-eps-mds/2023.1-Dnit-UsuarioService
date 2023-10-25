@@ -86,21 +86,21 @@ namespace test
         [Fact]
         public void HasPermission_QuandoTiverPermissao_DeveRetornarTrue()
         {
-            var (token, _) = ObterTokenValido(permissaos: new() { Permissao.RodoviaCadastrar });
+            var (token, _) = ObterTokenValido(permissoes: new() { Permissao.RodoviaCadastrar });
             Assert.True(authService.HasPermission(ObterClaim(token), Permissao.RodoviaCadastrar));
         }
 
         [Fact]
         public void HasPermission_QuandoNaoTiverPermissao_DeveRetornarFalse()
         {
-            var (token, _) = ObterTokenValido(permissaos: new() { Permissao.RodoviaCadastrar });
+            var (token, _) = ObterTokenValido(permissoes: new() { Permissao.RodoviaCadastrar });
             Assert.False(authService.HasPermission(ObterClaim(token), Permissao.PerfilVisualizar));
         }
 
         [Fact]
         public void Require_QuandoTiverPermissao_DevePassar()
         {
-            var (token, _) = ObterTokenValido(permissaos: new() { Permissao.RodoviaCadastrar });
+            var (token, _) = ObterTokenValido(permissoes: new() { Permissao.RodoviaCadastrar });
             authService.Require(ObterClaim(token), Permissao.RodoviaCadastrar);
             Assert.True(true);
         }
@@ -109,7 +109,7 @@ namespace test
         public void Require_QuandoTiverDesabilitado_DevePassar()
         {
             authConfig.Enabled = false;
-            var (token, _) = ObterTokenValido(permissaos: new() { Permissao.RodoviaCadastrar });
+            var (token, _) = ObterTokenValido(permissoes: new() { Permissao.RodoviaCadastrar });
             authService.Require(ObterClaim(token), Permissao.PerfilVisualizar);
             Assert.True(true);
         }
@@ -117,7 +117,7 @@ namespace test
         [Fact]
         public void Require_QuandoNaoTiverPermissao_DeveLancarExcecao()
         {
-            var (token, _) = ObterTokenValido(permissaos: new() { Permissao.RodoviaCadastrar });
+            var (token, _) = ObterTokenValido(permissoes: new() { Permissao.RodoviaCadastrar });
             Assert.Throws<AuthForbiddenException>(() => authService.Require(ObterClaim(token), Permissao.PerfilVisualizar));
         }
 
@@ -127,13 +127,13 @@ namespace test
             return new ClaimsPrincipal(new ClaimsIdentity(jwt.Claims));
         }
 
-        private (string, DateTime) ObterTokenValido(int id = 1, List<Permissao>? permissaos = null)
+        private (string, DateTime) ObterTokenValido(int id = 1, List<Permissao>? permissoes = null)
         {
             var usuario = new AuthUserModel<Permissao>()
             {
                 Id = id,
                 Name = "Test",
-                Permissions = permissaos ?? new() { Permissao.EscolaCadastrar },
+                Permissions = permissoes ?? new() { Permissao.EscolaCadastrar },
             };
             return authService.GenerateToken(usuario);
         }
