@@ -39,10 +39,9 @@ namespace app.Repositorios
 
         public void RemovePerfil(Perfil perfil)
         {
-            if(perfil.Tipo == TipoPerfil.Basico || perfil.Tipo == TipoPerfil.Administrador)
-            {
-                throw new InvalidOperationException("Esse Perfil não pode ser excluido.");
-            }
+            // TODO!! Quando um perfil com usuários atribuídos for excluído,
+            //        deve-se migrar todos os usuários do perfil excluído para
+            //        o perfil básico antes de efetuar a exclusão do perfil. US02! 
 
             dbContext.Perfis.Remove(perfil);
         }
@@ -61,12 +60,17 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize)
+        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize, string? nome = null)
         {
             var query = dbContext.Perfis.AsQueryable();
 
-            query = query.Include(p => p.PerfilPermissoes);
-            query = query.Include(p => p.Usuarios);
+            query = query.Include(p => p.PerfilPermissoes)
+                         .Include(p => p.Usuarios);
+
+            if (!string.IsNullOrWhiteSpace(nome))
+            {
+                query = query.Where(p => p.Nome.ToLower().Contains(nome.ToLower()));
+            }
 
             return await query
                 .OrderBy(p => p.Nome)

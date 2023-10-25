@@ -62,7 +62,8 @@ namespace app.Services.Mapper
                             }).ToList()
                     )
                 )
-                .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()));
+                .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()))
+                .ForMember(model => model.CategoriasPermissao, opt => opt.Ignore());
         }
     }
 }

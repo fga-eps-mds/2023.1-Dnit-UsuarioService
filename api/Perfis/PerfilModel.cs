@@ -9,5 +9,6 @@ namespace api.Perfis
         public int QuantidadeUsuarios { get; set; }
         public TipoPerfil Tipo { get; set; }
         public List<PermissaoModel> Permissoes { get; set; }
+        public List<CategoriaPermissaoModel>? CategoriasPermissao { get; set; }
     }
 }

@@ -1,10 +1,10 @@
-using api.Permissoes;
+using api;
 
 namespace app.Services.Interfaces
 {
     public interface IPermissaoService
     {
-        public List<string> ObterCategorias();
-        public List<PermissaoModel> ObterPermissoesPortCategoria(string categoria);
+        List<CategoriaPermissaoModel> CategorizarPermissoes(List<Permissao> permissaos);
+        List<string> ObterCategorias();
     }
 }

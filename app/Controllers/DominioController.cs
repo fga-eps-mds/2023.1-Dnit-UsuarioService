@@ -14,7 +14,7 @@ namespace app.Controllers
     public class DominioController : AppController
     {
         private readonly IUnidadeFederativaRepositorio unidadeFederativaRepositorio;
-        private readonly IPermissaoService PermissaoService;
+        private readonly IPermissaoService permissaoService;
         private readonly IMapper mapper;
         private readonly AuthService authService;
 
@@ -23,12 +23,12 @@ namespace app.Controllers
         (
             IUnidadeFederativaRepositorio unidadeFederativaRepositorio, 
             IMapper mapper, 
-            IPermissaoService PermissaoService,
+            IPermissaoService permissaoService,
             AuthService authService
         )
         {
             this.unidadeFederativaRepositorio = unidadeFederativaRepositorio;
-            this.PermissaoService = PermissaoService;
+            this.permissaoService = permissaoService;
             this.authService = authService;
             this.mapper = mapper;
         }
@@ -43,19 +43,11 @@ namespace app.Controllers
 
         [Authorize]
         [HttpGet("permissoes")]
-        public IActionResult ObterListaDePermissoes()
+        public List<CategoriaPermissaoModel> ObterListaDePermissoes()
         {
             authService.Require(Usuario, Permissao.PerfilVisualizar);
             
-            var categorias = PermissaoService.ObterCategorias();
-            
-            var lista = categorias.ConvertAll(c => new CategoriaPermissaoModel
-            {
-                Categoria = c,
-                Permissoes = PermissaoService.ObterPermissoesPortCategoria(c)
-            });
-                        
-            return Ok(lista);
+            return permissaoService.CategorizarPermissoes(Enum.GetValues<Permissao>().ToList());
         }
     }
 }

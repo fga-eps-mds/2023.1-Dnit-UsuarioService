@@ -1,9 +1,9 @@
 using api;
+using api.Perfis;
 using app.Entidades;
 using app.Repositorios.Interfaces;
 using app.Services.Interfaces;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace app.Services
 {
@@ -22,11 +22,11 @@ namespace app.Services
 
         public Perfil CriarPerfil(Perfil perfil, List<Permissao> permissoes)
         {
-            Perfil novoPerfil = perfilRepositorio.RegistraPerfil(perfil);
+            var novoPerfil = perfilRepositorio.RegistraPerfil(perfil);
 
             foreach(var permissao in permissoes)
             {
-                var novoPermissaoPerfil = perfilRepositorio.AdicionaPermissaoAoPerfil(novoPerfil.Id, permissao);
+                perfilRepositorio.AdicionaPermissaoAoPerfil(novoPerfil.Id, permissao);
             }
 
             dbContext.SaveChanges();
@@ -36,36 +36,26 @@ namespace app.Services
 
         public async Task<Perfil> EditarPerfil(Perfil perfil, List<Permissao> permissoes)
         {    
-            Perfil perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(perfil.Id) ?? 
+            var perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(perfil.Id) ?? 
                 throw new KeyNotFoundException("Perfil não encontrado");
 
-            if(perfilDb.Nome != perfil.Nome)
+            perfilDb.Nome = perfil.Nome;
+
+            var permissoesDeletadas = perfilDb.PerfilPermissoes!.Where(p => !permissoes.Contains(p.Permissao)).ToList();
+            var permissoesNovas = permissoes.Where(p => !perfilDb.PerfilPermissoes!.Exists(pr => pr.Permissao == p)).ToList();
+
+            foreach (var permissao in permissoesDeletadas)
             {
-                perfilDb.Nome = perfil.Nome;
+                perfilRepositorio.RemovePermissaoDoPerfil(permissao);
+                perfilDb.PerfilPermissoes!.Remove(permissao);
             }
 
-            List<Permissao> permissoesRegistradas = perfilDb.Permissoes!.ToList();
-
-            foreach(var permissao in permissoesRegistradas)
+            foreach(var permissao in permissoesNovas)
             {
-                if(!permissoes.Contains(permissao))
-                {
-                    var permissaoRemovida = perfilDb.PerfilPermissoes!.Where(p => p.Permissao == permissao).FirstOrDefault();
-                    perfilRepositorio.RemovePermissaoDoPerfil(permissaoRemovida!);
-                    perfilDb.PerfilPermissoes!.Remove(permissaoRemovida!);
-                }
-                else
-                {
-                    permissoes.Remove(permissao);
-                }
+                perfilRepositorio.AdicionaPermissaoAoPerfil(perfil.Id, permissao);
             }
 
-            foreach(var permissao in permissoes)
-            {
-                var novoPerfilPermissao = perfilRepositorio.AdicionaPermissaoAoPerfil(perfil.Id, permissao);
-            }
-
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync();
 
             return perfilDb; 
         }
@@ -74,6 +64,11 @@ namespace app.Services
         {   
             var perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(id) ??
                 throw new KeyNotFoundException("Perfil não encontrado");
+
+            if (perfilDb.Tipo == TipoPerfil.Basico || perfilDb.Tipo == TipoPerfil.Administrador)
+            {
+                throw new InvalidOperationException("Esse Perfil não pode ser excluído.");
+            }
 
             foreach(var perfilPermissao in perfilDb.PerfilPermissoes!)
             {
@@ -85,9 +80,9 @@ namespace app.Services
             dbContext.SaveChanges();
         }
 
-        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize)
+        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize, string? nome = null)
         {
-            var perfis = await perfilRepositorio.ListarPerfisAsync(pageIndex, pageSize);
+            var perfis = await perfilRepositorio.ListarPerfisAsync(pageIndex, pageSize, nome);
             var administrador = perfis.FirstOrDefault(p => p.Tipo == TipoPerfil.Administrador);
 
             if (administrador != null)
@@ -95,6 +90,18 @@ namespace app.Services
                 PreencherPermissoesAdministrador(administrador);
             }
             return perfis;
+        }
+
+        public async Task<Perfil?> ObterPorIdAsync(Guid id)
+        {
+            var perfil = await perfilRepositorio.ObterPerfilPorIdAsync(id);
+            
+            if(perfil != null && perfil.Tipo == TipoPerfil.Administrador)
+            {
+                PreencherPermissoesAdministrador(perfil);
+            }
+
+            return perfil;
         }
 
         private void PreencherPermissoesAdministrador(Perfil perfil)
