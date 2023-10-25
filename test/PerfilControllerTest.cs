@@ -44,8 +44,6 @@ namespace test
         {
             var perfil = PerfilStub.RetornaPerfilDTO();
             
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilCadastrar});
-
             var resposta = perfilController.CriarPerfil(perfil);
             var retorno =  (resposta as OkObjectResult)!.Value as PerfilModel;
 
@@ -75,8 +73,6 @@ namespace test
         {
             var perfil = PerfilStub.RetornaPerfilDTO();
 
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilCadastrar, Permissao.PerfilEditar});
-
             var resposta = perfilController.CriarPerfil(perfil);
             var retorno =  (resposta as OkObjectResult)!.Value as PerfilModel;
 
@@ -100,8 +96,6 @@ namespace test
         [Fact]
         public async Task ExcluirPerfil_QuandoTemPermissaoEPerfilNaoExiste_DeveLancarNotFound()
         {
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilRemover});
-            
             var resposta = await perfilController.ExcluirPerfil(Guid.NewGuid());
 
             Assert.IsType<NotFoundObjectResult>(resposta);
@@ -110,8 +104,6 @@ namespace test
         [Fact]
         public async Task ExcluirPerfil_QuandoTemPermissaoEPerfilBasico_DeveRetornarStatusCode400()
         {
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilRemover});
-
             var perfil = PerfilStub.RetornaPerfil(tipo: TipoPerfil.Basico);
             perfil.Id = Guid.NewGuid();
 
@@ -129,8 +121,6 @@ namespace test
         [Fact]
         public async Task ExcluirPerfil_QuandoTemPermissaoEPerfilAdministrador_DeveRetornarStatusCode400()
         {
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilRemover});
-
             var perfil = PerfilStub.RetornaPerfil(tipo: TipoPerfil.Administrador);
             perfil.Id = Guid.NewGuid();
 
@@ -148,8 +138,6 @@ namespace test
         [Fact]
         public async Task ExcluirPerfil_QuandoTemPermissaoEPerfilCustomizavel_DeveRetornarOk()
         {
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilRemover});
-
             var perfil = PerfilStub.RetornaPerfil();
             perfil.Id = Guid.NewGuid();
 
@@ -164,15 +152,13 @@ namespace test
         [Fact]
         public async Task ListarPerfis_QuandoNaoTemPermissao_DeveBloquear()
         {
-            AutenticarUsuario(perfilController, permissoes: new(){});
+            AutenticarUsuario(perfilController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => await perfilController.ListarPerfis(1, 20));
         }
 
         [Fact]
         public async Task ListarPerfis_QuandoTemPermissao_DeveRetornarOk()
         {
-            AutenticarUsuario(perfilController, permissoes: new(){Permissao.PerfilCadastrar, Permissao.PerfilVisualizar});
-            
             var lista = PerfilStub.RetornaListaPerfilDTO(5);
 
             lista.ForEach(p => perfilController.CriarPerfil(p));

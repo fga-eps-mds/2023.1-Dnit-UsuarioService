@@ -41,11 +41,7 @@ namespace test
             
             var resposta = dominioController.ObterListaDePermissoes();
 
-            Assert.IsType<OkObjectResult>(resposta);
-
-            var retorno = (resposta as OkObjectResult)!.Value as List<CategoriaPermissaoModel>;
-
-            Assert.NotEmpty(retorno);
+            Assert.NotEmpty(resposta);
         }
     }
 }

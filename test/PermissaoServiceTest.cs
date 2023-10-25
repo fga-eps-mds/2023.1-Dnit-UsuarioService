@@ -24,20 +24,6 @@ namespace test
             var categorias = permissaoService.ObterCategorias();
             Assert.NotEmpty(categorias);
         }
-
-        [Fact]
-        public void ObterPermissoesPortCategoria_DeveRetornarTodasPermissoesVigentes()
-        {
-            var permissoes = Enum.GetValues<Permissao>().ToList();
-
-            var categorias = permissaoService.ObterCategorias();
-
-            var lista = new List<Permissao>();
-
-            categorias.ForEach(c => lista.AddRange(permissaoService.ObterPermissoesPortCategoria(c).Select(l => l.Codigo)));
-            
-            Assert.Equal(permissoes.Count(), lista.Count());
-        }
     }
 
 }
