@@ -67,7 +67,7 @@ namespace app.Services
 
             if (perfilDb.Tipo == TipoPerfil.Basico || perfilDb.Tipo == TipoPerfil.Administrador)
             {
-                throw new KeyNotFoundException("Não é possível excluir o administrador ou o básico");
+                throw new InvalidOperationException("Esse Perfil não pode ser excluído.");
             }
 
             foreach(var perfilPermissao in perfilDb.PerfilPermissoes!)

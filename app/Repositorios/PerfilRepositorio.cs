@@ -38,12 +38,7 @@ namespace app.Repositorios
         }
 
         public void RemovePerfil(Perfil perfil)
-        {
-            if(perfil.Tipo == TipoPerfil.Basico || perfil.Tipo == TipoPerfil.Administrador)
-            {
-                throw new InvalidOperationException("Esse Perfil não pode ser excluido.");
-            }
-
+        {            
             dbContext.Perfis.Remove(perfil);
         }
 
