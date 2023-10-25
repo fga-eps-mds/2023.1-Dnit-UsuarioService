@@ -193,7 +193,7 @@ namespace app.Services
         public async Task<List<Permissao>> ListarPermissoesAsync(int userId)
         {
             var usuario = await usuarioRepositorio.ObterUsuarioAsync(userId, includePerfil: true);
-            if (usuario!.Perfil?.Tipo == TipoPerfil.Administrador)
+            if (usuario!.Perfil?.Tipo == TipoPerfil.Administrador || !authConfig.Enabled)
             {
                 usuario.Perfil.PermissoesSessao = Enum.GetValues<Permissao>().ToList();
             }
