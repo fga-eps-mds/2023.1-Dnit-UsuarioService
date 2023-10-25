@@ -119,14 +119,22 @@ namespace app.Repositorios
             var total = await dbContext.Usuario.CountAsync();
             var query = dbContext.Usuario.AsQueryable();
 
-            if (filtro.Nome != null) {
-                query = dbContext.Usuario.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
+            if (filtro.Nome != null)
+            {
+                query = query
+                .Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
+            }
+
+            if (filtro.UfLotacao != null)
+            {
+                query = query.Where(u => u.UfLotacao.Equals(filtro.UfLotacao));
             }
 
             var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
                 .Take(filtro.ItemsPorPagina)
                 .ToListAsync();
+
             return new ListaPaginada<Usuario>(items, filtro.Pagina, filtro.ItemsPorPagina, total);
         }
     }
