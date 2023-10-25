@@ -46,9 +46,6 @@ namespace app.Services
 
             foreach (var permissao in permissoesDeletadas)
             {
-                if (permissao.Perfil.Tipo == TipoPerfil.Basico && permissao.Permissao.ToString().StartsWith("Perfil")) {
-                    throw new UnauthorizedAccessException("A edição das permissões sobre o perfil básico esta desabilitada no momento. Isso será possível após a implementação da atribuição dos usuários aos perfis. Isso está desabilitado porque se nenhum usuário tiver acesso a edição de perfil, não será possível ativá-los depois.");
-                }
                 perfilRepositorio.RemovePermissaoDoPerfil(permissao);
                 perfilDb.PerfilPermissoes!.Remove(permissao);
             }
