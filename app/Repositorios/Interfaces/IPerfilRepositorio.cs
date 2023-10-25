@@ -11,6 +11,6 @@ namespace app.Repositorios.Interfaces
         public void RemovePerfil(Perfil perfil);
         public void RemovePermissaoDoPerfil(PerfilPermissao perfilPermissao);
         public Task<Perfil?> ObterPerfilPorIdAsync(Guid id);
-        public Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize);
+        public Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize, string? nome = null);
     }
 }

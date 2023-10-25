@@ -80,9 +80,9 @@ namespace app.Services
             dbContext.SaveChanges();
         }
 
-        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize)
+        public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize, string? nome = null)
         {
-            var perfis = await perfilRepositorio.ListarPerfisAsync(pageIndex, pageSize);
+            var perfis = await perfilRepositorio.ListarPerfisAsync(pageIndex, pageSize, nome);
             var administrador = perfis.FirstOrDefault(p => p.Tipo == TipoPerfil.Administrador);
 
             if (administrador != null)

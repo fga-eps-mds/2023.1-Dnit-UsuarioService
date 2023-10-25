@@ -106,13 +106,13 @@ namespace app.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> ListarPerfis(int pageIndex, int pageSize)
+        public async Task<IActionResult> ListarPerfis(int pageIndex, int pageSize, string? nome = null)
         {
             authService.Require(Usuario, Permissao.PerfilVisualizar);
 
             try
             {
-                var pagina = await perfilService.ListarPerfisAsync(pageIndex, pageSize);
+                var pagina = await perfilService.ListarPerfisAsync(pageIndex, pageSize, nome);
 
                 List<PerfilModel> paginaRetorno = pagina.Select(p => mapper.Map<PerfilModel>(p)).ToList();
 
