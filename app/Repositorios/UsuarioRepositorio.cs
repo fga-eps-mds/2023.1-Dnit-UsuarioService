@@ -117,11 +117,17 @@ namespace app.Repositorios
         public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var total = await dbContext.Usuario.CountAsync();
-            var usuarios = await dbContext.Usuario
+            var query = dbContext.Usuario.AsQueryable();
+
+            if (filtro.Nome != null) {
+                query = dbContext.Usuario.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
+            }
+
+            var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
                 .Take(filtro.ItemsPorPagina)
                 .ToListAsync();
-            return new ListaPaginada<Usuario>(usuarios, filtro.Pagina, filtro.ItemsPorPagina, total);
+            return new ListaPaginada<Usuario>(items, filtro.Pagina, filtro.ItemsPorPagina, total);
         }
     }
 }

@@ -200,7 +200,8 @@ namespace app.Services
 
         public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
-            return await usuarioRepositorio.ObterUsuariosAsync(filtro);
+            var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
+            return usuarios;
         }
     }
 }
