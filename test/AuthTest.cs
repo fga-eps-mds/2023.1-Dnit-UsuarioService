@@ -14,13 +14,13 @@ using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace test
 {
-    public class AuthTest
+    public class AuthenticationTest
     {
 
         AuthService authService;
         AuthConfig authConfig;
 
-        public AuthTest()
+        public AuthenticationTest()
         {
             authConfig = new AuthConfig()
             {

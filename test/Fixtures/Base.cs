@@ -27,15 +27,19 @@ namespace test.Fixtures
             // Repositorios
             services.AddScoped<IUnidadeFederativaRepositorio, UnidadeFederativaRepositorio>();
             services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
+            services.AddScoped<IPerfilRepositorio, PerfilRepositorio>();
 
             // Services
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddAutoMapper(typeof(AutoMapperConfig));
+            services.AddScoped<IPermissaoService, PermissaoService>();
+            services.AddScoped<IPerfilService, PerfilService>();
 
             // Controllers
             services.AddScoped<DominioController>();
             services.AddScoped<UsuarioController>();
+            services.AddScoped<PerfilController>();
 
             services.AddAuth(configuration);
         }
@@ -44,7 +48,7 @@ namespace test.Fixtures
 
         protected override IEnumerable<TestAppSettings> GetTestAppSettings()
         {
-            yield return new() { Filename = "appsettings.json", IsOptional = false };
+            yield return new() { Filename = "appsettings.Test.json", IsOptional = false };
         }
     }
 }

@@ -9,14 +9,18 @@ namespace app.DI
     public static class ServicesConfig
     {
         public static void AddConfigServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseNpgsql(configuration.GetConnectionString("PostgreSql")));
+        {   
+            var mode = Environment.GetEnvironmentVariable("MODE");
+            var connectionString = mode == "container" ? "PostgreSqlDocker" : "PostgreSql";
+
+            services.AddDbContext<AppDbContext>(optionsBuilder => optionsBuilder.UseNpgsql(configuration.GetConnectionString(connectionString)));
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<AuthService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IPerfilService, PerfilService>();
+            services.AddScoped<IPermissaoService, PermissaoService>();
 
             services.AddAuth(configuration);
         }
-
     }
 }
