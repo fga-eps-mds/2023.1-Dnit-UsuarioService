@@ -1,25 +1,29 @@
 version: "3.0"
 services:
   usuario-service:
+    depends_on:
+      - dnit-usuario-db
     build:
       context: .
     ports:
       - "7083:7083"
     container_name: usuario-service
     volumes:
+      - ./api:/app/api
       - ./app:/app/app
-      - ./dominio:/app/dominio
-      - ./repositorio:/app/repositorio
-      - ./service:/app/service
       - ./test:/app/test
+      - ./auth:/app/auth
+    environment:
+      - MODE=container
     env_file:
       - .env
-  
+
   dnit-usuario-db:
     container_name: dnit-usuario-db
     image: postgres:15.4
     restart: always
     environment:
+      POSTGRES_DB: usuarioservice
       POSTGRES_PASSWORD: 1234
     ports:
       - "5432:5432"

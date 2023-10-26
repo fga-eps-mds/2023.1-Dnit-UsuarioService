@@ -49,6 +49,10 @@ namespace app.Entidades
                 });
 
             modelBuilder.Entity<Perfil>()
+                .HasIndex(p => p.Nome)
+                .IsUnique();
+
+            modelBuilder.Entity<Perfil>()
                 .HasMany(p => p.PerfilPermissoes)
                 .WithOne(pp => pp.Perfil)
                 .OnDelete(DeleteBehavior.Restrict);
