@@ -19,8 +19,8 @@ namespace app.DI
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IPerfilService, PerfilService>();
             services.AddScoped<IPermissaoService, PermissaoService>();
-
             services.AddAuth(configuration);
         }
+
     }
 }

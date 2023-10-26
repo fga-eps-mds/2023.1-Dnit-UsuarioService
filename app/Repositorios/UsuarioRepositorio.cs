@@ -45,7 +45,6 @@ namespace app.Repositorios
 
         public async Task CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
-
             var novoUsuario = new Usuario
             {
                 Nome = usuario.Nome,
