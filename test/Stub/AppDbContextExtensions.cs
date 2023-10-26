@@ -1,9 +1,7 @@
-﻿using app.Entidades;
-using System;
+﻿using api;
+using app.Entidades;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace test.Stub
 {
@@ -24,7 +22,7 @@ namespace test.Stub
                     Email = usuarioDto.Email,
                     Nome = usuarioDto.Nome,
                     Senha = usuarioDto.SenhaHash,
-                    UfLotacao = api.UF.DF,
+                    UfLotacao = UF.DF,
                 };
 
                 usuarioDto.Id = usuario.Id;
@@ -40,7 +38,7 @@ namespace test.Stub
                             new PerfilPermissao
                             {
                                 Id = Guid.NewGuid(),
-                                Permissao = api.Permissao.EscolaCadastrar,
+                                Permissao = Permissao.EscolaCadastrar,
                             }
                         }
                     };

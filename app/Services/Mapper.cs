@@ -51,6 +51,9 @@ namespace app.Services.Mapper
                 .ForMember(p => p.Usuarios, opt => opt.Ignore())
                 .ForMember(p => p.Tipo, opt => opt.Ignore())
                 .ForMember(p => p.PermissoesSessao, opt => opt.Ignore());
+            
+            CreateMap<Usuario, UsuarioModelNovo>()
+                .ForMember(u => u.Cnpj, opt => opt.Ignore());
 
             CreateMap<Perfil, PerfilModel>()
                 .ForMember(model => model.Permissoes, opt => opt.MapFrom

@@ -126,16 +126,15 @@ namespace app.Repositorios
 
         public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
-            var total = await dbContext.Usuario.CountAsync();
             var query = dbContext.Usuario.AsQueryable();
 
-            if (filtro.Nome != null) {
+            if (filtro.Nome != null)
                 query = query.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
-            }
 
-            if (filtro.PerfilId != null) 
+            if (filtro.PerfilId != null)
                 query = query.Where(u => u.PerfilId == filtro.PerfilId);
-        
+
+            var total = await query.CountAsync();
             var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
                 .Take(filtro.ItemsPorPagina)

@@ -200,10 +200,11 @@ namespace app.Services
             return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
 
-        public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
+        public async Task<ListaPaginada<UsuarioModelNovo>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
-            return usuarios;
+            var modelos = mapper.Map<List<UsuarioModelNovo>>(usuarios.Items);
+            return new ListaPaginada<UsuarioModelNovo>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
     }
 }
