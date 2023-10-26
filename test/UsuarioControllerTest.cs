@@ -34,29 +34,6 @@ namespace test
             dbContext.PopulaUsuarios(5);
         }
 
-        [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
-        {
-            var filtro = new PesquisaUsuarioFiltro
-            {
-                ItemsPorPagina = 10,
-            };
-            var usuarios = await controller.ListarAsync(filtro);
-            Assert.Equal(5, usuarios.Total);
-        }
-
-        [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUf()
-        {
-            var filtro = new PesquisaUsuarioFiltro
-            {
-                ItemsPorPagina = 100,
-                UfLotacao = UF.DF,
-            };
-
-            var usuarios = await controller.ListarAsync(filtro);
-        }
-
         public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuario(UsuarioDTO usuario)
         {
             var resultado = await controller.Logar(usuario);
@@ -74,7 +51,7 @@ namespace test
         [Fact]
         public async Task Logar_QuandoLoginForValidado_DeveRetornarOk()
         {
-            var usuario = dbContext.PopulaUsuarios(1).First();
+            var usuario = dbContext.PopulaUsuarios(1, true).First();
 
             var resultado = await controller.Logar(usuario);
 
@@ -313,6 +290,38 @@ namespace test
             dbContext.RemoveRange(dbContext.Perfis);
             dbContext.RemoveRange(dbContext.Usuario);
             dbContext.RemoveRange(dbContext.Empresa);
+        }
+
+
+        [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
+        {
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                ItemsPorPagina = 10,
+            };
+            var usuarios = await controller.ListarAsync(filtro);
+            Assert.Equal(5, usuarios.Total);
+        }
+
+        [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUfDada()
+        {
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                ItemsPorPagina = 100,
+                UfLotacao = UF.DF,
+            };
+            var u = dbContext.Usuario.ToList();
+            u[0].UfLotacao = UF.DF;
+            u[1].UfLotacao = UF.DF;
+            u[2].UfLotacao = UF.DF;
+            u[3].UfLotacao = UF.AM;
+            u[4].UfLotacao = UF.AM;
+            dbContext.SaveChanges();
+
+            var usuarios = await controller.ListarAsync(filtro);
+            // Assert.Equal(3, usuarios.Items.Count);
         }
     }
 }

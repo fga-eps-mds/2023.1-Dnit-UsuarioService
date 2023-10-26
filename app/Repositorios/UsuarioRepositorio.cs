@@ -3,6 +3,7 @@ using AutoMapper;
 
 using app.Entidades;
 using api.Usuarios;
+using api;
 using app.Repositorios.Interfaces;
 using api;
 
@@ -44,14 +45,16 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync();
         }
 
-        public void CadastrarUsuarioDnit(UsuarioDnit usuario)
+        public async Task CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
+
             var novoUsuario = new Usuario
             {
                 Nome = usuario.Nome,
                 Email = usuario.Email,
                 Senha = usuario.Senha,
-                UfLotacao = usuario.UfLotacao
+                UfLotacao = usuario.UfLotacao,
+                Perfil = await RecuperaPerfilBasicoAsync()
             };
 
             dbContext.Add(novoUsuario);
@@ -97,7 +100,7 @@ namespace app.Repositorios
             dbContext.RedefinicaoSenha.Add(newRs);
         }
 
-        public void CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
+        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 
@@ -108,28 +111,30 @@ namespace app.Repositorios
                 Nome = usuarioTerceiro.Nome,
                 Email = usuarioTerceiro.Email,
                 Senha = usuarioTerceiro.Senha,
-                Empresas = empresas
+                Empresas = empresas,
+                Perfil = await RecuperaPerfilBasicoAsync()
             };
 
             dbContext.Usuario.Add(novoUsuarioTerceiro);
         }
 
+        private async Task<Perfil?> RecuperaPerfilBasicoAsync()
+        {
+            return await dbContext.Perfis.Where(p => p.Tipo == TipoPerfil.Basico)
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
-            var total = await dbContext.Usuario.CountAsync();
             var query = dbContext.Usuario.AsQueryable();
 
             if (filtro.Nome != null)
-            {
-                query = query
-                .Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
-            }
+                query = query.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
 
-            if (filtro.UfLotacao != null)
-            {
-                query = query.Where(u => u.UfLotacao.Equals(filtro.UfLotacao));
-            }
+            if (filtro.PerfilId != null)
+                query = query.Where(u => u.PerfilId == filtro.PerfilId);
 
+            var total = await query.CountAsync();
             var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
                 .Take(filtro.ItemsPorPagina)

@@ -49,7 +49,7 @@ namespace app.Services
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
-            usuarioRepositorio.CadastrarUsuarioDnit(usuario);
+            await usuarioRepositorio.CadastrarUsuarioDnit(usuario);
 
             await dbContext.SaveChangesAsync();
         }
@@ -165,10 +165,8 @@ namespace app.Services
         {
             var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
 
-            if (!authConfig.Enabled) // || usuario.Perfil.Tipo == TipoPerfil.Administrador
+            if (!authConfig.Enabled || usuario.Perfil.Tipo == TipoPerfil.Administrador)
                 permissoes = Enum.GetValues<Permissao>().ToList();
-
-            permissoes = new() { Permissao.EscolaVisualizar, Permissao.UpsVisualizar, Permissao.EscolaCadastrar };
 
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
@@ -195,13 +193,18 @@ namespace app.Services
         public async Task<List<Permissao>> ListarPermissoesAsync(int userId)
         {
             var usuario = await usuarioRepositorio.ObterUsuarioAsync(userId, includePerfil: true);
+            if (usuario!.Perfil?.Tipo == TipoPerfil.Administrador || !authConfig.Enabled)
+            {
+                usuario.Perfil.PermissoesSessao = Enum.GetValues<Permissao>().ToList();
+            }
             return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
 
-        public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
+        public async Task<ListaPaginada<UsuarioModelNovo>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
-            return usuarios;
+            var modelos = mapper.Map<List<UsuarioModelNovo>>(usuarios.Items);
+            return new ListaPaginada<UsuarioModelNovo>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
     }
 }
