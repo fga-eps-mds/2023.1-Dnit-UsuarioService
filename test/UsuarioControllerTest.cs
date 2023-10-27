@@ -298,7 +298,7 @@ namespace test
 
         [Fact]
         public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUfDada()
-        {
+        {   
             var filtro = new PesquisaUsuarioFiltro
             {
                 ItemsPorPagina = 100,
@@ -313,6 +313,11 @@ namespace test
             dbContext.SaveChanges();
 
             var usuarios = await controller.ListarAsync(filtro);
+            var lista = await controller.ListarAsync(filtro);
+            Assert.Equal(UF.DF, lista.Items[0].UfLotacao);  
+            Assert.Equal(UF.DF, lista.Items[1].UfLotacao);  
+            Assert.Equal(UF.DF, lista.Items[2].UfLotacao);  
+            Assert.Equal(3, lista.Items.Count);
         }
 
         // [Fact]
@@ -337,6 +342,28 @@ namespace test
 
         //     var usuarioEditado = dbContext.Usuario.Find(usuarioId)!;
         //     Assert.Equal(novoPerfilId, usuarioEditado.PerfilId.ToString());
+        // }
+
+
+        // [Fact]
+        // public async void ObterUsuariosAsync_QuandoFiltradoPorPerfilId_RetornarUsuariosDePerfilId()
+        // {
+        //     var filtro = new PesquisaUsuarioFiltro
+        //     {
+        //         ItemsPorPagina = 100,
+        //         PerfilId = Guid.Supervisor,
+        //     };
+        //     var u = dbContext.Usuario.ToList();
+        //     u[0].UfLotacao = UF.DF;
+        //     u[1].UfLotacao = UF.DF;
+        //     u[2].UfLotacao = UF.DF;
+        //     u[3].UfLotacao = UF.AM;
+        //     u[4].UfLotacao = UF.AM;
+        //     dbContext.SaveChanges();
+
+        //     var lista = await controller.ListarAsync(filtro);
+        //     Assert.Equal(UF.DF, lista.Items[0].UfLotacao);  
+        //     Assert.Equal(3, lista.Items.Count);
         // }
 
         public new void Dispose()

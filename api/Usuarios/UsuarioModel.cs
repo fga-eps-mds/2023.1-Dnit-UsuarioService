@@ -19,5 +19,6 @@ namespace api.Usuarios
         public string Cnpj { get; set; }
         public Guid? PerfilId { get; set; }
         public PerfilModel? Perfil { get; set; }
+        public UF UfLotacao { get; set; }
     }
 }
