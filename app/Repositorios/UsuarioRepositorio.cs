@@ -134,6 +134,9 @@ namespace app.Repositorios
             if (filtro.PerfilId != null)
                 query = query.Where(u => u.PerfilId == filtro.PerfilId);
 
+            if (filtro.UfLotacao != null)
+                query = query.Where(u => u.UfLotacao == filtro.UfLotacao);
+
             var total = await query.CountAsync();
             var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
