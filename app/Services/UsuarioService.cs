@@ -221,5 +221,12 @@ namespace app.Services
             usuario.PerfilId = permissao.Id;
             dbContext.SaveChanges();
         }
+
+        /*public async Task CadastrarMunicipioAsync(string nomeMunicipio)
+        
+
+        
+        */
+    
     }
 }

@@ -20,5 +20,6 @@ namespace api.Usuarios
         public Guid? PerfilId { get; set; }
         public PerfilModel? Perfil { get; set; }
         public UF UfLotacao { get; set; }
+        public Guid? Municipio { get; set; }
     }
 }

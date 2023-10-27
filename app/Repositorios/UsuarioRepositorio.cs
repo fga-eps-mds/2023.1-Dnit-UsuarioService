@@ -139,6 +139,9 @@ namespace app.Repositorios
             if (filtro.UfLotacao != null)
                 query = query.Where(u => u.UfLotacao == filtro.UfLotacao);
 
+            //if (filtro.Municipio != null)
+            //  query = query.Where(u => usuario.Municipio == filtro.Municipio); talvez surja um problema em relação a conversão do tipo Guid para uma String
+
             var total = await query.CountAsync();
             var items = await query
                 .Skip(filtro.ItemsPorPagina * (filtro.Pagina - 1))
