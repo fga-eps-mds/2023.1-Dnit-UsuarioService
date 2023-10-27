@@ -17,6 +17,7 @@ using app.Controllers;
 using api.Usuarios;
 using api.Senhas;
 using api;
+using Microsoft.EntityFrameworkCore;
 
 namespace test
 {
@@ -284,15 +285,6 @@ namespace test
             Assert.IsType<NotFoundResult>(resultado);
         }
 
-        public new void Dispose()
-        {
-            dbContext.RemoveRange(dbContext.PerfilPermissoes);
-            dbContext.RemoveRange(dbContext.Perfis);
-            dbContext.RemoveRange(dbContext.Usuario);
-            dbContext.RemoveRange(dbContext.Empresa);
-        }
-
-
         [Fact]
         public async void ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
         {
@@ -321,7 +313,38 @@ namespace test
             dbContext.SaveChanges();
 
             var usuarios = await controller.ListarAsync(filtro);
-            // Assert.Equal(3, usuarios.Items.Count);
+        }
+
+        // [Fact]
+        // public async Task EditarPerfilUsuario_QuandoNaoTemPermissao_ErroDePermissao()
+        // {
+        //     // logarUsuarioSemPermissao() perfil basico ou customizável?
+        //     var usuarioId = "";
+        //     var novoPerfilId = "";
+        //     var ex = await Assert.ThrowsAsync<Exception>(async () 
+        //         => await controller.EditarPerfilUsuario(usuarioId, novoPerfilId));
+            
+        //     Assert.Equal("Sem permissão", ex.Message);
+        // }
+
+        // [Fact]
+        // public async Task EditarPerfilUsuario_QuandoTemPermissao_NovoPerfilEhAtribuidoAoUsuario()
+        // {
+        //     // logarUsuarioComPermissao() perfil de adm
+        //     var usuarioId = "";
+        //     var novoPerfilId = "";
+        //     await controller.EditarPerfilUsuario(usuarioId, novoPerfilId);
+
+        //     var usuarioEditado = dbContext.Usuario.Find(usuarioId)!;
+        //     Assert.Equal(novoPerfilId, usuarioEditado.PerfilId.ToString());
+        // }
+
+        public new void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Perfis);
+            dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.Empresa);
         }
     }
 }

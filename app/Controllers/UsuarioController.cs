@@ -128,7 +128,14 @@ namespace app.Controllers
         [HttpGet()]
         public async Task<ListaPaginada<UsuarioModelNovo>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
         {
+            // authService.Require(Usuario, Permissao.UsuarioVisualizar);
             return await usuarioService.ObterUsuariosAsync(filtro);
         }
+
+        // [HttpPut("{id}")]
+        // public async Task EditarPerfilUsuario(string usuarioId, [FromBody] string novoPerfilId) {
+        //     authService.Require(Usuario, Permissao.PerfilEditar);
+        //     await Task.Run(() => {});
+        // }
     }
 }
