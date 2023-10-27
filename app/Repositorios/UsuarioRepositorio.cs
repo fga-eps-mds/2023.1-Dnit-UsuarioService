@@ -126,7 +126,9 @@ namespace app.Repositorios
 
         public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
-            var query = dbContext.Usuario.AsQueryable();
+            var query = dbContext.Usuario
+                .Include(u => u.Perfil)
+                .AsQueryable();
 
             if (filtro.Nome != null)
                 query = query.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Xunit.Microsoft.DependencyInjection.Abstracts;
 using Xunit.Abstractions;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,12 +16,11 @@ using app.Controllers;
 using api.Usuarios;
 using api.Senhas;
 using api;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+using app.Services;
 
 namespace test
 {
-    public class UsuarioControllerTest : TestBed<Base>, IDisposable
+    public class UsuarioControllerTest : AuthTest, IDisposable
     {
         const int CREATED = 201;
         const int INTERNAL_SERVER_ERROR = 500;
@@ -36,7 +34,7 @@ namespace test
             dbContext.PopulaUsuarios(5);
         }
 
-        public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuario(UsuarioDTO usuario)
+        public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuarioLocal(UsuarioDTO usuario)
         {
             var resultado = await controller.Logar(usuario);
 
@@ -72,7 +70,7 @@ namespace test
         {
             var usuario = dbContext.PopulaUsuarios(1, includePerfil: true).First();
 
-            await AutenticarUsuario(usuario);
+            await AutenticarUsuarioLocal(usuario);
             var permissoes = await controller.ListarPermissoes();
             Assert.NotEmpty(permissoes);
         }
@@ -82,7 +80,7 @@ namespace test
         {
             var usuario = dbContext.PopulaUsuarios(1, includePerfil: true).First();
 
-            var login = await AutenticarUsuario(usuario);
+            var login = await AutenticarUsuarioLocal(usuario);
             var novoLogin = await controller.AtualizarToken(new AtualizarTokenDto
             {
                 Token = login.Token,
@@ -99,7 +97,7 @@ namespace test
         {
             var usuario = dbContext.PopulaUsuarios(1, includePerfil: true).First();
 
-            var login = await AutenticarUsuario(usuario);
+            var login = await AutenticarUsuarioLocal(usuario);
             var atualizarTokenDto = new AtualizarTokenDto
             {
                 Token = login.Token,
@@ -252,7 +250,7 @@ namespace test
             usuarioServiceMock.Verify(service => service.RecuperarSenha(usuarioDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
         }
-        
+
         [Fact]
         public async void RedefinirSenha_QuandoRedefinicaoForConcluida_DeveRetornarOk()
         {
@@ -339,58 +337,58 @@ namespace test
         }
 
         [Fact]
-        public async Task EditarPerfilUsuario_QuandoTemPermissao_DeveAlterarOPerfilDoUsuario()
+        public async Task EditarPerfilUsuario_QuandoNaoTemPermissao_ErroDePermissao()
         {
-            // logarUsuarioComPermissao() perfil basico ou customizável?
-            var novoPerfilId = Guid.NewGuid(); //String para definir o novo perfil do usuário
-            var usuario = dbContext.Usuario.First(); //Banco de dados - Pega o primeiro usuario
+            AutenticarUsuario(controller, permissoes: new());
+            var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async ()
+                => await controller.EditarPerfilUsuario(1, "id"));
 
-            await controller.EditarPerfilUsuario(usuario.Id, novoPerfilId.ToString()); //Quando chamar a controller, queremos alterar no banco de dados o perfil do usuário
-
-            var usuarioEditado = dbContext.Usuario.Find(usuario.Id)!;
-            
-            Assert.Equal(novoPerfilId, usuarioEditado.PerfilId);
+            Assert.Contains("não tem a permissão: ", ex.Message);
         }
 
         [Fact]
         public async Task EditarPerfilUsuario_QuandoUsuarioNaoExiste_RetornaNaoEncontrado()
-        { 
-            var excecao = await Assert.ThrowsAsync<Exception>(async() => await controller.EditarPerfilUsuario(-1, Guid.NewGuid().ToString()));
+        {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            var ex = await Assert.ThrowsAsync<ApiException>(async ()
+                => await controller.EditarPerfilUsuario(-1, Guid.NewGuid().ToString()));
 
-            Assert.Equal("O usuário não foi encontrado.", excecao.Message);
-           // Assert.Equal(novoPerfilId, usuarioEditado.PerfilId);
+            Assert.Equal(ErrorCodes.UsuarioNaoEncontrado, ex.Error.Code);
         }
 
         [Fact]
         public async Task EditarPerfilUsuario_QuandoPerfilNaoExiste_RetornaPerfilNaoEncontrado()
         {
-            var usuario = dbContext.Usuario.First();
-            //Guid.NewGuid().ToString() é passado devido à conversão do Guid
-            var excecao = await Assert.ThrowsAsync<Exception>(async() => await controller.EditarPerfilUsuario(usuario.Id, Guid.NewGuid().ToString()));
-            Assert.Equal("O Perfil não foi encontrado.", excecao.Message);
+            AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            var usuarioId = dbContext.Usuario.First().Id;
+
+            var excecao = await Assert.ThrowsAsync<ApiException>(async ()
+                => await controller.EditarPerfilUsuario(usuarioId, Guid.NewGuid().ToString()));
+
+            Assert.Equal(ErrorCodes.PermissaoNaoEncontrada, excecao.Error.Code);
         }
 
-        // public async Task EditarPerfilUsuario_QuandoNaoTemPermissao_ErroDePermissao()
-            //         var usuarioId = "";
-            // var novoPerfilId = "";
-            // var ex = await Assert.ThrowsAsync<Exception>(async () 
-            //     => await controller.EditarPerfilUsuario(usuarioId, novoPerfilId));
+        [Fact]
+        public async Task EditarPerfilUsuario_QuandoTemPermissao_DeveAlterarPerfilDoUsuario()
+        {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            var novoPerfilParaUsuario = new Perfil
+            {
+                Id = Guid.NewGuid(),
+                // Se remover esses parâmetros, os testes acusam que já foi inserido uma row duplicada
+                Nome = "Teste",
+                Tipo = TipoPerfil.Administrador
+            };
+            dbContext.Perfis.Add(novoPerfilParaUsuario);
+            dbContext.SaveChanges();
+            var usuario = dbContext.Usuario.First();
 
-            // Assert.Equal("Sem permissão", ex.Message);
+            await controller.EditarPerfilUsuario(usuario.Id, novoPerfilParaUsuario.Id.ToString());
 
+            var usuarioEditado = dbContext.Usuario.Find(usuario.Id)!;
 
-        // [Fact]
-        // public async Task EditarPerfilUsuario_QuandoTemPermissao_NovoPerfilEhAtribuidoAoUsuario()
-        // {
-        //     // logarUsuarioComPermissao() perfil de adm
-        //     var usuarioId = "";
-        //     var novoPerfilId = "";
-        //     await controller.EditarPerfilUsuario(usuarioId, novoPerfilId);
-
-        //     var usuarioEditado = dbContext.Usuario.Find(usuarioId)!;
-        //     Assert.Equal(novoPerfilId, usuarioEditado.PerfilId.ToString());
-        // }
-
+            Assert.Equal(novoPerfilParaUsuario.Id, usuarioEditado.PerfilId);
+        }
 
         public new void Dispose()
         {

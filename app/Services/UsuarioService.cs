@@ -16,6 +16,7 @@ namespace app.Services
     {
 
         private readonly IUsuarioRepositorio usuarioRepositorio;
+        private readonly IPerfilRepositorio perfilRepositorio;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
         private readonly SenhaConfig senhaConfig;
@@ -26,6 +27,7 @@ namespace app.Services
         public UsuarioService
         (
             IUsuarioRepositorio usuarioRepositorio,
+            IPerfilRepositorio perfilRepositorio,
             IMapper mapper,
             IEmailService emailService,
             IOptions<SenhaConfig> senhaConfig,
@@ -34,6 +36,7 @@ namespace app.Services
             IOptions<AuthConfig> authConfig
         )
         {
+            this.perfilRepositorio = perfilRepositorio;
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
@@ -209,13 +212,13 @@ namespace app.Services
 
         public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId) //Implementar método para conseguir editar o PerfilId do usuário
         {
-            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId);
-            if (usuario == null)
-                throw new Exception("O usuário não foi encontrado.");
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId) 
+                ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
 
-            // if()
-                throw new Exception("O Perfil não foi encontrado.");
-            usuario.PerfilId = Guid.Parse(novoPerfilId);
+            var permissao = await perfilRepositorio.ObterPerfilPorIdAsync(Guid.Parse(novoPerfilId)) 
+                ?? throw new ApiException(ErrorCodes.PermissaoNaoEncontrada);
+
+            usuario.PerfilId = permissao.Id;
             dbContext.SaveChanges();
         }
     }

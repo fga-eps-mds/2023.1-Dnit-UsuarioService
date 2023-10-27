@@ -103,6 +103,18 @@ namespace api
         SinistroCadastrar = 7000,
     }
 
+    public enum ErrorCodes
+    {
+        Unknown,
+        [Description("Usuário não possui permissão para realizar ação")]
+        NaoPermitido,
+        [Description("Usuário não encontrado")]
+        UsuarioNaoEncontrado,
+        [Description("Permissao não encontrada")]
+        PermissaoNaoEncontrada,
+    }
+
+
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TipoPerfil
     {

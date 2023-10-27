@@ -1,10 +1,14 @@
 using api;
+using api.Usuarios;
+using app.Controllers;
 using app.Services;
 using auth;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 
@@ -22,7 +26,8 @@ namespace test.Fixtures
 
         public (string Token, ClaimsPrincipal Usuario) AutenticarUsuario(AppController controller, AuthUserModel<Permissao>? usuario = null, List<Permissao>? permissoes = null)
         {
-            if (usuario == null) {
+            if (usuario == null)
+            {
                 usuario = new AuthUserModel<Permissao>
                 {
                     Id = 1,
@@ -34,7 +39,7 @@ namespace test.Fixtures
             {
                 usuario.Permissions = permissoes;
             }
-            
+
             var (token, _) = authService.GenerateToken(usuario);
 
             var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
@@ -43,5 +48,19 @@ namespace test.Fixtures
             controller.AppUsuario = Usuario;
             return (token, Usuario);
         }
+
+        // public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuario(UsuarioController controller, UsuarioDTO usuario)
+        // {
+        //     var resultado = await controller.Logar(usuario);
+
+        //     Assert.IsType<OkObjectResult>(resultado);
+
+        //     var login = (resultado as OkObjectResult)!.Value as LoginModel;
+        //     var token = login!.Token.Split(" ")[1];
+
+        //     var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        //     controller.AppUsuario = new ClaimsPrincipal(new ClaimsIdentity(jwt.Claims));
+        //     return (token, login.TokenAtualizacao);
+        // }
     }
 }

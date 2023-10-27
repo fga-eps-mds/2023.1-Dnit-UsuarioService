@@ -20,6 +20,8 @@ namespace app.DI
             services.AddScoped<IPerfilService, PerfilService>();
             services.AddScoped<IPermissaoService, PermissaoService>();
 
+            services.AddControllers(o => o.Filters.Add(typeof(HandleExceptionFilter)));
+
             services.AddAuth(configuration);
         }
     }
