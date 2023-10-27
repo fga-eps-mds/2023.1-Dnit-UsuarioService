@@ -285,8 +285,18 @@ namespace test
         }
 
         [Fact]
+        public async void ObterUsuariosAsync_QuandoNãoTemPermissaoVisualizar_RetornaErroDePermissao()
+        {
+            var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async () => 
+                await controller.ListarAsync(new PesquisaUsuarioFiltro()));
+
+            Assert.Contains("não tem a permissão: Visualizar Usuário", ex.Message);
+        }
+
+        [Fact]
         public async void ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
         {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var filtro = new PesquisaUsuarioFiltro
             {
                 ItemsPorPagina = 10,
@@ -298,6 +308,7 @@ namespace test
         [Fact]
         public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUfDada()
         {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var filtro = new PesquisaUsuarioFiltro
             {
                 UfLotacao = UF.DF,
@@ -321,6 +332,7 @@ namespace test
         [Fact]
         public async void ObterUsuariosAsync_QuandoFiltradoPorPerfil_RetornaUsuariosComPerfilDado()
         {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var filtro = new PesquisaUsuarioFiltro
             {
                 PerfilId = Guid.NewGuid(),
@@ -343,7 +355,7 @@ namespace test
             var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async ()
                 => await controller.EditarPerfilUsuario(1, "id"));
 
-            Assert.Contains("não tem a permissão: ", ex.Message);
+            Assert.Contains("não tem a permissão: Editar Perfil", ex.Message);
         }
 
         [Fact]

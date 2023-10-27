@@ -79,7 +79,7 @@ namespace api
         //EmpresaEditar = 2001,
         //[Description("Remover Empresa")]
         //EmpresaRemover = 2002,
-        
+
         [Description("Cadastrar Perfil de Usuário")]
         PerfilCadastrar = 3000,
         [Description("Editar Perfil de Usuário")]
@@ -88,7 +88,7 @@ namespace api
         PerfilRemover = 3002,
         [Description("Visualizar perfis")]
         PerfilVisualizar = 3003,
-        
+
         [Description("Calcular UPS de sinistros")]
         UpsCalcularSinistro = 5000,
         [Description("Calcular UPS de escolas")]
@@ -101,6 +101,14 @@ namespace api
 
         [Description("Cadastrar sinistro")]
         SinistroCadastrar = 7000,
+
+        UsuarioCadastrar = 8000,
+        [Description("Editar Usuário")]
+        UsuarioEditar = 8001,
+        [Description("Remover Usuário")]
+        UsuarioRemover = 8002,
+        [Description("Visualizar Usuário")]
+        UsuarioVisualizar = 8003,
     }
 
     public enum ErrorCodes

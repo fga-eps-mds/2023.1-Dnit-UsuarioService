@@ -128,7 +128,7 @@ namespace app.Controllers
         [HttpGet()]
         public async Task<ListaPaginada<UsuarioModelNovo>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
         {
-            // authService.Require(Usuario, Permissao.UsuarioVisualizar);
+            authService.Require(Usuario, Permissao.UsuarioVisualizar);
             return await usuarioService.ObterUsuariosAsync(filtro);
         }
 
