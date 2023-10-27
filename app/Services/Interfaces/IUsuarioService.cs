@@ -17,5 +17,6 @@ namespace app.Services.Interfaces
         Task<List<Permissao>> ListarPermissoesAsync(int userId);
         // ou usuário DTO?
         Task<ListaPaginada<UsuarioModelNovo>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
+        Task EditarUsuarioPerfil(int usuarioId ,string novoPerfilId);
     }
 }

@@ -18,6 +18,7 @@ using api.Usuarios;
 using api.Senhas;
 using api;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace test
 {
@@ -251,7 +252,7 @@ namespace test
             usuarioServiceMock.Verify(service => service.RecuperarSenha(usuarioDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
         }
-
+        
         [Fact]
         public async void RedefinirSenha_QuandoRedefinicaoForConcluida_DeveRetornarOk()
         {
@@ -341,13 +342,32 @@ namespace test
         public async Task EditarPerfilUsuario_QuandoTemPermissao_DeveAlterarOPerfilDoUsuario()
         {
             // logarUsuarioComPermissao() perfil basico ou customizável?
-            var novoPerfilId = Guid.NewGuid();
-            var usuario = dbContext.Usuario.First();
+            var novoPerfilId = Guid.NewGuid(); //String para definir o novo perfil do usuário
+            var usuario = dbContext.Usuario.First(); //Banco de dados - Pega o primeiro usuario
 
-            await controller.EditarPerfilUsuario(usuario.Id.ToString(), novoPerfilId.ToString());
+            await controller.EditarPerfilUsuario(usuario.Id, novoPerfilId.ToString()); //Quando chamar a controller, queremos alterar no banco de dados o perfil do usuário
 
             var usuarioEditado = dbContext.Usuario.Find(usuario.Id)!;
+            
             Assert.Equal(novoPerfilId, usuarioEditado.PerfilId);
+        }
+
+        [Fact]
+        public async Task EditarPerfilUsuario_QuandoUsuarioNaoExiste_RetornaNaoEncontrado()
+        { 
+            var excecao = await Assert.ThrowsAsync<Exception>(async() => await controller.EditarPerfilUsuario(-1, Guid.NewGuid().ToString()));
+
+            Assert.Equal("O usuário não foi encontrado.", excecao.Message);
+           // Assert.Equal(novoPerfilId, usuarioEditado.PerfilId);
+        }
+
+        [Fact]
+        public async Task EditarPerfilUsuario_QuandoPerfilNaoExiste_RetornaPerfilNaoEncontrado()
+        {
+            var usuario = dbContext.Usuario.First();
+            //Guid.NewGuid().ToString() é passado devido à conversão do Guid
+            var excecao = await Assert.ThrowsAsync<Exception>(async() => await controller.EditarPerfilUsuario(usuario.Id, Guid.NewGuid().ToString()));
+            Assert.Equal("O Perfil não foi encontrado.", excecao.Message);
         }
 
         // public async Task EditarPerfilUsuario_QuandoNaoTemPermissao_ErroDePermissao()

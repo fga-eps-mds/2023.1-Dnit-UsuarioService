@@ -25,9 +25,9 @@ namespace app.Services
 
         public UsuarioService
         (
-            IUsuarioRepositorio usuarioRepositorio, 
-            IMapper mapper, 
-            IEmailService emailService, 
+            IUsuarioRepositorio usuarioRepositorio,
+            IMapper mapper,
+            IEmailService emailService,
             IOptions<SenhaConfig> senhaConfig,
             AppDbContext dbContext,
             AuthService autenticacaoService,
@@ -205,6 +205,18 @@ namespace app.Services
             var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
             var modelos = mapper.Map<List<UsuarioModelNovo>>(usuarios.Items);
             return new ListaPaginada<UsuarioModelNovo>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
+        }
+
+        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId) //Implementar método para conseguir editar o PerfilId do usuário
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId);
+            if (usuario == null)
+                throw new Exception("O usuário não foi encontrado.");
+
+            // if()
+                throw new Exception("O Perfil não foi encontrado.");
+            usuario.PerfilId = Guid.Parse(novoPerfilId);
+            dbContext.SaveChanges();
         }
     }
 }
