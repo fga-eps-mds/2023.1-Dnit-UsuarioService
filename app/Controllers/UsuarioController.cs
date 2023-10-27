@@ -132,10 +132,12 @@ namespace app.Controllers
             return await usuarioService.ObterUsuariosAsync(filtro);
         }
 
-        // [HttpPut("{id}")]
-        // public async Task EditarPerfilUsuario(string usuarioId, [FromBody] string novoPerfilId) {
-        //     authService.Require(Usuario, Permissao.PerfilEditar);
-        //     await Task.Run(() => {});
-        // }
+        [HttpPatch("{id}/perfil")]
+        // PATCH /api/usuario/{id}/perfil
+        public async Task EditarPerfilUsuario([FromRoute] string id, [FromBody] string novoPerfilId) {
+            
+            // authService.Require(Usuario, Permissao.PerfilEditar);
+            // await Task.Run(() => {});
+        }
     }
 }

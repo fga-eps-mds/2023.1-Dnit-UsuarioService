@@ -367,4 +367,7 @@ FodyWeavers.xsd
 
 .idea/
 
+cov.sh
+coveragereport/
+
 report/

@@ -298,10 +298,9 @@ namespace test
 
         [Fact]
         public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUfDada()
-        {   
+        {
             var filtro = new PesquisaUsuarioFiltro
             {
-                ItemsPorPagina = 100,
                 UfLotacao = UF.DF,
             };
             var u = dbContext.Usuario.ToList();
@@ -312,25 +311,53 @@ namespace test
             u[4].UfLotacao = UF.AM;
             dbContext.SaveChanges();
 
-            var usuarios = await controller.ListarAsync(filtro);
             var lista = await controller.ListarAsync(filtro);
-            Assert.Equal(UF.DF, lista.Items[0].UfLotacao);  
-            Assert.Equal(UF.DF, lista.Items[1].UfLotacao);  
-            Assert.Equal(UF.DF, lista.Items[2].UfLotacao);  
+
+            Assert.Equal(UF.DF, lista.Items[0].UfLotacao);
+            Assert.Equal(UF.DF, lista.Items[1].UfLotacao);
+            Assert.Equal(UF.DF, lista.Items[2].UfLotacao);
             Assert.Equal(3, lista.Items.Count);
         }
 
-        // [Fact]
+        [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltradoPorPerfil_RetornaUsuariosComPerfilDado()
+        {
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                PerfilId = Guid.NewGuid(),
+            };
+            var u = dbContext.Usuario.ToList();
+            u[0].PerfilId = filtro.PerfilId;
+            u[1].PerfilId = filtro.PerfilId;
+            u[2].PerfilId = filtro.PerfilId;
+            dbContext.SaveChanges();
+
+            var lista = await controller.ListarAsync(filtro);
+
+            Assert.Equal(3, lista.Items.Count);
+        }
+
+        [Fact]
+        public async Task EditarPerfilUsuario_QuandoTemPermissao_DeveAlterarOPerfilDoUsuario()
+        {
+            // logarUsuarioComPermissao() perfil basico ou customizável?
+            var novoPerfilId = Guid.NewGuid();
+            var usuario = dbContext.Usuario.First();
+
+            await controller.EditarPerfilUsuario(usuario.Id.ToString(), novoPerfilId.ToString());
+
+            var usuarioEditado = dbContext.Usuario.Find(usuario.Id)!;
+            Assert.Equal(novoPerfilId, usuarioEditado.PerfilId);
+        }
+
         // public async Task EditarPerfilUsuario_QuandoNaoTemPermissao_ErroDePermissao()
-        // {
-        //     // logarUsuarioSemPermissao() perfil basico ou customizável?
-        //     var usuarioId = "";
-        //     var novoPerfilId = "";
-        //     var ex = await Assert.ThrowsAsync<Exception>(async () 
-        //         => await controller.EditarPerfilUsuario(usuarioId, novoPerfilId));
-            
-        //     Assert.Equal("Sem permissão", ex.Message);
-        // }
+            //         var usuarioId = "";
+            // var novoPerfilId = "";
+            // var ex = await Assert.ThrowsAsync<Exception>(async () 
+            //     => await controller.EditarPerfilUsuario(usuarioId, novoPerfilId));
+
+            // Assert.Equal("Sem permissão", ex.Message);
+
 
         // [Fact]
         // public async Task EditarPerfilUsuario_QuandoTemPermissao_NovoPerfilEhAtribuidoAoUsuario()
@@ -344,27 +371,6 @@ namespace test
         //     Assert.Equal(novoPerfilId, usuarioEditado.PerfilId.ToString());
         // }
 
-
-        // [Fact]
-        // public async void ObterUsuariosAsync_QuandoFiltradoPorPerfilId_RetornarUsuariosDePerfilId()
-        // {
-        //     var filtro = new PesquisaUsuarioFiltro
-        //     {
-        //         ItemsPorPagina = 100,
-        //         PerfilId = Guid.Supervisor,
-        //     };
-        //     var u = dbContext.Usuario.ToList();
-        //     u[0].UfLotacao = UF.DF;
-        //     u[1].UfLotacao = UF.DF;
-        //     u[2].UfLotacao = UF.DF;
-        //     u[3].UfLotacao = UF.AM;
-        //     u[4].UfLotacao = UF.AM;
-        //     dbContext.SaveChanges();
-
-        //     var lista = await controller.ListarAsync(filtro);
-        //     Assert.Equal(UF.DF, lista.Items[0].UfLotacao);  
-        //     Assert.Equal(3, lista.Items.Count);
-        // }
 
         public new void Dispose()
         {
