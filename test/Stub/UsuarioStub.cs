@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace test.Stub
 {
-    public class TesteUsuarioStub : UsuarioDTO
+    public class TesteUsuarioStub : UsuarioDTONovo
     {
         public int Id { get; set; }
         public string SenhaHash { get; set; }
@@ -21,38 +21,35 @@ namespace test.Stub
                 yield return new TesteUsuarioStub()
                 {
                     Nome = "teste " + Random.Shared.Next().ToString(),
-                    CNPJ = string.Join("", Enumerable.Range(0, 11).Select(_ => Random.Shared.Next() % 10)),
                     Email = $"teste{Random.Shared.Next()}@email.com",
                     Senha = $"teste_senha_{Random.Shared.Next()}",
                 };
             }
         }
 
-        public UsuarioDTO RetornarUsuarioDnitDTO()
+        public UsuarioDTONovo RetornarUsuarioDnitDTO()
         {
-            return new UsuarioDTO
+            return new UsuarioDTONovo
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
-                UfLotacao = UF.DF
             };
         }
 
-        public UsuarioDTO RetornarUsuarioTerceiroDTO()
+        public UsuarioDTONovo RetornarUsuarioTerceiroDTO()
         {
-            return new UsuarioDTO
+            return new UsuarioDTONovo
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
-                CNPJ = "12345678901234"
             };
         }
 
-        public UsuarioDnit RetornarUsuarioDnit()
+        public UsuarioDnitNovo RetornarUsuarioDnit()
         {
-            return new UsuarioDnit
+            return new UsuarioDnitNovo
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
@@ -83,9 +80,9 @@ namespace test.Stub
             };
         }
 
-        public UsuarioTerceiro RetornarUsuarioTerceiro()
+        public UsuarioTerceiroNovo RetornarUsuarioTerceiro()
         {
-            return new UsuarioTerceiro
+            return new UsuarioTerceiroNovo
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",

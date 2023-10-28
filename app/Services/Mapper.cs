@@ -31,18 +31,26 @@ namespace app.Services.Mapper
             CreateMap<Usuario, UsuarioModel>()
                 .ForMember(dto => dto.Cnpj, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
 
+            CreateMap<Usuario, UsuarioModelNovo>()
+                .ForMember(u => u.Cnpj, opt => opt.Ignore());
+            
+            CreateMap<UsuarioDTO, UsuarioTerceiroNovo>();
+
+            CreateMap<UsuarioDTONovo, UsuarioTerceiroNovo>()
+                .ForMember(u => u.CNPJ, opt => opt.Ignore());
+
+            CreateMap<UsuarioDTONovo, UsuarioDnitNovo>()
+                .ForMember(u => u.UfLotacao, opt => opt.Ignore());
+
+            CreateMap<UsuarioDTO, UsuarioDnit>()
+                .ForMember(usuarioDnit => usuarioDnit.Id, opt => opt.Ignore());
+                
             CreateMap<UF, UfModel>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(uf => (int)uf))
                 .ForMember(model => model.Sigla, opt => opt.MapFrom(uf => uf.ToString()))
                 .ForMember(model => model.Nome, opt => opt.MapFrom(uf => uf.AsString(EnumFormat.Description)));
 
-            CreateMap<UsuarioDTO, UsuarioDnit>()
-                .ForMember(usuarioDnit => usuarioDnit.Id, opt => opt.Ignore());
-
             CreateMap<RedefinicaoSenhaDTO, RedefinicaoSenhaModel>();
-
-            CreateMap<UsuarioDTO, UsuarioTerceiro>()
-                .ForMember(usuarioTerceiro => usuarioTerceiro.Id, opt => opt.Ignore());
 
             CreateMap<PerfilDTO, Perfil>()
                 .ForMember(p => p.Id, opt => opt.Ignore())
@@ -52,9 +60,6 @@ namespace app.Services.Mapper
                 .ForMember(p => p.Tipo, opt => opt.Ignore())
                 .ForMember(p => p.PermissoesSessao, opt => opt.Ignore());
             
-            CreateMap<Usuario, UsuarioModelNovo>()
-                .ForMember(u => u.Cnpj, opt => opt.Ignore());
-
             CreateMap<Perfil, PerfilModel>()
                 .ForMember(model => model.Permissoes, opt => opt.MapFrom
                     (

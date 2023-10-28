@@ -26,7 +26,7 @@ namespace app.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Logar([FromBody] UsuarioDTO usuarioDTO)
+        public async Task<IActionResult> Logar([FromBody] UsuarioDTONovo usuarioDTO)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace app.Controllers
 
 
         [HttpPost("cadastrarUsuarioDnit")]
-        public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
+        public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTONovo usuarioDTO)
         {
             try
             {
@@ -71,14 +71,14 @@ namespace app.Controllers
             {
                 return Conflict("Usuário já cadastrado.");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }
         }
 
         [HttpPost("cadastrarUsuarioTerceiro")]
-        public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTO usuarioDTO)
+        public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTONovo usuarioDTO)
         {
             try
             {
@@ -97,7 +97,7 @@ namespace app.Controllers
         }
 
         [HttpPut("recuperarSenha")]
-        public async Task<IActionResult> RecuperarSenhaAsync([FromBody] UsuarioDTO usuarioDto)
+        public async Task<IActionResult> RecuperarSenhaAsync([FromBody] UsuarioDTONovo usuarioDto)
         {
             try
             {
@@ -125,6 +125,7 @@ namespace app.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet()]
         public async Task<ListaPaginada<UsuarioModelNovo>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
         {
@@ -132,6 +133,7 @@ namespace app.Controllers
             return await usuarioService.ObterUsuariosAsync(filtro);
         }
 
+        [Authorize]
         [HttpPatch("{id}/perfil")]
         public async Task EditarPerfilUsuario([FromRoute] int id, [FromBody] EditarPerfilUsuarioDTO dto)
         {

@@ -55,11 +55,11 @@ namespace test
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
             string senhaAntesDaEncriptografia = usuarioDNIT.Senha;
-            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<UsuarioDnitNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioDNIT);
 
             await usuarioServiceMock.CadastrarUsuarioDnit(usuarioStub.RetornarUsuarioDnitDTO());
 
-            usuarioRepositorio.Verify(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>()), Times.Once);
+            usuarioRepositorio.Verify(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnitNovo>()), Times.Once);
 
             Assert.NotEqual(senhaAntesDaEncriptografia, usuarioDNIT.Senha);
         }
@@ -72,11 +72,11 @@ namespace test
 
             var senhaAntesDaEncriptografia = usuarioTerceiro.Senha;
 
-            mapper.Setup(x => x.Map<UsuarioTerceiro>(It.IsAny<UsuarioDTO>())).Returns(usuarioTerceiro);
+            mapper.Setup(x => x.Map<UsuarioTerceiroNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioTerceiro);
 
             usuarioServiceMock.CadastrarUsuarioTerceiro(usuarioStub.RetornarUsuarioTerceiroDTO());
 
-            usuarioRepositorio.Verify(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>()), Times.Once);
+            usuarioRepositorio.Verify(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiroNovo>()), Times.Once);
 
             Assert.NotEqual(senhaAntesDaEncriptografia, usuarioTerceiro.Senha);
         }
@@ -87,8 +87,8 @@ namespace test
             var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
-            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
-            usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnit>())).Throws(new InvalidOperationException("Email já cadastrado."));
+            mapper.Setup(x => x.Map<UsuarioDnitNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioDNIT);
+            usuarioRepositorio.Setup(x => x.CadastrarUsuarioDnit(It.IsAny<UsuarioDnitNovo>())).Throws(new InvalidOperationException("Email já cadastrado."));
 
             var cadastrarUsuario = async () => await usuarioServiceMock.CadastrarUsuarioDnit(usuarioStub.RetornarUsuarioDnitDTO());
 
@@ -101,8 +101,8 @@ namespace test
             var usuarioStub = new UsuarioStub();
             var usuarioTerceiro = usuarioStub.RetornarUsuarioTerceiro();
 
-            mapper.Setup(x => x.Map<UsuarioTerceiro>(It.IsAny<UsuarioDTO>())).Returns(usuarioTerceiro);
-            usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiro>())).Throws(new InvalidOperationException("Email já cadastrado."));
+            mapper.Setup(x => x.Map<UsuarioTerceiroNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioTerceiro);
+            usuarioRepositorio.Setup(x => x.CadastrarUsuarioTerceiro(It.IsAny<UsuarioTerceiroNovo>())).Throws(new InvalidOperationException("Email já cadastrado."));
 
             var cadastrarUsuario = () => usuarioServiceMock.CadastrarUsuarioTerceiro(usuarioStub.RetornarUsuarioTerceiroDTO());
 
@@ -151,7 +151,7 @@ namespace test
         }
 
         [Fact]
-        public void RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
+        public async void RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
         {
             var usuarioStub = new UsuarioStub();
             var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -159,12 +159,12 @@ namespace test
 
             var usuarioRetorno = usuarioStub.RetornarUsuarioDnitBanco();
 
-            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<UsuarioDnitNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioRetorno);
 
-            usuarioServiceMock.RecuperarSenha(usuarioDnitDTO);
+            await usuarioServiceMock.RecuperarSenha(usuarioDnitDTO);
 
             emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }
@@ -176,7 +176,7 @@ namespace test
             var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
-            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<UsuarioDnitNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
@@ -194,7 +194,7 @@ namespace test
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
-            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<UsuarioDnitNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioDNIT);
             mapper.Setup(x => x.Map<RedefinicaoSenhaModel>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
@@ -217,7 +217,7 @@ namespace test
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
-            mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
+            mapper.Setup(x => x.Map<UsuarioDnitNovo>(It.IsAny<UsuarioDTONovo>())).Returns(usuarioDNIT);
             mapper.Setup(x => x.Map<RedefinicaoSenhaModel>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));

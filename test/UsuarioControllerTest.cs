@@ -34,7 +34,7 @@ namespace test
             dbContext.PopulaUsuarios(5);
         }
 
-        public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuarioLocal(UsuarioDTO usuario)
+        public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuarioLocal(UsuarioDTONovo usuario)
         {
             var resultado = await controller.Logar(usuario);
 
@@ -150,7 +150,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             var excecao = new Npgsql.PostgresException("", "", "", "23505");
 
-            usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
+            usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTONovo>())).Throws(excecao);
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
@@ -187,7 +187,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             var excecao = new Npgsql.PostgresException("", "", "", "23505");
 
-            usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTO>())).Throws(excecao);
+            usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTONovo>())).Throws(excecao);
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
@@ -206,7 +206,7 @@ namespace test
             Mock<IUsuarioService> usuarioServiceMock = new();
             var excecao = new Exception("");
 
-            usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTO>())).Throws(excecao);
+            usuarioServiceMock.Setup(service => service.CadastrarUsuarioTerceiro(It.IsAny<UsuarioDTONovo>())).Throws(excecao);
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
@@ -241,7 +241,7 @@ namespace test
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
-            usuarioServiceMock.Setup(service => service.RecuperarSenha(It.IsAny<UsuarioDTO>())).Throws(new KeyNotFoundException());
+            usuarioServiceMock.Setup(service => service.RecuperarSenha(It.IsAny<UsuarioDTONovo>())).Throws(new KeyNotFoundException());
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 

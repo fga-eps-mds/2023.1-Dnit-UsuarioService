@@ -46,9 +46,9 @@ namespace app.Services
             this.authConfig = authConfig.Value;
         }
 
-        public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
+        public async Task CadastrarUsuarioDnit(UsuarioDTONovo usuarioDTO)
         {
-            var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
+            var usuario = mapper.Map<UsuarioDnitNovo>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
@@ -64,12 +64,10 @@ namespace app.Services
             return BCryptNet.HashPassword(senha, salt);
         }
 
-        public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO)
+        public void CadastrarUsuarioTerceiro(UsuarioDTONovo usuarioDTO)
         {
-            var usuario = mapper.Map<UsuarioTerceiro>(usuarioDTO);
-
+            var usuario = mapper.Map<UsuarioTerceiroNovo>(usuarioDTO);
             usuario.Senha = EncriptarSenha(usuario.Senha);
-
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
@@ -93,7 +91,7 @@ namespace app.Services
             return usuario;
         }
 
-        public bool ValidaLogin(UsuarioDTO usuarioDTO)
+        public bool ValidaLogin(UsuarioDTONovo usuarioDTO)
         {
             Usuario? usuarioBanco = Obter(usuarioDTO.Email);
 
@@ -124,9 +122,9 @@ namespace app.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task RecuperarSenha(UsuarioDTO usuarioDTO)
+        public async Task RecuperarSenha(UsuarioDTONovo usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
+            var usuarioEntrada = mapper.Map<UsuarioDnitNovo>(usuarioDTO);
 
             Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
@@ -221,12 +219,5 @@ namespace app.Services
             usuario.PerfilId = permissao.Id;
             dbContext.SaveChanges();
         }
-
-        /*public async Task CadastrarMunicipioAsync(string nomeMunicipio)
-        
-
-        
-        */
-    
     }
 }

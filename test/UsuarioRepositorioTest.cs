@@ -14,15 +14,13 @@ namespace test
 {
     public class UsuarioRepositorioTest : TestBed<Base>, IDisposable
     {
-        IUsuarioRepositorio repositorio;
-        AppDbContext dbContext;
-        IMapper mapper;
+        readonly IUsuarioRepositorio repositorio;
+        readonly AppDbContext dbContext;
 
         public UsuarioRepositorioTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
             dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
             repositorio = fixture.GetService<IUsuarioRepositorio>(testOutputHelper)!;
-            mapper = fixture.GetService<IMapper>(testOutputHelper)!;
         }
 
         [Fact]
@@ -31,7 +29,7 @@ namespace test
             var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
-            repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario("usuarioteste@gmail.com");
@@ -47,16 +45,15 @@ namespace test
             var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
-            repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             await dbContext.SaveChangesAsync();
 
-            var usuarioObtido = dbContext.Usuario.Where(u => u.Email == usuarioDNIT.Email).FirstOrDefault();
-            var usuarioObtidoDTO = mapper.Map<UsuarioDTO>(usuarioObtido);
+            var usuarioObtido = dbContext.Usuario.Where(u => u.Email == usuarioDNIT.Email).FirstOrDefault()!;
 
-            Assert.Equal(usuarioDNIT.Email, usuarioObtidoDTO.Email);
-            Assert.Equal(usuarioDNIT.Senha, usuarioObtidoDTO.Senha);
-            Assert.Equal(usuarioDNIT.Nome, usuarioObtidoDTO.Nome);
-            Assert.Equal(usuarioDNIT.UfLotacao, usuarioObtidoDTO.UfLotacao);
+            Assert.Equal(usuarioDNIT.Email, usuarioObtido.Email);
+            Assert.Equal(usuarioDNIT.Senha, usuarioObtido.Senha);
+            Assert.Equal(usuarioDNIT.Nome, usuarioObtido.Nome);
+            Assert.Equal(usuarioDNIT.UfLotacao, usuarioObtido.UfLotacao);
         }
 
         [Fact]
@@ -65,7 +62,7 @@ namespace test
             var usuarioStub = new UsuarioStub();
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
 
-            repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             await dbContext.SaveChangesAsync();
 
             string novaSenha = "NovaSenha";
@@ -86,7 +83,7 @@ namespace test
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
-            repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
@@ -107,7 +104,7 @@ namespace test
             var usuarioDNIT = usuarioStub.RetornarUsuarioDnit();
             var redefinicaoSenha = redefinicaoSenhaStub.ObterRedefinicaoSenha();
 
-            repositorio.CadastrarUsuarioDnit(usuarioDNIT);
+            await repositorio.CadastrarUsuarioDnit(usuarioDNIT);
             await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario(usuarioDNIT.Email);
@@ -139,7 +136,7 @@ namespace test
             dbContext.Empresa.Add(empresa);
             await dbContext.SaveChangesAsync();
 
-            repositorio.CadastrarUsuarioTerceiro(usuarioTerceiro);
+            await repositorio.CadastrarUsuarioTerceiro(usuarioTerceiro);
             await dbContext.SaveChangesAsync();
 
             var usuarioObtido = repositorio.ObterUsuario(usuarioTerceiro.Email)!;

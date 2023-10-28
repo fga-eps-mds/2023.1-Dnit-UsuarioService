@@ -45,7 +45,7 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task CadastrarUsuarioDnit(UsuarioDnit usuario)
+        public async Task CadastrarUsuarioDnit(UsuarioDnitNovo usuario)
         {
 
             var novoUsuario = new Usuario
@@ -100,7 +100,7 @@ namespace app.Repositorios
             dbContext.RedefinicaoSenha.Add(newRs);
         }
 
-        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
+        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiroNovo usuarioTerceiro)
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 

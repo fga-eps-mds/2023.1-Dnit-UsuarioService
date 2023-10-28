@@ -4,4 +4,9 @@ namespace api.Usuarios
     {
         public UF UfLotacao { get; set; }
     }
+
+    public class UsuarioDnitNovo : UsuarioDTONovo
+    {
+        public UF UfLotacao { get; set; }
+    }
 }
