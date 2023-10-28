@@ -126,6 +126,7 @@ namespace app.Repositorios
         public async Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var query = dbContext.Usuario
+                .Include(u => u.Municipio)
                 .Include(u => u.Perfil)
                 .AsQueryable();
 
@@ -138,8 +139,8 @@ namespace app.Repositorios
             if (filtro.UfLotacao != null)
                 query = query.Where(u => u.UfLotacao == filtro.UfLotacao);
 
-            //if (filtro.Municipio != null)
-            //  query = query.Where(u => usuario.Municipio == filtro.Municipio); talvez surja um problema em relação a conversão do tipo Guid para uma String
+            if (filtro.MunicipioId != null)
+                query = query.Where(u => u.MunicipioId == filtro.MunicipioId);
 
             var total = await query.CountAsync();
             var items = await query

@@ -330,6 +330,31 @@ namespace test
         }
 
         [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltradoPorMunicipio_RetornaUsuariosDoMunicipioDado()
+        {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
+            var m = new Municipio { Id = 1, Nome = "Municipio", Uf = UF.DF };
+            dbContext.Municipio.Add(m);
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                MunicipioId = m.Id,
+            };
+            var u = dbContext.Usuario.ToList();
+            u[0].MunicipioId = 1;
+            u[1].MunicipioId = 1;
+            u[2].MunicipioId = 2;
+            u[3].MunicipioId = 2;
+            u[4].MunicipioId = 2;
+            dbContext.SaveChanges();
+
+            var lista = await controller.ListarAsync(filtro);
+
+            Assert.Equal(1, lista.Items[0].Municipio!.Id);
+            Assert.Equal(1, lista.Items[1].Municipio!.Id);
+            Assert.Equal(2, lista.Items.Count);
+        }
+
+        [Fact]
         public async void ObterUsuariosAsync_QuandoFiltradoPorPerfil_RetornaUsuariosComPerfilDado()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });

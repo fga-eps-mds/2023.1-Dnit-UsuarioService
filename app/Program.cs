@@ -68,6 +68,7 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<AppDbContext>();
 
     dbContext.Database.Migrate();
+    dbContext.Popula();
 }
 
 app.Run();

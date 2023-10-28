@@ -208,12 +208,12 @@ namespace app.Services
             return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
 
-        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId) //Implementar método para conseguir editar o PerfilId do usuário
+        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId)
         {
-            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId) 
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId)
                 ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
 
-            var permissao = await perfilRepositorio.ObterPerfilPorIdAsync(Guid.Parse(novoPerfilId)) 
+            var permissao = await perfilRepositorio.ObterPerfilPorIdAsync(Guid.Parse(novoPerfilId))
                 ?? throw new ApiException(ErrorCodes.PermissaoNaoEncontrada);
 
             usuario.PerfilId = permissao.Id;

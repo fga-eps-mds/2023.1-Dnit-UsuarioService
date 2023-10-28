@@ -6,6 +6,7 @@ using api;
 using EnumsNET;
 using api.Perfis;
 using api.Permissoes;
+using api.Municipios;
 
 namespace app.Services.Mapper
 {
@@ -13,6 +14,8 @@ namespace app.Services.Mapper
     {
         public AutoMapperConfig()
         {
+            CreateMap<Municipio, MunicipioModel>();
+
             CreateMap<Usuario, UsuarioModel>()
                 .ForMember(u => u.Cnpj, opt => opt.Ignore());
             
