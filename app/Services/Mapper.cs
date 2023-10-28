@@ -13,13 +13,13 @@ namespace app.Services.Mapper
     {
         public AutoMapperConfig()
         {
-            CreateMap<Usuario, UsuarioModelNovo>()
+            CreateMap<Usuario, UsuarioModel>()
                 .ForMember(u => u.Cnpj, opt => opt.Ignore());
             
-            CreateMap<UsuarioDTONovo, UsuarioTerceiroNovo>()
+            CreateMap<UsuarioDTO, UsuarioTerceiro>()
                 .ForMember(u => u.CNPJ, opt => opt.Ignore());
 
-            CreateMap<UsuarioDTONovo, UsuarioDnitNovo>()
+            CreateMap<UsuarioDTO, UsuarioDnit>()
                 .ForMember(u => u.UfLotacao, opt => opt.Ignore());
 
             CreateMap<UF, UfModel>()

@@ -7,14 +7,14 @@ namespace app.Services.Interfaces
     public interface IUsuarioService
     {
         Task<LoginModel> AutenticarUsuarioAsync(string email, string senha);
-        bool ValidaLogin(UsuarioDTONovo usuarioDTO);
+        bool ValidaLogin(UsuarioDTO usuarioDTO);
         Task TrocaSenha(RedefinicaoSenhaDTO redefinirSenhaDto);
-        Task RecuperarSenha(UsuarioDTONovo usuarioDto);
-        Task CadastrarUsuarioDnit(UsuarioDTONovo usuarioDTO);
-        void CadastrarUsuarioTerceiro(UsuarioDTONovo usuarioDTO);
+        Task RecuperarSenha(UsuarioDTO usuarioDto);
+        Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO);
+        void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO);
         Task<LoginModel> AtualizarTokenAsync(AtualizarTokenDto atualizarTokenDto);
         Task<List<Permissao>> ListarPermissoesAsync(int userId);
-        Task<ListaPaginada<UsuarioModelNovo>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
+        Task<ListaPaginada<UsuarioModel>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
         Task EditarUsuarioPerfil(int usuarioId ,string novoPerfilId);
     }
 }

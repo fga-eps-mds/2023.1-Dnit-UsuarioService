@@ -46,9 +46,9 @@ namespace app.Services
             this.authConfig = authConfig.Value;
         }
 
-        public async Task CadastrarUsuarioDnit(UsuarioDTONovo usuarioDTO)
+        public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
-            var usuario = mapper.Map<UsuarioDnitNovo>(usuarioDTO);
+            var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
 
@@ -64,9 +64,9 @@ namespace app.Services
             return BCryptNet.HashPassword(senha, salt);
         }
 
-        public void CadastrarUsuarioTerceiro(UsuarioDTONovo usuarioDTO)
+        public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO)
         {
-            var usuario = mapper.Map<UsuarioTerceiroNovo>(usuarioDTO);
+            var usuario = mapper.Map<UsuarioTerceiro>(usuarioDTO);
             usuario.Senha = EncriptarSenha(usuario.Senha);
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
@@ -91,7 +91,7 @@ namespace app.Services
             return usuario;
         }
 
-        public bool ValidaLogin(UsuarioDTONovo usuarioDTO)
+        public bool ValidaLogin(UsuarioDTO usuarioDTO)
         {
             Usuario? usuarioBanco = Obter(usuarioDTO.Email);
 
@@ -122,9 +122,9 @@ namespace app.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task RecuperarSenha(UsuarioDTONovo usuarioDTO)
+        public async Task RecuperarSenha(UsuarioDTO usuarioDTO)
         {
-            var usuarioEntrada = mapper.Map<UsuarioDnitNovo>(usuarioDTO);
+            var usuarioEntrada = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             Usuario usuarioBanco = Obter(usuarioEntrada.Email);
 
@@ -201,11 +201,11 @@ namespace app.Services
             return usuario!.Perfil?.Permissoes?.ToList() ?? new();
         }
 
-        public async Task<ListaPaginada<UsuarioModelNovo>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
+        public async Task<ListaPaginada<UsuarioModel>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
-            var modelos = mapper.Map<List<UsuarioModelNovo>>(usuarios.Items);
-            return new ListaPaginada<UsuarioModelNovo>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
+            var modelos = mapper.Map<List<UsuarioModel>>(usuarios.Items);
+            return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
 
         public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId) //Implementar método para conseguir editar o PerfilId do usuário

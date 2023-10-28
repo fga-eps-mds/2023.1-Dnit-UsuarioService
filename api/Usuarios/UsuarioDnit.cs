@@ -1,6 +1,6 @@
 namespace api.Usuarios
 {
-    public class UsuarioDnitNovo : UsuarioDTONovo
+    public class UsuarioDnit : UsuarioDTO
     {
         public UF UfLotacao { get; set; }
     }

@@ -44,7 +44,7 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync();
         }
 
-        public async Task CadastrarUsuarioDnit(UsuarioDnitNovo usuario)
+        public async Task CadastrarUsuarioDnit(UsuarioDnit usuario)
         {
 
             var novoUsuario = new Usuario
@@ -59,7 +59,7 @@ namespace app.Repositorios
             dbContext.Add(novoUsuario);
         }
 
-        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiroNovo usuarioTerceiro)
+        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 
@@ -77,7 +77,7 @@ namespace app.Repositorios
             dbContext.Usuario.Add(novoUsuarioTerceiro);
         }
 
-        public UsuarioModelNovo? TrocarSenha(string email, string senha)
+        public UsuarioModel? TrocarSenha(string email, string senha)
         {
             var usuario = dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
 
@@ -86,7 +86,7 @@ namespace app.Repositorios
                 usuario.Senha = senha;
             }
 
-            return mapper.Map<UsuarioModelNovo>(usuario);
+            return mapper.Map<UsuarioModel>(usuario);
         }
 
         public string? ObterEmailRedefinicaoSenha(string uuid)

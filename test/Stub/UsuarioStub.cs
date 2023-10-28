@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace test.Stub
 {
-    public class TesteUsuarioStub : UsuarioDTONovo
+    public class TesteUsuarioStub : UsuarioDTO
     {
         public int Id { get; set; }
         public string SenhaHash { get; set; }
@@ -27,9 +27,9 @@ namespace test.Stub
             }
         }
 
-        public UsuarioDTONovo RetornarUsuarioDnitDTO()
+        public UsuarioDTO RetornarUsuarioDnitDTO()
         {
-            return new UsuarioDTONovo
+            return new UsuarioDTO
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
@@ -37,9 +37,9 @@ namespace test.Stub
             };
         }
 
-        public UsuarioDTONovo RetornarUsuarioTerceiroDTO()
+        public UsuarioDTO RetornarUsuarioTerceiroDTO()
         {
-            return new UsuarioDTONovo
+            return new UsuarioDTO
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
@@ -47,9 +47,9 @@ namespace test.Stub
             };
         }
 
-        public UsuarioDnitNovo RetornarUsuarioDnit()
+        public UsuarioDnit RetornarUsuarioDnit()
         {
-            return new UsuarioDnitNovo
+            return new UsuarioDnit
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
@@ -69,9 +69,9 @@ namespace test.Stub
             };
         }
 
-        public UsuarioTerceiroNovo RetornarUsuarioTerceiro()
+        public UsuarioTerceiro RetornarUsuarioTerceiro()
         {
-            return new UsuarioTerceiroNovo
+            return new UsuarioTerceiro
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",

@@ -26,7 +26,7 @@ namespace app.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Logar([FromBody] UsuarioDTONovo usuarioDTO)
+        public async Task<IActionResult> Logar([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace app.Controllers
 
 
         [HttpPost("cadastrarUsuarioDnit")]
-        public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTONovo usuarioDTO)
+        public async Task<IActionResult> CadastrarUsuarioDnit([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
@@ -77,7 +77,7 @@ namespace app.Controllers
         }
 
         [HttpPost("cadastrarUsuarioTerceiro")]
-        public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTONovo usuarioDTO)
+        public IActionResult CadastrarUsuarioTerceiro([FromBody] UsuarioDTO usuarioDTO)
         {
             try
             {
@@ -96,7 +96,7 @@ namespace app.Controllers
         }
 
         [HttpPut("recuperarSenha")]
-        public async Task<IActionResult> RecuperarSenhaAsync([FromBody] UsuarioDTONovo usuarioDto)
+        public async Task<IActionResult> RecuperarSenhaAsync([FromBody] UsuarioDTO usuarioDto)
         {
             try
             {
@@ -126,7 +126,7 @@ namespace app.Controllers
 
         [Authorize]
         [HttpGet()]
-        public async Task<ListaPaginada<UsuarioModelNovo>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
+        public async Task<ListaPaginada<UsuarioModel>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
         {
             authService.Require(Usuario, Permissao.UsuarioVisualizar);
             return await usuarioService.ObterUsuariosAsync(filtro);
