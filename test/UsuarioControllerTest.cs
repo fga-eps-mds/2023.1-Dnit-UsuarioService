@@ -387,7 +387,7 @@ namespace test
         [Fact]
         public async Task EditarPerfilUsuario_QuandoUsuarioNaoExiste_RetornaNaoEncontrado()
         {
-            AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioPerfilEditar });
             var dto = new EditarPerfilUsuarioDTO { NovoPerfilId = "id" };
             var ex = await Assert.ThrowsAsync<ApiException>(async ()
                 => await controller.EditarPerfilUsuario(-1, dto));
@@ -398,7 +398,7 @@ namespace test
         [Fact]
         public async Task EditarPerfilUsuario_QuandoPerfilNaoExiste_RetornaPerfilNaoEncontrado()
         {
-            AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioPerfilEditar });
             var usuarioId = dbContext.Usuario.First().Id;
             var dto = new EditarPerfilUsuarioDTO { NovoPerfilId = Guid.NewGuid().ToString() };
             var excecao = await Assert.ThrowsAsync<ApiException>(async ()
@@ -410,7 +410,7 @@ namespace test
         [Fact]
         public async Task EditarPerfilUsuario_QuandoTemPermissao_DeveAlterarPerfilDoUsuario()
         {
-            AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioPerfilEditar });
             var novoPerfilParaUsuario = new Perfil
             {
                 Id = Guid.NewGuid(),

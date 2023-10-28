@@ -136,7 +136,7 @@ namespace app.Controllers
         [HttpPatch("{id}/perfil")]
         public async Task EditarPerfilUsuario([FromRoute] int id, [FromBody] EditarPerfilUsuarioDTO dto)
         {
-            authService.Require(Usuario, Permissao.PerfilEditar);
+            authService.Require(Usuario, Permissao.UsuarioPerfilEditar);
             await usuarioService.EditarUsuarioPerfil(id, dto.NovoPerfilId);
         }
     }

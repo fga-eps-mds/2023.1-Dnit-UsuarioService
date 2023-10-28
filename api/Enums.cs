@@ -109,6 +109,8 @@ namespace api
         UsuarioRemover = 8002,
         [Description("Visualizar Usuário")]
         UsuarioVisualizar = 8003,
+        [Description("Editar Perfil Usuário")]
+        UsuarioPerfilEditar = 8004,
     }
 
     public enum ErrorCodes
