@@ -287,7 +287,7 @@ namespace test
         [Fact]
         public async void ObterUsuariosAsync_QuandoNãoTemPermissaoVisualizar_RetornaErroDePermissao()
         {
-            var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async () => 
+            var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async () =>
                 await controller.ListarAsync(new PesquisaUsuarioFiltro()));
 
             Assert.Contains("não tem a permissão: Visualizar Usuário", ex.Message);
@@ -352,8 +352,9 @@ namespace test
         public async Task EditarPerfilUsuario_QuandoNaoTemPermissao_ErroDePermissao()
         {
             AutenticarUsuario(controller, permissoes: new());
+            var dto = new EditarPerfilUsuarioDTO { NovoPerfilId = "id" };
             var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async ()
-                => await controller.EditarPerfilUsuario(1, "id"));
+                => await controller.EditarPerfilUsuario(1, dto));
 
             Assert.Contains("não tem a permissão: Editar Perfil", ex.Message);
         }
@@ -362,8 +363,9 @@ namespace test
         public async Task EditarPerfilUsuario_QuandoUsuarioNaoExiste_RetornaNaoEncontrado()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
+            var dto = new EditarPerfilUsuarioDTO { NovoPerfilId = "id" };
             var ex = await Assert.ThrowsAsync<ApiException>(async ()
-                => await controller.EditarPerfilUsuario(-1, Guid.NewGuid().ToString()));
+                => await controller.EditarPerfilUsuario(-1, dto));
 
             Assert.Equal(ErrorCodes.UsuarioNaoEncontrado, ex.Error.Code);
         }
@@ -373,9 +375,9 @@ namespace test
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.PerfilEditar });
             var usuarioId = dbContext.Usuario.First().Id;
-
+            var dto = new EditarPerfilUsuarioDTO { NovoPerfilId = Guid.NewGuid().ToString() };
             var excecao = await Assert.ThrowsAsync<ApiException>(async ()
-                => await controller.EditarPerfilUsuario(usuarioId, Guid.NewGuid().ToString()));
+                => await controller.EditarPerfilUsuario(usuarioId, dto));
 
             Assert.Equal(ErrorCodes.PermissaoNaoEncontrada, excecao.Error.Code);
         }
@@ -394,8 +396,9 @@ namespace test
             dbContext.Perfis.Add(novoPerfilParaUsuario);
             dbContext.SaveChanges();
             var usuario = dbContext.Usuario.First();
+            var dto = new EditarPerfilUsuarioDTO { NovoPerfilId = novoPerfilParaUsuario.Id.ToString() };
 
-            await controller.EditarPerfilUsuario(usuario.Id, novoPerfilParaUsuario.Id.ToString());
+            await controller.EditarPerfilUsuario(usuario.Id, dto);
 
             var usuarioEditado = dbContext.Usuario.Find(usuario.Id)!;
 

@@ -31,6 +31,5 @@ namespace app.Entidades
 
         public string? TokenAtualizacao { get; set; }
         public DateTime? TokenAtualizacaoExpiracao { get; set; }
-        // public Guid? Municipio { get; set; }
     }
 }
