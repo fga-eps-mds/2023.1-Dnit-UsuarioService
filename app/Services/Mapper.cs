@@ -13,38 +13,15 @@ namespace app.Services.Mapper
     {
         public AutoMapperConfig()
         {
-            CreateMap<Usuario, UsuarioDTO>()
-                .ForMember(dto => dto.CNPJ, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
-
-            CreateMap<UsuarioDnit, Usuario>()
-                .ForMember(u => u.RedefinicaoSenha, opt => opt.Ignore())
-                .ForMember(u => u.Empresas, opt => opt.Ignore())
-                .ForMember(u => u.Perfil, opt => opt.Ignore())
-                .ForMember(u => u.PerfilId, opt => opt.Ignore())
-                .ForMember(u => u.TokenAtualizacao, opt => opt.Ignore())
-                .ForMember(u => u.TokenAtualizacaoExpiracao, opt => opt.Ignore());
-
-            CreateMap<UsuarioModel, UsuarioDTO>()
-                .ForMember(dto => dto.CNPJ, opt => opt.Ignore())
-                .ForMember(dto => dto.UfLotacao, opt => opt.Ignore());
-                
-            CreateMap<Usuario, UsuarioModel>()
-                .ForMember(dto => dto.Cnpj, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
-
             CreateMap<Usuario, UsuarioModelNovo>()
                 .ForMember(u => u.Cnpj, opt => opt.Ignore());
             
-            CreateMap<UsuarioDTO, UsuarioTerceiroNovo>();
-
             CreateMap<UsuarioDTONovo, UsuarioTerceiroNovo>()
                 .ForMember(u => u.CNPJ, opt => opt.Ignore());
 
             CreateMap<UsuarioDTONovo, UsuarioDnitNovo>()
                 .ForMember(u => u.UfLotacao, opt => opt.Ignore());
 
-            CreateMap<UsuarioDTO, UsuarioDnit>()
-                .ForMember(usuarioDnit => usuarioDnit.Id, opt => opt.Ignore());
-                
             CreateMap<UF, UfModel>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(uf => (int)uf))
                 .ForMember(model => model.Sigla, opt => opt.MapFrom(uf => uf.ToString()))

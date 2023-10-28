@@ -69,17 +69,6 @@ namespace test.Stub
             };
         }
 
-        public UsuarioDTO RetornarUsuarioSenhaErrada()
-        {
-            return new UsuarioDTO
-            {
-                Email = "usuarioteste@gmail.com",
-                Senha = "senha1234",
-                Nome = "Usuario Dnit",
-                UfLotacao = UF.DF
-            };
-        }
-
         public UsuarioTerceiroNovo RetornarUsuarioTerceiro()
         {
             return new UsuarioTerceiroNovo

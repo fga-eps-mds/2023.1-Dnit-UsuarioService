@@ -3,7 +3,6 @@ using AutoMapper;
 
 using app.Entidades;
 using api.Usuarios;
-using api;
 using app.Repositorios.Interfaces;
 using api;
 
@@ -60,7 +59,25 @@ namespace app.Repositorios
             dbContext.Add(novoUsuario);
         }
 
-        public UsuarioModel? TrocarSenha(string email, string senha)
+        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiroNovo usuarioTerceiro)
+        {
+            var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
+
+            List<Empresa> empresas = new() { empresa };
+
+            var novoUsuarioTerceiro = new Usuario
+            {
+                Nome = usuarioTerceiro.Nome,
+                Email = usuarioTerceiro.Email,
+                Senha = usuarioTerceiro.Senha,
+                Empresas = empresas,
+                Perfil = await RecuperaPerfilBasicoAsync()
+            };
+
+            dbContext.Usuario.Add(novoUsuarioTerceiro);
+        }
+
+        public UsuarioModelNovo? TrocarSenha(string email, string senha)
         {
             var usuario = dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
 
@@ -69,7 +86,7 @@ namespace app.Repositorios
                 usuario.Senha = senha;
             }
 
-            return mapper.Map<UsuarioModel>(usuario);
+            return mapper.Map<UsuarioModelNovo>(usuario);
         }
 
         public string? ObterEmailRedefinicaoSenha(string uuid)
@@ -98,24 +115,6 @@ namespace app.Repositorios
             };
 
             dbContext.RedefinicaoSenha.Add(newRs);
-        }
-
-        public async Task CadastrarUsuarioTerceiro(UsuarioTerceiroNovo usuarioTerceiro)
-        {
-            var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
-
-            List<Empresa> empresas = new List<Empresa> { empresa };
-
-            var novoUsuarioTerceiro = new Usuario
-            {
-                Nome = usuarioTerceiro.Nome,
-                Email = usuarioTerceiro.Email,
-                Senha = usuarioTerceiro.Senha,
-                Empresas = empresas,
-                Perfil = await RecuperaPerfilBasicoAsync()
-            };
-
-            dbContext.Usuario.Add(novoUsuarioTerceiro);
         }
 
         private async Task<Perfil?> RecuperaPerfilBasicoAsync()

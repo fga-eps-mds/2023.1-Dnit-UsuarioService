@@ -1,13 +1,10 @@
-﻿using app.Repositorios;
-using app.Repositorios.Interfaces;
-using api.Usuarios;
+﻿using app.Repositorios.Interfaces;
 using test.Stub;
 using test.Fixtures;
 using app.Entidades;
 using Xunit.Abstractions;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
 using System.Linq;
-using AutoMapper;
 using System.Threading.Tasks;
 
 namespace test

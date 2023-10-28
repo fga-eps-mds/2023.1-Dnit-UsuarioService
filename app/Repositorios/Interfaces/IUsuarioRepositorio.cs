@@ -9,7 +9,7 @@ namespace app.Repositorios.Interfaces
         Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
         Usuario? ObterUsuario(string email);
         Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false);
-        UsuarioModel? TrocarSenha(string senha, string email);
+        UsuarioModelNovo? TrocarSenha(string senha, string email);
         void InserirDadosRecuperacao(string uuid, int idUsuario);
         string? ObterEmailRedefinicaoSenha(string uuid);
         void RemoverUuidRedefinicaoSenha(string uuid);

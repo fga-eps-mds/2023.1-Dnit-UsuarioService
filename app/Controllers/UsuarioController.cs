@@ -64,14 +64,13 @@ namespace app.Controllers
             try
             {
                 await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
-
                 return StatusCode(201, new NoContentResult());
             }
             catch (DbException)
             {
                 return Conflict("Usuário já cadastrado.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }
