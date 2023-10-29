@@ -66,6 +66,19 @@ namespace api
     {
         [Description("Cadastrar Escola")]
         EscolaCadastrar = 1000,
+        [Description("Editar Escola")]
+        EscolaEditar = 1001,
+        [Description("Remover Escola")]
+        EscolaRemover = 1002,
+        [Description("Visualizar Escola")]
+        EscolaVisualizar = 1003,
+
+        //[Description("Cadastrar Empresa")]
+        //EmpresaCadastrar = 2000,
+        //[Description("Editar Empresa")]
+        //EmpresaEditar = 2001,
+        //[Description("Remover Empresa")]
+        //EmpresaRemover = 2002,
 
         [Description("Cadastrar Perfil de Usuário")]
         PerfilCadastrar = 3000,
@@ -76,8 +89,18 @@ namespace api
         [Description("Visualizar perfis")]
         PerfilVisualizar = 3003,
 
+        [Description("Calcular UPS de sinistros")]
+        UpsCalcularSinistro = 5000,
+        [Description("Calcular UPS de escolas")]
+        UpsCalcularEscola = 5001,
+        [Description("Visualizar UPS")]
+        UpsVisualizar = 5002,
+
         [Description("Cadastrar rodovia")]
         RodoviaCadastrar = 6000,
+
+        [Description("Cadastrar sinistro")]
+        SinistroCadastrar = 7000,
 
         [Description("Visualizar Usuário")]
         UsuarioVisualizar = 8003,
