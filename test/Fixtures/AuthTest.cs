@@ -48,19 +48,5 @@ namespace test.Fixtures
             controller.AppUsuario = Usuario;
             return (token, Usuario);
         }
-
-        // public async Task<(string Token, string TokenAtualizacao)> AutenticarUsuario(UsuarioController controller, UsuarioDTO usuario)
-        // {
-        //     var resultado = await controller.Logar(usuario);
-
-        //     Assert.IsType<OkObjectResult>(resultado);
-
-        //     var login = (resultado as OkObjectResult)!.Value as LoginModel;
-        //     var token = login!.Token.Split(" ")[1];
-
-        //     var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        //     controller.AppUsuario = new ClaimsPrincipal(new ClaimsIdentity(jwt.Claims));
-        //     return (token, login.TokenAtualizacao);
-        // }
     }
 }
