@@ -1,5 +1,4 @@
 using api;
-using api.Perfis;
 using app.Entidades;
 using app.Repositorios.Interfaces;
 using app.Services.Interfaces;
@@ -10,6 +9,7 @@ namespace app.Services
     public class PerfilService : IPerfilService
     {
         private readonly IPerfilRepositorio perfilRepositorio;
+        private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly AppDbContext dbContext;
         private readonly IMapper mapper;
 
@@ -24,7 +24,7 @@ namespace app.Services
         {
             var novoPerfil = perfilRepositorio.RegistraPerfil(perfil);
 
-            foreach(var permissao in permissoes)
+            foreach (var permissao in permissoes)
             {
                 perfilRepositorio.AdicionaPermissaoAoPerfil(novoPerfil.Id, permissao);
             }
@@ -35,8 +35,8 @@ namespace app.Services
         }
 
         public async Task<Perfil> EditarPerfil(Perfil perfil, List<Permissao> permissoes)
-        {    
-            var perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(perfil.Id) ?? 
+        {
+            var perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(perfil.Id) ??
                 throw new KeyNotFoundException("Perfil não encontrado");
 
             perfilDb.Nome = perfil.Nome;
@@ -50,33 +50,32 @@ namespace app.Services
                 perfilDb.PerfilPermissoes!.Remove(permissao);
             }
 
-            foreach(var permissao in permissoesNovas)
+            foreach (var permissao in permissoesNovas)
             {
                 perfilRepositorio.AdicionaPermissaoAoPerfil(perfil.Id, permissao);
             }
 
             await dbContext.SaveChangesAsync();
 
-            return perfilDb; 
+            return perfilDb;
         }
 
         public async Task ExcluirPerfil(Guid id)
-        {   
-            var perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(id) ??
+        {
+            var perfilParaExcluir = await perfilRepositorio.ObterPerfilPorIdAsync(id) ??
                 throw new KeyNotFoundException("Perfil não encontrado");
 
-            if (perfilDb.Tipo == TipoPerfil.Basico || perfilDb.Tipo == TipoPerfil.Administrador)
+            if (perfilParaExcluir.Tipo == TipoPerfil.Basico || perfilParaExcluir.Tipo == TipoPerfil.Administrador)
             {
                 throw new InvalidOperationException("Esse Perfil não pode ser excluído.");
             }
 
-            foreach(var perfilPermissao in perfilDb.PerfilPermissoes!)
+            foreach (var perfilPermissao in perfilParaExcluir.PerfilPermissoes!)
             {
                 perfilRepositorio.RemovePermissaoDoPerfil(perfilPermissao);
             }
 
-            perfilRepositorio.RemovePerfil(perfilDb);
-
+            perfilRepositorio.RemovePerfil(perfilParaExcluir);
             dbContext.SaveChanges();
         }
 
@@ -95,8 +94,8 @@ namespace app.Services
         public async Task<Perfil?> ObterPorIdAsync(Guid id)
         {
             var perfil = await perfilRepositorio.ObterPerfilPorIdAsync(id);
-            
-            if(perfil != null && perfil.Tipo == TipoPerfil.Administrador)
+
+            if (perfil != null && perfil.Tipo == TipoPerfil.Administrador)
             {
                 PreencherPermissoesAdministrador(perfil);
             }

@@ -6,6 +6,7 @@ using api;
 using EnumsNET;
 using api.Perfis;
 using api.Permissoes;
+using api.Municipios;
 
 namespace app.Services.Mapper
 {
@@ -13,36 +14,22 @@ namespace app.Services.Mapper
     {
         public AutoMapperConfig()
         {
-            CreateMap<Usuario, UsuarioDTO>()
-                .ForMember(dto => dto.CNPJ, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
+            CreateMap<Municipio, MunicipioModel>();
 
-            CreateMap<UsuarioDnit, Usuario>()
-                .ForMember(u => u.RedefinicaoSenha, opt => opt.Ignore())
-                .ForMember(u => u.Empresas, opt => opt.Ignore())
-                .ForMember(u => u.Perfil, opt => opt.Ignore())
-                .ForMember(u => u.PerfilId, opt => opt.Ignore())
-                .ForMember(u => u.TokenAtualizacao, opt => opt.Ignore())
-                .ForMember(u => u.TokenAtualizacaoExpiracao, opt => opt.Ignore());
-
-            CreateMap<UsuarioModel, UsuarioDTO>()
-                .ForMember(dto => dto.CNPJ, opt => opt.Ignore())
-                .ForMember(dto => dto.UfLotacao, opt => opt.Ignore());
-                
             CreateMap<Usuario, UsuarioModel>()
-                .ForMember(dto => dto.Cnpj, opt => opt.MapFrom(u => u.Empresas.FirstOrDefault().Cnpj));
+                .ForMember(u => u.Cnpj, opt => opt.Ignore());
+            
+            CreateMap<UsuarioDTO, UsuarioTerceiro>()
+                .ForMember(u => u.CNPJ, opt => opt.Ignore());
+
+            CreateMap<UsuarioDTO, UsuarioDnit>();
 
             CreateMap<UF, UfModel>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(uf => (int)uf))
                 .ForMember(model => model.Sigla, opt => opt.MapFrom(uf => uf.ToString()))
                 .ForMember(model => model.Nome, opt => opt.MapFrom(uf => uf.AsString(EnumFormat.Description)));
 
-            CreateMap<UsuarioDTO, UsuarioDnit>()
-                .ForMember(usuarioDnit => usuarioDnit.Id, opt => opt.Ignore());
-
             CreateMap<RedefinicaoSenhaDTO, RedefinicaoSenhaModel>();
-
-            CreateMap<UsuarioDTO, UsuarioTerceiro>()
-                .ForMember(usuarioTerceiro => usuarioTerceiro.Id, opt => opt.Ignore());
 
             CreateMap<PerfilDTO, Perfil>()
                 .ForMember(p => p.Id, opt => opt.Ignore())
@@ -51,7 +38,7 @@ namespace app.Services.Mapper
                 .ForMember(p => p.Usuarios, opt => opt.Ignore())
                 .ForMember(p => p.Tipo, opt => opt.Ignore())
                 .ForMember(p => p.PermissoesSessao, opt => opt.Ignore());
-
+            
             CreateMap<Perfil, PerfilModel>()
                 .ForMember(model => model.Permissoes, opt => opt.MapFrom
                     (

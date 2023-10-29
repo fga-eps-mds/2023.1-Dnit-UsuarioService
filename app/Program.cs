@@ -34,7 +34,7 @@ builder.Services.AddConfigServices(builder.Configuration);
 
 builder.Services.AddConfigRepositorios();
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(options => 
 {
     options.AddPolicy("AllowAllOrigins",
         builder =>
@@ -68,6 +68,7 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<AppDbContext>();
 
     dbContext.Database.Migrate();
+    dbContext.Popula();
 }
 
 app.Run();

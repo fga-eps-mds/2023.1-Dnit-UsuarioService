@@ -21,14 +21,14 @@ namespace test
 {
     public class UsuarioServiceTest : TestBed<Base>, IDisposable
     {
-
-        AppDbContext dbContext;
-        Mock<IMapper> mapper;
-        Mock<IUsuarioRepositorio> usuarioRepositorio;
-        Mock<IEmailService> emailService;
-        AuthService authService;
-        Mock<IOptions<AuthConfig>> authConfig;
-        IUsuarioService usuarioServiceMock;
+        readonly AppDbContext dbContext;
+        readonly Mock<IMapper> mapper;
+        readonly Mock<IUsuarioRepositorio> usuarioRepositorio;
+        readonly Mock<IPerfilRepositorio> perfilRepositorio;
+        readonly Mock<IEmailService> emailService;
+        readonly AuthService authService;
+        readonly Mock<IOptions<AuthConfig>> authConfig;
+        readonly IUsuarioService usuarioServiceMock;
 
         public UsuarioServiceTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
@@ -36,13 +36,16 @@ namespace test
 
             mapper = new Mock<IMapper>();
             usuarioRepositorio = new Mock<IUsuarioRepositorio>();
+            perfilRepositorio = new Mock<IPerfilRepositorio>();
             emailService = new Mock<IEmailService>();
             var senhaConfig = new SenhaConfig();
             authConfig = new Mock<IOptions<AuthConfig>>();
             authService = new AuthService(authConfig.Object);
             
-
-            usuarioServiceMock = new UsuarioService(usuarioRepositorio.Object, mapper.Object, emailService.Object, Options.Create(senhaConfig), dbContext, authService, authConfig.Object);
+            usuarioServiceMock = new UsuarioService(
+                usuarioRepositorio.Object, perfilRepositorio.Object, 
+                mapper.Object, emailService.Object, 
+                Options.Create(senhaConfig), dbContext, authService, authConfig.Object);
         }
 
         [Fact]
@@ -148,7 +151,7 @@ namespace test
         }
 
         [Fact]
-        public void RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
+        public async void RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
         {
             var usuarioStub = new UsuarioStub();
             var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -161,7 +164,7 @@ namespace test
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
             usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioRetorno);
 
-            usuarioServiceMock.RecuperarSenha(usuarioDnitDTO);
+            await usuarioServiceMock.RecuperarSenha(usuarioDnitDTO);
 
             emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
         }

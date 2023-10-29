@@ -19,19 +19,19 @@ namespace app.Repositorios
             perfil.Id = Guid.NewGuid();
 
             dbContext.Add(perfil);
-            
+
             return perfil;
         }
 
         public PerfilPermissao AdicionaPermissaoAoPerfil(Guid perfilId, Permissao permissao)
         {
-            var  novoPerfilPermissao = new PerfilPermissao
+            var novoPerfilPermissao = new PerfilPermissao
             {
                 Id = Guid.NewGuid(),
                 PerfilId = perfilId,
                 Permissao = permissao
             };
-            
+
             dbContext.Add(novoPerfilPermissao);
 
             return novoPerfilPermissao;
@@ -39,11 +39,19 @@ namespace app.Repositorios
 
         public void RemovePerfil(Perfil perfil)
         {
-            // TODO!! Quando um perfil com usuários atribuídos for excluído,
-            //        deve-se migrar todos os usuários do perfil excluído para
-            //        o perfil básico antes de efetuar a exclusão do perfil. US02! 
-
+            DefinirPerfilBasicoParaUsuariosComPerfilParaExcluir(perfil.Id);
             dbContext.Perfis.Remove(perfil);
+        }
+
+        private void DefinirPerfilBasicoParaUsuariosComPerfilParaExcluir(Guid perfilParaExcluirId)
+        {
+            var usuariosComPerfilParaExcluir = dbContext.Usuario.Where(u => u.PerfilId == perfilParaExcluirId);
+            if (usuariosComPerfilParaExcluir.Any())
+            {
+                var perfilBasico = dbContext.Perfis.Where(p => p.Tipo == TipoPerfil.Basico).First();
+                foreach (var u in usuariosComPerfilParaExcluir)
+                    u.PerfilId = perfilBasico.Id;
+            }
         }
 
         public void RemovePermissaoDoPerfil(PerfilPermissao perfilPermissao)

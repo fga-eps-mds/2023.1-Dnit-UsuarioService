@@ -1,34 +1,31 @@
-﻿using app.Controllers;
-using api.Usuarios;
-using api.Senhas;
+﻿using Moq;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using app.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using test.Stub;
-using Xunit;
 using System.Threading.Tasks;
-using Xunit.Microsoft.DependencyInjection.Abstracts;
-using test.Fixtures;
-using app.Entidades;
 using Xunit.Abstractions;
-using app.Services;
-using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+
+using test.Fixtures;
+using test.Stub;
 using auth;
+using app.Services.Interfaces;
+using app.Entidades;
+using app.Controllers;
+using api.Usuarios;
+using api.Senhas;
+using Xunit.Microsoft.DependencyInjection.Abstracts;
 
 namespace test
 {
     public class UsuarioControllerTest : TestBed<Base>, IDisposable
     {
         const int CREATED = 201;
+        const int BAD_REQUEST = 400;
         const int INTERNAL_SERVER_ERROR = 500;
-
-        UsuarioController controller;
-        AppDbContext dbContext;
+        readonly UsuarioController controller;
+        readonly AppDbContext dbContext;
 
         public UsuarioControllerTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
@@ -142,6 +139,23 @@ namespace test
 
             var objeto = Assert.IsType<ObjectResult>(resultado);
             Assert.Equal(CREATED, objeto.StatusCode);
+
+            var usuarioBanco = dbContext.Usuario.Single(u => u.Email == usuarioDTO.Email);
+            Assert.True(usuarioDTO.UfLotacao != 0);
+            Assert.Equal(usuarioDTO.UfLotacao, usuarioDTO.UfLotacao);
+        }
+
+        [Fact]
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioTemUfInvalido_RetornaBadRequest()
+        {
+            var usuarioDTO = new UsuarioStub().RetornarUsuarioDnitDTO();
+            usuarioDTO.UfLotacao = 0;
+
+            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
+
+            var objeto = Assert.IsType<ObjectResult>(resultado);
+            Assert.Equal(BAD_REQUEST, objeto.StatusCode);
+            Assert.Equal("Código UF inválido", objeto!.Value);
         }
 
         [Fact]
@@ -285,14 +299,6 @@ namespace test
 
             usuarioServiceMock.Verify(service => service.TrocaSenha(redefinicaoSenhaDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
-        }
-
-        public new void Dispose()
-        {
-            dbContext.RemoveRange(dbContext.PerfilPermissoes);
-            dbContext.RemoveRange(dbContext.Perfis);
-            dbContext.RemoveRange(dbContext.Usuario);
-            dbContext.RemoveRange(dbContext.Empresa);
         }
     }
 }

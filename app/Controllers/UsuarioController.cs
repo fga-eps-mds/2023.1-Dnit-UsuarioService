@@ -64,12 +64,15 @@ namespace app.Controllers
             try
             {
                 await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
-
                 return StatusCode(201, new NoContentResult());
             }
             catch (DbException)
             {
                 return Conflict("Usuário já cadastrado.");
+            }
+            catch (ApiException ex)
+            {
+                return StatusCode(400, ex.Message);
             }
             catch (Exception)
             {
@@ -123,6 +126,22 @@ namespace app.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [Authorize]
+        [HttpGet()]
+        public async Task<ListaPaginada<UsuarioModel>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
+        {
+            authService.Require(Usuario, Permissao.UsuarioVisualizar);
+            return await usuarioService.ObterUsuariosAsync(filtro);
+        }
+
+        [Authorize]
+        [HttpPatch("{id}/perfil")]
+        public async Task EditarPerfilUsuario([FromRoute] int id, [FromBody] EditarPerfilUsuarioDTO dto)
+        {
+            authService.Require(Usuario, Permissao.UsuarioPerfilEditar);
+            await usuarioService.EditarUsuarioPerfil(id, dto.NovoPerfilId);
         }
     }
 }
