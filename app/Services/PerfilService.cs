@@ -75,21 +75,8 @@ namespace app.Services
                 perfilRepositorio.RemovePermissaoDoPerfil(perfilPermissao);
             }
 
-            DefinirPerfilBasicoParaUsuariosComPerfilParaExcluir(perfilParaExcluir.Id);
-
             perfilRepositorio.RemovePerfil(perfilParaExcluir);
             dbContext.SaveChanges();
-        }
-
-        private void DefinirPerfilBasicoParaUsuariosComPerfilParaExcluir(Guid perfilParaExcluirId)
-        {
-            var usuariosComPerfilParaExcluir = dbContext.Usuario.Where(u => u.PerfilId == perfilParaExcluirId);
-            if (usuariosComPerfilParaExcluir.Any())
-            {
-                var perfilBasico = dbContext.Perfis.Where(p => p.Tipo == TipoPerfil.Basico).First();
-                foreach (var u in usuariosComPerfilParaExcluir)
-                    u.PerfilId = perfilBasico.Id;
-            }
         }
 
         public async Task<List<Perfil>> ListarPerfisAsync(int pageIndex, int pageSize, string? nome = null)

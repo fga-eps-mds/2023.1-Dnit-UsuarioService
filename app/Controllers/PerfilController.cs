@@ -85,10 +85,6 @@ namespace app.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> ExcluirPerfil(Guid id)
         {
-            // !TODO  Quando um perfil com usuários atribuídos for excluído,
-            //        deve-se migrar todos os usuários do perfil excluído para
-            //        o perfil básico antes de efetuar a exclusão do perfil. US02!
-
             authService.Require(Usuario, Permissao.PerfilRemover);
 
             try{
