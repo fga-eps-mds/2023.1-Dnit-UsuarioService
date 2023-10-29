@@ -184,6 +184,7 @@ namespace test
             dbContext.RemoveRange(dbContext.PerfilPermissoes);
             dbContext.RemoveRange(dbContext.Perfis);
             dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.Municipio);
         }
     }
 }
