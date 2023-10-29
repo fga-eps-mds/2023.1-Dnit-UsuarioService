@@ -171,7 +171,7 @@ namespace app.Services
 
             if (!authConfig.Enabled || usuario.Perfil.Tipo == TipoPerfil.Administrador)
                 permissoes = Enum.GetValues<Permissao>().ToList();
-
+                
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
                 Id = usuario.Id,
