@@ -19,7 +19,8 @@ namespace app.Services
             mensagem.To.Add(new MailAddress(emailDestinatario));
             mensagem.Body = corpo;
 
-            var clienteSmtp = new SmtpClient("smtp-mail.outlook.com")
+            var enderecoSmtp = DotNetEnv.Env.GetString("EMAIL_SERVICE_SMTP") ?? "smtp-mail.outlook.com";
+            var clienteSmtp = new SmtpClient(enderecoSmtp)
             {
                 Port = 587,
                 Credentials = new NetworkCredential(emailRemetente, senhaRemetente),
