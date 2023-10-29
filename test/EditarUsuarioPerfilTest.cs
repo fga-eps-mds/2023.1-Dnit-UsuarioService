@@ -104,6 +104,29 @@ namespace test
         }
 
         [Fact]
+        public async void ObterUsuariosAsync_QuandoFiltradoPorNome_RetornaUsuariosComNomeDado()
+        {
+            AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
+            var m = new Municipio { Id = 1, Nome = "Municipio", Uf = UF.DF };
+            dbContext.Municipio.Add(m);
+            var filtro = new PesquisaUsuarioFiltro
+            {
+                Nome = "Silva"
+            };
+            var u = dbContext.Usuario.ToList();
+            u[0].Nome = "Anderson Silva";
+            u[1].Nome = "Silvania Almeida";
+            u[2].Nome = "Silvio Santos";
+            u[3].Nome = "Marcos";
+            u[4].Nome = "Bianca";
+            dbContext.SaveChanges();
+
+            var lista = await controller.ListarAsync(filtro);
+
+            Assert.Equal(2, lista.Items.Count);
+        }
+
+        [Fact]
         public async void ObterUsuariosAsync_QuandoFiltradoPorPerfil_RetornaUsuariosComPerfilDado()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
