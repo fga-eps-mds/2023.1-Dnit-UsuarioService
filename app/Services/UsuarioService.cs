@@ -48,6 +48,9 @@ namespace app.Services
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
+            if (usuarioDTO.UfLotacao == 0) 
+                throw new ApiException(ErrorCodes.CodigoUfInvalido);
+
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);

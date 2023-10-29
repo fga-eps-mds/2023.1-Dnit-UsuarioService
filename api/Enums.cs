@@ -120,6 +120,8 @@ namespace api
         NaoPermitido,
         [Description("Usuário não encontrado")]
         UsuarioNaoEncontrado,
+        [Description("Código UF inválido")]
+        CodigoUfInvalido,
         [Description("Permissao não encontrada")]
         PermissaoNaoEncontrada,
     }

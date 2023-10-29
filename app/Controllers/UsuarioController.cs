@@ -70,6 +70,10 @@ namespace app.Controllers
             {
                 return Conflict("Usuário já cadastrado.");
             }
+            catch (ApiException ex)
+            {
+                return StatusCode(400, ex.Message);
+            }
             catch (Exception)
             {
                 return StatusCode(500, "Houve um erro interno no servidor.");

@@ -14,6 +14,13 @@ namespace test.Stub
 
     public class UsuarioStub
     {
+        static readonly UF[] ListaUfs = Enum.GetValues<UF>();
+
+        static private UF UfAleatoria()
+        {
+            return ListaUfs[Random.Shared.Next() % ListaUfs.Length];
+        }
+
         public static IEnumerable<TesteUsuarioStub> Listar()
         {
             while (true)
@@ -23,6 +30,7 @@ namespace test.Stub
                     Nome = "teste " + Random.Shared.Next().ToString(),
                     Email = $"teste{Random.Shared.Next()}@email.com",
                     Senha = $"teste_senha_{Random.Shared.Next()}",
+                    UfLotacao = UfAleatoria(),
                 };
             }
         }
@@ -34,6 +42,7 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
+                UfLotacao = UfAleatoria(),
             };
         }
 
@@ -44,6 +53,7 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
+                UfLotacao = UfAleatoria()
             };
         }
 
@@ -54,7 +64,7 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
-                UfLotacao = UF.DF
+                UfLotacao = UfAleatoria()
             };
         }
 
@@ -65,7 +75,7 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
                 Nome = "Usuario Dnit",
-                UfLotacao = UF.DF
+                UfLotacao = UfAleatoria()
             };
         }
 
@@ -76,7 +86,8 @@ namespace test.Stub
                 Email = "usuarioteste@gmail.com",
                 Senha = "senha1234",
                 Nome = "Usuario Dnit",
-                CNPJ = "12345678901234"
+                CNPJ = "12345678901234",
+                UfLotacao = UfAleatoria()
             };
         }
 
@@ -86,7 +97,8 @@ namespace test.Stub
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
-                Nome = "Usuario Dnit"
+                Nome = "Usuario Dnit",
+                UfLotacao = UfAleatoria()
             };
         }
 
@@ -96,7 +108,8 @@ namespace test.Stub
             {
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J68",
-                Nome = "Usuario Dnit"
+                Nome = "Usuario Dnit",
+                UfLotacao = UfAleatoria()
             };
         }
     }

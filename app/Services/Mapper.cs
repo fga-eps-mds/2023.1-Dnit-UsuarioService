@@ -22,8 +22,7 @@ namespace app.Services.Mapper
             CreateMap<UsuarioDTO, UsuarioTerceiro>()
                 .ForMember(u => u.CNPJ, opt => opt.Ignore());
 
-            CreateMap<UsuarioDTO, UsuarioDnit>()
-                .ForMember(u => u.UfLotacao, opt => opt.Ignore());
+            CreateMap<UsuarioDTO, UsuarioDnit>();
 
             CreateMap<UF, UfModel>()
                 .ForMember(model => model.Id, opt => opt.MapFrom(uf => (int)uf))

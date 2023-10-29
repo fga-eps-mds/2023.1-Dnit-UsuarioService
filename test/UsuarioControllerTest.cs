@@ -22,6 +22,7 @@ namespace test
     public class UsuarioControllerTest : TestBed<Base>, IDisposable
     {
         const int CREATED = 201;
+        const int BAD_REQUEST = 400;
         const int INTERNAL_SERVER_ERROR = 500;
         readonly UsuarioController controller;
         readonly AppDbContext dbContext;
@@ -138,6 +139,23 @@ namespace test
 
             var objeto = Assert.IsType<ObjectResult>(resultado);
             Assert.Equal(CREATED, objeto.StatusCode);
+
+            var usuarioBanco = dbContext.Usuario.Single(u => u.Email == usuarioDTO.Email);
+            Assert.True(usuarioDTO.UfLotacao != 0);
+            Assert.Equal(usuarioDTO.UfLotacao, usuarioDTO.UfLotacao);
+        }
+
+        [Fact]
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioTemUfInvalido_RetornaBadRequest()
+        {
+            var usuarioDTO = new UsuarioStub().RetornarUsuarioDnitDTO();
+            usuarioDTO.UfLotacao = 0;
+
+            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
+
+            var objeto = Assert.IsType<ObjectResult>(resultado);
+            Assert.Equal(BAD_REQUEST, objeto.StatusCode);
+            Assert.Equal("Código UF inválido", objeto!.Value);
         }
 
         [Fact]
