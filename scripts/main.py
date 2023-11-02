@@ -1,4 +1,6 @@
-from fastapi import FastAPI, UploadFile
+from typing import Union
+from typing_extensions import Annotated
+from fastapi import FastAPI, UploadFile, Header
 from subprocess import call
 import tarfile
 import os
@@ -9,6 +11,8 @@ TARGET_DIR = "target"
 APPSETTINGS_FILE = "appsettings.json"
 SYSTEMD_START_FILE = "./start.sh"
 SYSTEMD_SERVICE = "sshd"
+
+SECRET = ""
 
 def prepare():
     os.makedirs(STAGE_DIR, exist_ok=True)
@@ -24,7 +28,11 @@ prepare()
 app = FastAPI()
 
 @app.post("/update/{build_name}")
-def update_deploy(build_name: str, file: UploadFile):
+async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotated[Union[str, None], Header()] = None):
+    print(upload_token)
+    if SECRET and upload_token != SECRET:
+        return {"error": "invalid token"}
+
     # save file to STAGE_DIR
     TAR_FILE = f'{STAGE_DIR}/{build_name}'
     with open(TAR_FILE, "wb") as fd:
@@ -52,3 +60,4 @@ def update_deploy(build_name: str, file: UploadFile):
     else:
         print(f"Error at restarting {SYSTEMD_SERVICE}")
 
+    return {"status": "success"}
