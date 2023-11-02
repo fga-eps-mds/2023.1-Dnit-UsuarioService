@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
 using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace app.Controllers
 {
@@ -66,17 +67,9 @@ namespace app.Controllers
                 await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbException)
+            catch (DbUpdateException)
             {
-                return Conflict("Usuário já cadastrado.");
-            }
-            catch (ApiException ex)
-            {
-                return StatusCode(400, ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Houve um erro interno no servidor.");
+                throw new ApiException(ErrorCodes.EmailUtilizado);
             }
         }
 
