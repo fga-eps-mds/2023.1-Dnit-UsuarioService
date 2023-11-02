@@ -1,21 +1,34 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
 from subprocess import call
 import tarfile
 import os
 import shutil
 
-STAGE_DIR = "/home/frostwagner/unb/EPS/api_updater/stage"
-TARGET_DIR = "/home/frostwagner/unb/EPS/api_updater/target"
-APPSETTINGS_FILE = "/home/frostwagner/unb/EPS/api_updater/appsettings.json"
-SYSTEMD_START_FILE = "/home/frostwagner/unb/EPS/api_updater/start.sh"
+STAGE_DIR = "stage"
+TARGET_DIR = "target"
+APPSETTINGS_FILE = "appsettings.json"
+SYSTEMD_START_FILE = "./start.sh"
 SYSTEMD_SERVICE = "sshd"
+
+def prepare():
+    os.makedirs(STAGE_DIR, exist_ok=True)
+    os.makedirs(TARGET_DIR, exist_ok=True)
+    if not os.path.exists(APPSETTINGS_FILE):
+        raise FileNotFoundError(f"File {APPSETTINGS_FILE} not found")
+    systemd_start_file_dir = os.path.dirname(SYSTEMD_START_FILE)
+    if not os.path.exists(systemd_start_file_dir):
+        os.makedirs(systemd_start_file_dir, exist_ok=True)
+
+prepare()
 
 app = FastAPI()
 
 @app.post("/update/{build_name}")
-def update_deploy(build_name: str):
+def update_deploy(build_name: str, file: UploadFile):
+    # save file to STAGE_DIR
     TAR_FILE = f'{STAGE_DIR}/{build_name}'
-    # download build to STAGE_DIR
+    with open(TAR_FILE, "wb") as fd:
+        fd.write(file.file.read())
 
     # untar it
     with tarfile.open(TAR_FILE) as tar:
@@ -38,5 +51,4 @@ def update_deploy(build_name: str):
         print("ok")
     else:
         print(f"Error at restarting {SYSTEMD_SERVICE}")
-
 
