@@ -3,8 +3,8 @@
 set -x
 WORKDIR=$(pwd)
 
-python -m venv venv
-source /opt/venv/bin/activate
+python3 -m venv venv
+source $WORKDIR/venv/bin/activate
 
 pip install -r "${WORKDIR}/requirements.txt"
 
