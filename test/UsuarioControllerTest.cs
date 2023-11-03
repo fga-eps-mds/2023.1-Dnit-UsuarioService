@@ -6,7 +6,8 @@ using Xunit.Abstractions;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-
+using app.Services;
+using api;
 using test.Fixtures;
 using test.Stub;
 using auth;
@@ -151,11 +152,10 @@ namespace test
             var usuarioDTO = new UsuarioStub().RetornarUsuarioDnitDTO();
             usuarioDTO.UfLotacao = 0;
 
-            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
+            var e = await Assert.ThrowsAsync<ApiException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO));
+            Assert.Equal(ErrorCodes.CodigoUfInvalido, e.Error.Code);
 
-            var objeto = Assert.IsType<ObjectResult>(resultado);
-            Assert.Equal(BAD_REQUEST, objeto.StatusCode);
-            Assert.Equal("Código UF inválido", objeto!.Value);
+          
         }
 
         [Fact]
@@ -171,10 +171,10 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
-            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
+            var resultado = await Assert.ThrowsAsync<Npgsql.PostgresException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO)); 
 
             usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
-            var objeto = Assert.IsType<ConflictObjectResult>(resultado);
+            var objeto = Assert.IsType<Npgsql.PostgresException>(resultado);
         }
 
         [Fact]
