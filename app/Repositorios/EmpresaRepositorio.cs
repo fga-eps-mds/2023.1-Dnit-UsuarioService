@@ -17,5 +17,11 @@ namespace app.Repositorios
         {
             dbContext.Add(empresa);
         }
+
+        public Empresa? VisualizarEmpresa(string empresaid)
+        {
+            var empresa = dbContext.Empresa.Where(e => e.Cnpj == empresaid).FirstOrDefault();
+            return empresa;
+        }
     }
 }

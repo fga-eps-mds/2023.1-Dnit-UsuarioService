@@ -54,5 +54,18 @@ namespace app.Controller
                 return StatusCode(500, "Houve um erro interno no servidor.");
             }
         }
+
+        [HttpGet("{cnpj}")]
+        public IActionResult VisualizarEmpresa(string cnpj)
+        {
+            var empresa = empresaService.VisualizarEmpresa(cnpj);
+
+            if (empresa != null)
+            {
+                return Ok(empresa);
+            }
+
+            return StatusCode(404, "A empresa não existe.");
+        }
     }
 }

@@ -21,5 +21,10 @@ namespace app.Services
 
             await dbContext.SaveChangesAsync();
         }
+
+        public Empresa? VisualizarEmpresa(string empresaid)
+        {
+            return empresaRepositorio.VisualizarEmpresa(empresaid);
+        }
     }
 }
