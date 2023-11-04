@@ -54,9 +54,9 @@ namespace app.Services.Mapper
                 .ForMember(model => model.CategoriasPermissao, opt => opt.Ignore());
                 
             CreateMap<EmpresaDTO, Empresa>()
-                .ForMember(e => e.Cnpj, opt => opt.Ignore())
-                .ForMember(e => e.RazaoSocial, opt => opt.Ignore())
-                .ForMember(e => e.UFs, opt => opt.Ignore());
+                .ForMember(e => e.Cnpj, opt => opt.MapFrom(em => em.Cnpj))
+                .ForMember(e => e.RazaoSocial, opt => opt.MapFrom(em => em.RazaoSocial))
+                .ForMember(e => e.UFs, opt => opt.MapFrom(em => em.UFs));
 
         }
     }

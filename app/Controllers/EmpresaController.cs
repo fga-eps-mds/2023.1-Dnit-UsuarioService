@@ -35,14 +35,14 @@ namespace app.Controller
 
         //[Authorize]
         [HttpPost()]
-        public IActionResult CadastrarEmpresa([FromBody] EmpresaDTO empresaDTO)
+        public async Task<IActionResult> CadastrarEmpresa([FromBody] EmpresaDTO empresaDTO)
         {
             //authService.Require(Usuario, Permissao.EmpresaCadastrar);
 
             var empresa = mapper.Map<Empresa>(empresaDTO);
 
             try{
-                empresaService.CadastrarEmpresa(empresa);
+                await empresaService.CadastrarEmpresa(empresa);
                 return Ok();
             }
             catch(DbUpdateException)
