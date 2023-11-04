@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using api;
 
 namespace app.Entidades
 {
@@ -13,5 +14,7 @@ namespace app.Entidades
         public string RazaoSocial { get; set; }
 
         public List<Usuario> Usuarios { get; set; }
+
+        public List<UF> UFs { get; set;}
     }
 }

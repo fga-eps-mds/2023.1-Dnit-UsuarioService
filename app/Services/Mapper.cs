@@ -7,6 +7,7 @@ using EnumsNET;
 using api.Perfis;
 using api.Permissoes;
 using api.Municipios;
+using api.Empresa;
 
 namespace app.Services.Mapper
 {
@@ -51,6 +52,12 @@ namespace app.Services.Mapper
                 )
                 .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()))
                 .ForMember(model => model.CategoriasPermissao, opt => opt.Ignore());
+                
+            CreateMap<EmpresaDTO, Empresa>()
+                .ForMember(e => e.Cnpj, opt => opt.Ignore())
+                .ForMember(e => e.RazaoSocial, opt => opt.Ignore())
+                .ForMember(e => e.UFs, opt => opt.Ignore());
+
         }
     }
 }
