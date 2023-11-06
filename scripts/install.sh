@@ -21,5 +21,22 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
+cat > /etc/systemd/system/usuarioservice.service <<EOF
+[Unit]
+Description = Usuario Service
+
+[Service]
+WorkingDirectory=$WORKDIR
+ExecStart=$WORKDIR/start.sh
+User=eps
+Restart=on-failure
+EnvironmentFile=/etc/usuario/env
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
 systemctl daemon-reload
 systemctl enable dnit-deploy.service --now
+systemctl enable usuarioservice.service --now
+
