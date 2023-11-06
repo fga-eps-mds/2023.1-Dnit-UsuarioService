@@ -8,11 +8,11 @@ import shutil
 
 STAGE_DIR = "stage"
 TARGET_DIR = "target"
-APPSETTINGS_FILE = "appsettings.json"
+APPSETTINGS_FILE = os.getenv("APPSETTINGS_FILE","appsettings.json")
 SYSTEMD_START_FILE = "./start.sh"
-SYSTEMD_SERVICE = "sshd"
+SYSTEMD_SERVICE =  os.getenv("SYSTEMD_SERVICE","usuarioservice")
 
-SECRET = ""
+SECRET = os.getenv("SECRET_KEY", "secret")
 
 def prepare():
     os.makedirs(STAGE_DIR, exist_ok=True)
@@ -23,15 +23,15 @@ def prepare():
     if not os.path.exists(systemd_start_file_dir):
         os.makedirs(systemd_start_file_dir, exist_ok=True)
 
-prepare()
 
 app = FastAPI()
 
 @app.post("/update/{build_name}")
-async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotated[Union[str, None], Header()] = None):
-    print(upload_token)
-    if SECRET and upload_token != SECRET:
+async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotated[str, Header()]):
+    if upload_token != SECRET:
         return {"error": "invalid token"}
+
+    prepare()
 
     # save file to STAGE_DIR
     TAR_FILE = f'{STAGE_DIR}/{build_name}'
@@ -42,16 +42,13 @@ async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotat
     with tarfile.open(TAR_FILE) as tar:
         tar.extractall(path=STAGE_DIR)
 
-    next_build_id = len(os.listdir(TARGET_DIR))+1
-    shutil.move(f"{STAGE_DIR}/publish", f"{TARGET_DIR}/{next_build_id}")
     os.remove(TAR_FILE)
+
+    next_build_id = len(os.listdir(TARGET_DIR))+1
+    shutil.move(f"{STAGE_DIR}", f"{TARGET_DIR}/{next_build_id}")
 
     # set appsettings.json
     shutil.copy(APPSETTINGS_FILE, f"{TARGET_DIR}/{next_build_id}/appsettings.json")
-
-    # change context in file to systemd
-    with open(SYSTEMD_START_FILE, "w") as fd:
-        fd.write(f"#!/bin/bash\n\ndotnet {TARGET_DIR}/{next_build_id}/app.dll")
 
     # restart systemd service
     systemd_restart_status = call(["systemctl", "restart", SYSTEMD_SERVICE])

@@ -3,8 +3,8 @@
 set -x
 WORKDIR=$(pwd)
 
-python3 -m venv venv
-source $WORKDIR/venv/bin/activate
+python3 -m venv .venv
+source $WORKDIR/.venv/bin/activate
 
 pip install -r "${WORKDIR}/requirements.txt"
 
@@ -14,7 +14,7 @@ Description = Deploy Dnit Service
 
 [Service]
 WorkingDirectory=$WORKDIR
-ExecStart=$WORKDIR/venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 30001
+ExecStart=$WORKDIR/.venv/bin/python -m uvicorn main:app --host 0.0.0.0 --port 30001
 Restart=on-failure
 
 [Install]
