@@ -1,7 +1,10 @@
 #!/bin/bash
 
-BUILD_NUMBER=$(ls target/ | sort -r | head -n1)
+BUILD_NUMBER="$(ls target/ | sort -r | head -n1)"
+WORK_DIR="target/$BUILD_NUMBER/build"
+
 
 echo "Starting build $BUILD_NUMBER";
 
-dotnet target/$BUILD_NUMBER/build/app.dll
+cd $WORK_DIR
+dotnet app.dll
