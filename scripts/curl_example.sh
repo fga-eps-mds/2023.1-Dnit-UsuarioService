@@ -1,1 +1,0 @@
-curl -X POST -L -F "file=@example.tar.gz"  http://localhost:8000/update/example.tar.gz
