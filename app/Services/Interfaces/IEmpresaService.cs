@@ -9,7 +9,7 @@ namespace app.Services.Interfaces
         Empresa? VisualizarEmpresa(string empresaid);
         Task DeletarEmpresa(string empresaid);
         
-        // Task<Empresa> EditarEmpresa(string empresaid, Empresa empresa);
+        Task<Empresa?> EditarEmpresa(string empresaid, Empresa empresa);
         Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null);
         // Task<List<Usuario>> ListarUsuarios(int pageIndex, int pageSize);
         // Task AdicionarUsuario(int usuarioid, string empresaid);

@@ -40,5 +40,22 @@ namespace app.Services
           
             return empresas;
         }
+
+        public async Task<Empresa?> EditarEmpresa(string empresaid, Empresa empresa)
+        {
+            var empresaAtualizar = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaid) ?? throw new KeyNotFoundException("Empresa não encontrada");
+
+            if (empresaAtualizar != null)
+            {
+                empresaAtualizar.Cnpj = empresa.Cnpj;
+                empresaAtualizar.RazaoSocial = empresa.RazaoSocial;
+                empresaAtualizar.UFs = empresa.UFs;
+                empresaAtualizar.Usuarios = empresa.Usuarios;
+            }
+
+            await dbContext.SaveChangesAsync();
+
+            return empresaAtualizar;
+        }
     }
 }

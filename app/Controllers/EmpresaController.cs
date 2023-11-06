@@ -69,12 +69,12 @@ namespace app.Controller
         }
 
         [HttpDelete("{cnpj}")]
-        public async Task<IActionResult> ExcluirEmpresa(string empresaid)
+        public async Task<IActionResult> ExcluirEmpresa(string cnpj)
         {
             authService.Require(Usuario, Permissao.PerfilRemover);
 
             try{
-                await empresaService.DeletarEmpresa(empresaid);
+                await empresaService.DeletarEmpresa(cnpj);
                 return Ok("Empresa excluida");
             }
             catch(KeyNotFoundException ex){
@@ -108,5 +108,29 @@ namespace app.Controller
                 return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
             }
         }
+        
+        // [Authorize]
+        [HttpPut("{cnpj}")]
+        public async Task<IActionResult> EditarEmpresa(string cnpj, [FromBody] EmpresaDTO empresaDTO)
+        {
+
+            var empresa = mapper.Map<Empresa>(empresaDTO);
+            empresa.Cnpj = cnpj;
+
+            try
+            {
+                var novaEmpresa = await empresaService.EditarEmpresa(cnpj, empresa);
+                return Ok(novaEmpresa);
+            }
+            catch (DbUpdateException)
+            {
+                return UnprocessableEntity("Este Perfil já existe");
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
+            }
+        }
+        
     }
 }
