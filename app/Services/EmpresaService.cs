@@ -26,5 +26,19 @@ namespace app.Services
         {
             return empresaRepositorio.VisualizarEmpresa(empresaid);
         }
+
+        public async Task DeletarEmpresa(string empresaid){
+            var empresaParaExcluir = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaid) ?? throw new KeyNotFoundException("Empresa não encontrada");
+
+            await empresaRepositorio.DeletarEmpresa(empresaParaExcluir);
+            dbContext.SaveChanges();
+        }
+
+        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
+        {
+            var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize);
+          
+            return empresas;
+        }
     }
 }

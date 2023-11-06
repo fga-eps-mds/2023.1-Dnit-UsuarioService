@@ -67,5 +67,46 @@ namespace app.Controller
 
             return StatusCode(404, "A empresa não existe.");
         }
+
+        [HttpDelete("{cnpj}")]
+        public async Task<IActionResult> ExcluirEmpresa(string empresaid)
+        {
+            authService.Require(Usuario, Permissao.PerfilRemover);
+
+            try{
+                await empresaService.DeletarEmpresa(empresaid);
+                return Ok("Empresa excluida");
+            }
+            catch(KeyNotFoundException ex){
+                return NotFound(ex.Message);
+            }
+            catch(InvalidOperationException e)
+            {
+                return StatusCode(400, e.Message);
+            }
+            catch(Exception)
+            {
+                return StatusCode(500, "Houve um erro interno no servidor.");
+            }            
+        }
+        
+        //[Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
+        {
+
+            try
+            {
+                var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize);
+
+                List<Empresa> paginaRetorno = pagina.Select(p => mapper.Map<Empresa>(p)).ToList();
+
+                return Ok(paginaRetorno);
+            }
+            catch(Exception e)
+            {
+                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
+            }
+        }
     }
 }
