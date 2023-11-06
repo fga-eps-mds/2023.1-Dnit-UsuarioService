@@ -28,7 +28,7 @@ jobs:
       run: tar -czvf build.tar.gz ./build
 
     - name: Upload Build
-      with:
+      env:
         DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
         DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
       run: |
