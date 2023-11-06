@@ -48,7 +48,9 @@ async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotat
     shutil.move(f"{STAGE_DIR}", f"{TARGET_DIR}/{next_build_id}")
 
     # set appsettings.json
-    shutil.copy(APPSETTINGS_FILE, f"{TARGET_DIR}/{next_build_id}/appsettings.json")
+    SETTINGS_FILE = f"{TARGET_DIR}/{next_build_id}/build/appsettings.json"
+    os.remove(SETTINGS_FILE)
+    os.symlink(APPSETTINGS_FILE, SETTINGS_FILE)
 
     # restart systemd service
     systemd_restart_status = call(["systemctl", "restart", SYSTEMD_SERVICE])
