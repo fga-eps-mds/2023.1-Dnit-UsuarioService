@@ -6,6 +6,8 @@ import tarfile
 import os
 import shutil
 
+from fastapi.responses import JSONResponse
+
 STAGE_DIR = "stage"
 TARGET_DIR = "target"
 APPSETTINGS_FILE = os.getenv("APPSETTINGS_FILE","appsettings.json")
@@ -29,7 +31,7 @@ app = FastAPI()
 @app.post("/update/{build_name}")
 async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotated[str, Header()]):
     if upload_token != SECRET:
-        return {"error": "invalid token"}
+        return JSONResponse(content={"error": "invalid token"}, status_code=401)
 
     prepare()
 
@@ -54,9 +56,7 @@ async def update_deploy(build_name: str, file: UploadFile, upload_token: Annotat
 
     # restart systemd service
     systemd_restart_status = call(["systemctl", "restart", SYSTEMD_SERVICE])
-    if systemd_restart_status == 0:
-        print("ok")
-    else:
-        print(f"Error at restarting {SYSTEMD_SERVICE}")
+    if systemd_restart_status:
+        return JSONResponse(content={"error": f"Error at restarting {SYSTEMD_SERVICE}"}, status_code=500)
 
     return {"status": "success"}
