@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - devops/deploy-continuo
 
 jobs:
   deploy:
@@ -22,7 +23,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal
 
     - name: Publish
-      run: dotnet publish --no-restore -o build
+      run: dotnet publish --no-restore -r linux-x64 -p:PublishSingleFile=true --self-contained false -o build app
 
     - name: Compress
       run: tar -czvf build.tar.gz ./build

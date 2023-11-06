@@ -7,4 +7,4 @@ WORK_DIR="target/$BUILD_NUMBER/build"
 echo "Starting build $BUILD_NUMBER";
 
 cd $WORK_DIR
-dotnet app.dll
+./app
