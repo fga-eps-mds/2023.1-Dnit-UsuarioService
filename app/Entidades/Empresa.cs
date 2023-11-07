@@ -13,7 +13,7 @@ namespace app.Entidades
         [Required, MaxLength(200)]
         public string RazaoSocial { get; set; }
 
-        public List<Usuario> Usuarios { get; set; }
+        public List<Usuario> Usuarios { get; set; } = new();
 
         public List<UF> UFs { get; set;}
     }

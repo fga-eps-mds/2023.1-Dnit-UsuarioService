@@ -12,8 +12,7 @@ namespace app.Services.Interfaces
         Task<Empresa?> EditarEmpresa(string empresaid, Empresa empresa);
         Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null);
         // Task<List<Usuario>> ListarUsuarios(int pageIndex, int pageSize);
-        // Task AdicionarUsuario(int usuarioid, string empresaid);
+        Task AdicionarUsuario(int usuarioid, string empresaid);
         // Task RemoverUsuario(int usuarioid, string empresaid);
     }
 }
-

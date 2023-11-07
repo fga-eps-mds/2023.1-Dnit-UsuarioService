@@ -57,5 +57,11 @@ namespace app.Services
 
             return empresaAtualizar;
         }
+
+        public async Task AdicionarUsuario(int usuarioid, string empresaid)
+        {
+            await empresaRepositorio.AdicionarUsuario(usuarioid, empresaid);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

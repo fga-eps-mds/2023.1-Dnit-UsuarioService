@@ -24,7 +24,7 @@ namespace app.Entidades
 
         public List<RedefinicaoSenha> RedefinicaoSenha { get; set; }
 
-        public List<Empresa>? Empresas { get; set; }
+        public List<Empresa>? Empresas { get; set; } = new();
 
         public Guid? PerfilId { get; set; }
         public Perfil? Perfil { get; set; }

@@ -124,13 +124,30 @@ namespace app.Controller
             }
             catch (DbUpdateException)
             {
-                return UnprocessableEntity("Este Perfil já existe");
+                return UnprocessableEntity("Esta empresa já existe");
             }
             catch (Exception e)
             {
                 return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
             }
         }
-        
+
+        [HttpPut("adicionarUsuario")]
+        public async Task<IActionResult> AdicionarUsuario(string cnpj, int usuarioid)
+        {
+            try
+            {
+                await empresaService.AdicionarUsuario(usuarioid, cnpj);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
+            }
+        }
     }
 }

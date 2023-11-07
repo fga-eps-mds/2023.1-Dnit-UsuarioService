@@ -8,10 +8,9 @@ namespace app.Repositorios.Interfaces
         Empresa? VisualizarEmpresa(string empresaid);
         Task DeletarEmpresa(Empresa empresa);
         public Task<Empresa?> ObterEmpresaPorIdAsync(string empresaid);
-        // Task<Empresa> EditarEmpresa(string empresaid, Empresa empresa);
         Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null);
         // Task<List<Usuario>> ListarUsuarios(int pageIndex, int pageSize);
-        // Task AdicionarUsuario(int usuarioid, string empresaid);
+        Task AdicionarUsuario(int usuarioid, string empresaid);
         // Task RemoverUsuario(int usuarioid, string empresaid);
     }
         
