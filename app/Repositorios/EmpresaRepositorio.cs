@@ -69,6 +69,20 @@ namespace app.Repositorios
                 throw new KeyNotFoundException();
             }
         }
+        public async Task RemoverUsuario(int usuarioid, string empresaid)
+        {
+            var usuario = dbContext.Usuario.Where(u => u.Id == usuarioid).FirstOrDefault();
+            var empresa = dbContext.Empresa.Where(e => e.Cnpj == empresaid).FirstOrDefault();
 
+            if (empresa != null && usuario != null)
+            {
+                empresa.Usuarios.Remove(usuario);
+            }
+            else
+            {
+                throw new KeyNotFoundException();
+            }
+
+        }
     }
 }

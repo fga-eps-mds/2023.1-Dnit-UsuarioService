@@ -63,5 +63,11 @@ namespace app.Services
             await empresaRepositorio.AdicionarUsuario(usuarioid, empresaid);
             await dbContext.SaveChangesAsync();
         }
+
+         public async Task RemoverUsuario(int usuarioid, string empresaid)
+        {
+            await empresaRepositorio.RemoverUsuario(usuarioid, empresaid);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

@@ -149,5 +149,23 @@ namespace app.Controller
                 return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
             }
         }
+
+        [HttpDelete("removerUsuario")]
+        public async Task<IActionResult> RemoverUsuario(string cnpj, int usuarioid)
+        {
+            try
+            {
+                await empresaService.RemoverUsuario(usuarioid, cnpj);
+                return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
+            }
+        }
     }
 }
