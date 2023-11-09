@@ -211,7 +211,7 @@ namespace app.Services
             return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
 
-        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId)
+        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId, api.UF novaUF)
         {
             var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId)
                 ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
@@ -219,7 +219,9 @@ namespace app.Services
             var permissao = await perfilRepositorio.ObterPerfilPorIdAsync(Guid.Parse(novoPerfilId))
                 ?? throw new ApiException(ErrorCodes.PermissaoNaoEncontrada);
 
+
             usuario.PerfilId = permissao.Id;
+            usuario.UfLotacao = novaUF;
             dbContext.SaveChanges();
         }
     }
