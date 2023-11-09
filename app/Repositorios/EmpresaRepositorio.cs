@@ -53,11 +53,11 @@ namespace app.Repositorios
                 .Take(pageSize)
                 .ToListAsync();
         }
-
+        
         public async Task AdicionarUsuario(int usuarioid, string empresaid)
         {
             var usuario = dbContext.Usuario.Where(u => u.Id == usuarioid).FirstOrDefault();
-            var empresa = dbContext.Empresa.Where(e => e.Cnpj == empresaid).FirstOrDefault();
+            var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == empresaid).FirstOrDefault();
 
 
             if (empresa != null && usuario != null)
@@ -83,6 +83,31 @@ namespace app.Repositorios
                 throw new KeyNotFoundException();
             }
 
+        }        
+        
+        public async Task<List<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
+        {
+            var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == cnpj).FirstOrDefault();
+
+            if (empresa != null)
+            {
+                var query = dbContext.Entry(empresa).Collection(e => e.Usuarios).Query();
+
+                if (!string.IsNullOrWhiteSpace(nome))
+                {
+                    query = query.Where(u => u.Nome.ToLower().Contains(nome.ToLower()));
+                }
+
+                return await query
+                .OrderBy(u => u.Nome)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            }
+            else
+            {
+                throw new KeyNotFoundException("A empresa n�o existe");
+            }
         }
     }
 }

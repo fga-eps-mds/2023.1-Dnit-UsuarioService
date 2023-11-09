@@ -69,5 +69,12 @@ namespace app.Services
             await empresaRepositorio.RemoverUsuario(usuarioid, empresaid);
             await dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
+        {
+            var usuarios = await empresaRepositorio.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
+
+            return usuarios;
+        }
     }
 }

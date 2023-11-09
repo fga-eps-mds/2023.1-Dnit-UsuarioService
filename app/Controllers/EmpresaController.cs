@@ -167,5 +167,24 @@ namespace app.Controller
                 return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
             }
         }
+
+        [HttpGet("listarUsuarios/{cnpj}")]
+        public async Task<IActionResult> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome = null)
+        {
+            try
+            {
+                var pagina = await empresaService.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
+
+                return Ok(pagina);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
+            }
+        }
     }
 }
