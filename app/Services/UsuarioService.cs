@@ -211,7 +211,7 @@ namespace app.Services
             return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
 
-        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId, api.UF novaUF)
+        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId, UF novaUF)
         {
             var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId)
                 ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
