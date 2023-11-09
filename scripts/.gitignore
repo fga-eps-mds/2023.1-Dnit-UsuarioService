@@ -3,3 +3,5 @@ __pycache__
 appsettings.json
 target/**
 stage/**
+dnit_updater-*
+poetry.lock
