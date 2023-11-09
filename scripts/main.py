@@ -11,7 +11,6 @@ from fastapi.responses import JSONResponse
 STAGE_DIR = "stage"
 TARGET_DIR = "target"
 APPSETTINGS_FILE = os.getenv("APPSETTINGS_FILE","appsettings.json")
-SYSTEMD_START_FILE = "./start.sh"
 SYSTEMD_SERVICE =  os.getenv("SYSTEMD_SERVICE","usuarioservice")
 
 SECRET = os.getenv("SECRET_KEY", "secret")
@@ -21,10 +20,8 @@ def prepare():
     os.makedirs(TARGET_DIR, exist_ok=True)
     if not os.path.exists(APPSETTINGS_FILE):
         raise FileNotFoundError(f"File {APPSETTINGS_FILE} not found")
-    systemd_start_file_dir = os.path.dirname(SYSTEMD_START_FILE)
-    if not os.path.exists(systemd_start_file_dir):
-        os.makedirs(systemd_start_file_dir, exist_ok=True)
 
+prepare()
 
 app = FastAPI()
 
