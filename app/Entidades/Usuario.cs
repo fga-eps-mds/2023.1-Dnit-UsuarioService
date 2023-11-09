@@ -1,6 +1,7 @@
 using api;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace app.Entidades
 {
@@ -24,6 +25,7 @@ namespace app.Entidades
 
         public List<RedefinicaoSenha> RedefinicaoSenha { get; set; }
 
+        [JsonIgnore]
         public List<Empresa>? Empresas { get; set; }
 
         public Guid? PerfilId { get; set; }
