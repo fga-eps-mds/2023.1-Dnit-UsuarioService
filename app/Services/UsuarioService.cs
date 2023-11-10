@@ -211,7 +211,7 @@ namespace app.Services
             return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
 
-        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId, UF novaUF)
+        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId, UF novaUF, int novoMunicipio)
         {
             var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId)
                 ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
@@ -222,6 +222,7 @@ namespace app.Services
 
             usuario.PerfilId = permissao.Id;
             usuario.UfLotacao = novaUF;
+            usuario.MunicipioId = novoMunicipio;
             dbContext.SaveChanges();
         }
     }
