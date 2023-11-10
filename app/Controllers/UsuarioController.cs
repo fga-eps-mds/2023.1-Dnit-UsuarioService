@@ -134,7 +134,7 @@ namespace app.Controllers
         public async Task EditarPerfilUsuario([FromRoute] int id, [FromBody] EditarPerfilUsuarioDTO dto)
         {
             authService.Require(Usuario, Permissao.UsuarioPerfilEditar);
-            await usuarioService.EditarUsuarioPerfil(id, dto.NovoPerfilId, dto.NovaUF);
+            await usuarioService.EditarUsuarioPerfil(id, dto.NovoPerfilId, dto.NovaUF, dto.NovoMunicipio);
         }
     }
 }
