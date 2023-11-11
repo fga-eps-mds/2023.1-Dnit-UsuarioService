@@ -33,11 +33,11 @@ namespace app.Controller
             this.permissaoService = permissaoService;
         }
 
-        //[Authorize]
+        [Authorize]
         [HttpPost()]
         public async Task<IActionResult> CadastrarEmpresa([FromBody] EmpresaDTO empresaDTO)
         {
-            //authService.Require(Usuario, Permissao.EmpresaCadastrar);
+            authService.Require(Usuario, Permissao.EmpresaCadastrar);
 
             var empresa = mapper.Map<Empresa>(empresaDTO);
 
@@ -55,9 +55,12 @@ namespace app.Controller
             }
         }
 
+        [Authorize]
         [HttpGet("{cnpj}")]
         public IActionResult VisualizarEmpresa(string cnpj)
         {
+            authService.Require(Usuario, Permissao.EmpresaVisualizar);
+
             var empresa = empresaService.VisualizarEmpresa(cnpj);
 
             if (empresa != null)
@@ -68,10 +71,11 @@ namespace app.Controller
             return StatusCode(404, "A empresa não existe.");
         }
 
+        [Authorize]
         [HttpDelete("{cnpj}")]
         public async Task<IActionResult> ExcluirEmpresa(string cnpj)
         {
-            authService.Require(Usuario, Permissao.PerfilRemover);
+            authService.Require(Usuario, Permissao.EmpresaRemover);
 
             try{
                 await empresaService.DeletarEmpresa(cnpj);
@@ -90,11 +94,11 @@ namespace app.Controller
             }            
         }
         
-        //[Authorize]
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
         {
-
+            authService.Require(Usuario, Permissao.EmpresaVisualizar);
             try
             {
                 var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize);
@@ -109,10 +113,11 @@ namespace app.Controller
             }
         }
         
-        // [Authorize]
+        [Authorize]
         [HttpPut("{cnpj}")]
         public async Task<IActionResult> EditarEmpresa(string cnpj, [FromBody] EmpresaDTO empresaDTO)
         {
+            authService.Require(Usuario, Permissao.EmpresaEditar);
 
             var empresa = mapper.Map<Empresa>(empresaDTO);
             empresa.Cnpj = cnpj;
@@ -124,7 +129,7 @@ namespace app.Controller
             }
             catch (DbUpdateException)
             {
-                return UnprocessableEntity("Esta empresa já existe");
+                return UnprocessableEntity("Erro ao editar a empresa.");
             }
             catch (Exception e)
             {
@@ -132,13 +137,20 @@ namespace app.Controller
             }
         }
 
+        [Authorize]
         [HttpPut("adicionarUsuario")]
         public async Task<IActionResult> AdicionarUsuario(string cnpj, int usuarioid)
         {
+            authService.Require(Usuario, Permissao.EmpresaGerenciarUsuarios);
+
             try
             {
                 await empresaService.AdicionarUsuario(usuarioid, cnpj);
-                return Ok();
+                return Ok("Usuário adicionado");
+            }
+            catch (DbUpdateException)
+            {
+                return UnprocessableEntity("Erro ao adicionar usuário.");
             }
             catch (KeyNotFoundException ex)
             {
@@ -150,13 +162,20 @@ namespace app.Controller
             }
         }
 
+        [Authorize]
         [HttpDelete("removerUsuario")]
         public async Task<IActionResult> RemoverUsuario(string cnpj, int usuarioid)
         {
+            authService.Require(Usuario, Permissao.EmpresaGerenciarUsuarios);
+
             try
             {
                 await empresaService.RemoverUsuario(usuarioid, cnpj);
-                return Ok();
+                return Ok("Usuário removido");
+            }
+            catch (DbUpdateException)
+            {
+                return UnprocessableEntity("Erro ao remover usuário.");
             }
             catch (KeyNotFoundException ex)
             {
@@ -168,9 +187,12 @@ namespace app.Controller
             }
         }
 
+        [Authorize]
         [HttpGet("listarUsuarios/{cnpj}")]
         public async Task<IActionResult> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome = null)
         {
+            authService.Require(Usuario, Permissao.EmpresaVisualizarUsuarios);
+
             try
             {
                 var pagina = await empresaService.ListarUsuarios(cnpj, pageIndex, pageSize, nome);

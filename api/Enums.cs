@@ -83,6 +83,10 @@ namespace api
         EmpresaVisualizar = 2003,
         [Description("Gerenciar Empresas")]
         EmpresaGerenciar = 2004,
+        [Description("Gerenciar Usuários da Empresa")]
+        EmpresaGerenciarUsuarios = 2005,
+        [Description("Visualizar Usuários da Empresa")]
+        EmpresaVisualizarUsuarios = 2006,
 
         [Description("Cadastrar Perfil de Usuário")]
         PerfilCadastrar = 3000,
