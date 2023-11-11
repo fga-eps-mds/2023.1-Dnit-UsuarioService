@@ -67,7 +67,7 @@ namespace app.Controllers
                 await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbUpdateException)
+            catch (DbException)
             {
                 throw new ApiException(ErrorCodes.EmailUtilizado);
             }
