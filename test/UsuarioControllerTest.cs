@@ -159,7 +159,7 @@ namespace test
         }
 
         [Fact]
-        public async Task CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
+      public async Task CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
             var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -171,11 +171,12 @@ namespace test
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
-            var resultado = await Assert.ThrowsAsync<Npgsql.PostgresException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO)); 
+            var resultado = await Assert.ThrowsAsync<ApiException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO)); 
 
             usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
-            var objeto = Assert.IsType<Npgsql.PostgresException>(resultado);
+            Assert.IsType<ApiException>(resultado);
         }
+
 
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoUsuarioForCadastrado_DeveRetornarCreated()
