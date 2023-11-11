@@ -17,6 +17,7 @@ using app.Controllers;
 using api.Usuarios;
 using api.Senhas;
 using Xunit.Microsoft.DependencyInjection.Abstracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace test
 {
@@ -165,7 +166,7 @@ namespace test
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
-            var excecao = new Npgsql.PostgresException("", "", "", "23505");
+            var excecao = new DbUpdateException("23505");
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
