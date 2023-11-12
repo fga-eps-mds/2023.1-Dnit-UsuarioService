@@ -102,10 +102,9 @@ namespace app.Controller
             try
             {
                 var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome);
-
-                List<Empresa> paginaRetorno = pagina.Select(p => mapper.Map<Empresa>(p)).ToList();
-
-                return Ok(paginaRetorno);
+                var result = mapper.Map<List<EmpresaModel>>(pagina);
+                
+                return Ok(result);
             }
             catch(Exception e)
             {
