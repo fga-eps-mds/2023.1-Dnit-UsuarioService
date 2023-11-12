@@ -17,8 +17,7 @@ namespace app.Services.Mapper
         {
             CreateMap<Municipio, MunicipioModel>();
 
-            CreateMap<Usuario, UsuarioModel>()
-                .ForMember(u => u.Cnpj, opt => opt.Ignore());
+            CreateMap<Usuario, UsuarioModel>();
             
             CreateMap<UsuarioDTO, UsuarioTerceiro>()
                 .ForMember(u => u.CNPJ, opt => opt.Ignore());
@@ -52,7 +51,9 @@ namespace app.Services.Mapper
                 )
                 .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()))
                 .ForMember(model => model.CategoriasPermissao, opt => opt.Ignore());
-                
+            
+            CreateMap<Empresa, EmpresaModel>();
+
             CreateMap<EmpresaDTO, Empresa>()
                 .ForMember(e => e.Cnpj, opt => opt.MapFrom(em => em.Cnpj))
                 .ForMember(e => e.RazaoSocial, opt => opt.MapFrom(em => em.RazaoSocial))

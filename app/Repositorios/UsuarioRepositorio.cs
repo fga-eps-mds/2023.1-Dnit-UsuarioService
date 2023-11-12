@@ -127,6 +127,7 @@ namespace app.Repositorios
             var query = dbContext.Usuario
                 .Include(u => u.Municipio)
                 .Include(u => u.Perfil)
+                .Include(u => u.Empresas)
                 .AsQueryable();
 
             if (filtro.Nome != null)
@@ -140,6 +141,9 @@ namespace app.Repositorios
 
             if (filtro.MunicipioId != null)
                 query = query.Where(u => u.MunicipioId == filtro.MunicipioId);
+
+            if (filtro.Empresa != null)
+                query = query.Where(u => u.Empresas.All(e => e.RazaoSocial.ToLower().Contains(filtro.Empresa.ToLower())));
 
             var total = await query.CountAsync();
             var items = await query
