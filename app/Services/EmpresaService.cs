@@ -36,7 +36,7 @@ namespace app.Services
 
         public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
         {
-            var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize);
+            var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome);
           
             return empresas;
         }

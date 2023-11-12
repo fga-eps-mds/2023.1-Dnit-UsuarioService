@@ -101,7 +101,7 @@ namespace app.Controller
             authService.Require(Usuario, Permissao.EmpresaVisualizar);
             try
             {
-                var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize);
+                var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome);
 
                 List<Empresa> paginaRetorno = pagina.Select(p => mapper.Map<Empresa>(p)).ToList();
 
