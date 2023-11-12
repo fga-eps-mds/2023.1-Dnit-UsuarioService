@@ -119,6 +119,8 @@ namespace api
         CodigoUfInvalido,
         [Description("Permissao não encontrada")]
         PermissaoNaoEncontrada,
+        [Description("Email já cadastrado")]
+        EmailUtilizado,
     }
 
 
