@@ -1,0 +1,35 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity normal
+
+    - name: Publish
+      run: dotnet publish --no-restore -r linux-x64 -p:PublishSingleFile=true --self-contained false -o build app
+
+    - name: Compress
+      run: tar -czvf build.tar.gz ./build
+
+    - name: Upload Build
+      env:
+        DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+        DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      run: |
+        curl --fail -X POST -L -F "file=@build.tar.gz"  $DEPLOY_URL/build_`git rev-parse HEAD`.tar.gz -H "upload-token: $DEPLOY_TOKEN"
