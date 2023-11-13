@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BUILD_NUMBER="$(ls target/ | sort -r | head -n1)"
+BUILD_NUMBER="$(ls target/ | sort -rn | head -n1)"
 WORK_DIR="target/$BUILD_NUMBER/build"
 
 
