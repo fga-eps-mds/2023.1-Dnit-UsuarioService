@@ -169,7 +169,7 @@ namespace app.Services
         {
             var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
 
-            if (!authConfig.Enabled || usuario.Perfil.Tipo == TipoPerfil.Administrador)
+            if (!authConfig.Enabled || usuario.Perfil?.Tipo == TipoPerfil.Administrador)
                 permissoes = Enum.GetValues<Permissao>().ToList();
                 
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
@@ -177,6 +177,7 @@ namespace app.Services
                 Id = usuario.Id,
                 Name = usuario.Nome,
                 Permissions = permissoes,
+                Administrador = usuario.Perfil?.Tipo == TipoPerfil.Administrador,
             });
 
             var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
@@ -224,6 +225,20 @@ namespace app.Services
             usuario.UfLotacao = novaUF;
             usuario.MunicipioId = novoMunicipio;
             dbContext.SaveChanges();
+        }
+
+        public string ObterApiKey(int usuarioid)
+        {
+            var usuario = usuarioRepositorio.ObterUsuario(id: usuarioid)!;
+            var (token, _) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
+            {
+                Id = usuario.Id,
+                Name = usuario.Nome,
+                Permissions = usuario.Perfil?.Permissoes?.ToList() ?? new(),
+                Administrador = usuario.Perfil?.Tipo == TipoPerfil.Administrador,
+            },
+            apiKey: usuario.Perfil?.Tipo == TipoPerfil.Administrador);
+            return "Bearer " + token;
         }
     }
 }

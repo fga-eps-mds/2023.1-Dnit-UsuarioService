@@ -9,6 +9,7 @@
         public bool ValidateIssuer { get; set; }
         public bool ValidateIssuerSigningKey { get; set; }
         public int ExpireMinutes { get; set; } = 10;
+        public int ApiKeyExpireMinutes { get; set; } = 60 * 24 * 365; // 1 ano
         public int RefreshTokenExpireMinutes { get; set; } = 120;
     }
 }

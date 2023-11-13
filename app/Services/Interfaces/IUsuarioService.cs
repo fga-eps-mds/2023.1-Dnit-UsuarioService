@@ -16,5 +16,6 @@ namespace app.Services.Interfaces
         Task<List<Permissao>> ListarPermissoesAsync(int userId);
         Task<ListaPaginada<UsuarioModel>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
         Task EditarUsuarioPerfil(int usuarioId ,string novoPerfilId, api.UF novaUF, int novoMunicipio);
+        string ObterApiKey(int usuarioid);
     }
 }
