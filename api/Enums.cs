@@ -79,7 +79,7 @@ namespace api
         //EmpresaEditar = 2001,
         //[Description("Remover Empresa")]
         //EmpresaRemover = 2002,
-        
+
         [Description("Cadastrar Perfil de Usuário")]
         PerfilCadastrar = 3000,
         [Description("Editar Perfil de Usuário")]
@@ -88,7 +88,7 @@ namespace api
         PerfilRemover = 3002,
         [Description("Visualizar perfis")]
         PerfilVisualizar = 3003,
-        
+
         [Description("Calcular UPS de sinistros")]
         UpsCalcularSinistro = 5000,
         [Description("Calcular UPS de escolas")]
@@ -101,7 +101,28 @@ namespace api
 
         [Description("Cadastrar sinistro")]
         SinistroCadastrar = 7000,
+
+        [Description("Visualizar Usuário")]
+        UsuarioVisualizar = 8003,
+        [Description("Editar Perfil Usuário")]
+        UsuarioPerfilEditar = 8004,
     }
+
+    public enum ErrorCodes
+    {
+        Unknown,
+        [Description("Usuário não possui permissão para realizar ação")]
+        NaoPermitido,
+        [Description("Usuário não encontrado")]
+        UsuarioNaoEncontrado,
+        [Description("Código UF inválido")]
+        CodigoUfInvalido,
+        [Description("Permissao não encontrada")]
+        PermissaoNaoEncontrada,
+        [Description("Email já cadastrado")]
+        EmailUtilizado,
+    }
+
 
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TipoPerfil

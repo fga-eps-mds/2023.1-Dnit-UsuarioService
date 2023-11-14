@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using app.Services;
 using api;
 using System.Data.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace app.Controllers
 {
@@ -64,16 +65,11 @@ namespace app.Controllers
             try
             {
                 await usuarioService.CadastrarUsuarioDnit(usuarioDTO);
-
                 return StatusCode(201, new NoContentResult());
             }
-            catch (DbException)
+            catch (DbUpdateException)
             {
-                return Conflict("Usuário já cadastrado.");
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Houve um erro interno no servidor.");
+                throw new ApiException(ErrorCodes.EmailUtilizado);
             }
         }
 
@@ -123,6 +119,22 @@ namespace app.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [Authorize]
+        [HttpGet()]
+        public async Task<ListaPaginada<UsuarioModel>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
+        {
+            authService.Require(Usuario, Permissao.UsuarioVisualizar);
+            return await usuarioService.ObterUsuariosAsync(filtro);
+        }
+
+        [Authorize]
+        [HttpPatch("{id}/perfil")]
+        public async Task EditarPerfilUsuario([FromRoute] int id, [FromBody] EditarPerfilUsuarioDTO dto)
+        {
+            authService.Require(Usuario, Permissao.UsuarioPerfilEditar);
+            await usuarioService.EditarUsuarioPerfil(id, dto.NovoPerfilId, dto.NovaUF, dto.NovoMunicipio);
         }
     }
 }

@@ -18,12 +18,12 @@ namespace app.Entidades
 
         [Required, MaxLength(50)]
         public string Email { get; set; }
-        
+
         [Required, MaxLength(200)]
         public string Senha { get; set; }
 
         public List<RedefinicaoSenha> RedefinicaoSenha { get; set; }
-        
+
         public List<Empresa>? Empresas { get; set; }
 
         public Guid? PerfilId { get; set; }
@@ -31,5 +31,7 @@ namespace app.Entidades
 
         public string? TokenAtualizacao { get; set; }
         public DateTime? TokenAtualizacaoExpiracao { get; set; }
+        public int? MunicipioId { get; set; }
+        public Municipio? Municipio { get; set; }
     }
 }

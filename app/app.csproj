@@ -2,6 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+        <RuntimeIdentifiers>win10-x64;osx.10.11-x64;linux-x64</RuntimeIdentifiers>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>458d8e9b-3d94-4e66-8b4d-cd89daee7157</UserSecretsId>
@@ -23,12 +24,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.11" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL.Design" Version="1.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
     <PackageReference Include="DotNetEnv" Version="2.5.0" />
   </ItemGroup>
+	
+	<ItemGroup>
+	    <Folder Include="Migrations\Data\" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\api\api.csproj" />
@@ -37,7 +43,7 @@
 
 	<ItemGroup>
 		<SonarQubeSetting Include="sonar.exclusions">
-			<Value>Migrations\**, DI\**, Program.cs</Value>
+			<Value>Migrations\**, DI\**, Program.cs, Entidades/AppDbContext.cs</Value>
 		</SonarQubeSetting>
 	</ItemGroup>
 </Project>

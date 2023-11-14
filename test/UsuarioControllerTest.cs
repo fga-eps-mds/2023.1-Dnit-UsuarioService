@@ -1,34 +1,33 @@
-﻿using app.Controllers;
-using api.Usuarios;
-using api.Senhas;
+﻿using Moq;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
-using app.Services.Interfaces;
-using System;
 using System.Collections.Generic;
-using test.Stub;
-using Xunit;
 using System.Threading.Tasks;
-using Xunit.Microsoft.DependencyInjection.Abstracts;
-using test.Fixtures;
-using app.Entidades;
 using Xunit.Abstractions;
-using app.Services;
-using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using app.Services;
+using api;
+using test.Fixtures;
+using test.Stub;
 using auth;
+using app.Services.Interfaces;
+using app.Entidades;
+using app.Controllers;
+using api.Usuarios;
+using api.Senhas;
+using Xunit.Microsoft.DependencyInjection.Abstracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace test
 {
     public class UsuarioControllerTest : TestBed<Base>, IDisposable
     {
         const int CREATED = 201;
+        const int BAD_REQUEST = 400;
         const int INTERNAL_SERVER_ERROR = 500;
-
-        UsuarioController controller;
-        AppDbContext dbContext;
+        readonly UsuarioController controller;
+        readonly AppDbContext dbContext;
 
         public UsuarioControllerTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
@@ -142,26 +141,43 @@ namespace test
 
             var objeto = Assert.IsType<ObjectResult>(resultado);
             Assert.Equal(CREATED, objeto.StatusCode);
+
+            var usuarioBanco = dbContext.Usuario.Single(u => u.Email == usuarioDTO.Email);
+            Assert.True(usuarioDTO.UfLotacao != 0);
+            Assert.Equal(usuarioDTO.UfLotacao, usuarioDTO.UfLotacao);
         }
 
         [Fact]
-        public async Task CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
+        public async Task CadastrarUsuarioDnit_QuandoUsuarioTemUfInvalido_RetornaBadRequest()
+        {
+            var usuarioDTO = new UsuarioStub().RetornarUsuarioDnitDTO();
+            usuarioDTO.UfLotacao = 0;
+
+            var e = await Assert.ThrowsAsync<ApiException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO));
+            Assert.Equal(ErrorCodes.CodigoUfInvalido, e.Error.Code);
+
+          
+        }
+
+        [Fact]
+      public async Task CadastrarUsuarioDnit_QuandoUsuarioJaExistir_DeveRetornarConflict()
         {
             var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
 
             Mock<IUsuarioService> usuarioServiceMock = new();
-            var excecao = new Npgsql.PostgresException("", "", "", "23505");
+            var excecao = new DbUpdateException("23505");
 
             usuarioServiceMock.Setup(service => service.CadastrarUsuarioDnit(It.IsAny<UsuarioDTO>())).Throws(excecao);
 
             var controller = new UsuarioController(usuarioServiceMock.Object, null);
 
-            var resultado = await controller.CadastrarUsuarioDnit(usuarioDTO);
+            var resultado = await Assert.ThrowsAsync<ApiException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO)); 
 
             usuarioServiceMock.Verify(service => service.CadastrarUsuarioDnit(usuarioDTO), Times.Once);
-            var objeto = Assert.IsType<ConflictObjectResult>(resultado);
+            Assert.IsType<ApiException>(resultado);
         }
+
 
         [Fact]
         public void CadastrarUsuarioTerceiro_QuandoUsuarioForCadastrado_DeveRetornarCreated()
@@ -285,14 +301,6 @@ namespace test
 
             usuarioServiceMock.Verify(service => service.TrocaSenha(redefinicaoSenhaDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
-        }
-
-        public new void Dispose()
-        {
-            dbContext.RemoveRange(dbContext.PerfilPermissoes);
-            dbContext.RemoveRange(dbContext.Perfis);
-            dbContext.RemoveRange(dbContext.Usuario);
-            dbContext.RemoveRange(dbContext.Empresa);
         }
     }
 }

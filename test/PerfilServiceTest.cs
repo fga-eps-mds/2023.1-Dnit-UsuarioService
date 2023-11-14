@@ -45,7 +45,7 @@ namespace test
             Assert.Equal(1, perfilDb.Permissoes.Count());
         }
 
-        [Fact] 
+        [Fact]
         public async Task EditarPerfil_QuandoNomeJaCadastrado_DeveRetornarPerfilAtualizado()
         {
             var perfilDTO = PerfilStub.RetornaPerfilDTO();
@@ -59,7 +59,7 @@ namespace test
 
             perfilEdicao.Id = perfilRetorno.Id;
             var perfilRetornoEditado = await perfilService.EditarPerfil(perfilEdicao, perfilDTOEdicao.Permissoes);
-            
+
             var perfilDb = await perfilRepositorio.ObterPerfilPorIdAsync(perfilRetorno.Id);
 
             Assert.NotNull(perfilRetorno);
@@ -68,7 +68,7 @@ namespace test
             Assert.Equal(perfilRetorno.Id, perfilDb.Id);
             Assert.Equal(perfilRetornoEditado, perfilDb);
             Assert.NotEqual(perfilDb.Nome, perfilDTO.Nome);
-            Assert.NotEqual(perfilDb.Permissoes.Count(), perfilDTO.Permissoes.Count());            
+            Assert.NotEqual(perfilDb.Permissoes.Count(), perfilDTO.Permissoes.Count());
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace test
             var perfilDTO = PerfilStub.RetornaPerfilDTO();
             var perfil = mapper.Map<Perfil>(perfilDTO);
 
-            await Assert.ThrowsAsync<KeyNotFoundException>( async () => await perfilService.EditarPerfil(perfil, perfilDTO.Permissoes));
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await perfilService.EditarPerfil(perfil, perfilDTO.Permissoes));
         }
 
         [Fact]
@@ -96,9 +96,45 @@ namespace test
         }
 
         [Fact]
+        public async Task ExcluirPerfil_QuandoTemUsuariosComEssePerfilExcluido_PerfisDosUsuariosSaoDefinidosComoBasico()
+        {
+            var perfilParaExcluir = new Perfil { Nome = "Será excluído", Tipo = TipoPerfil.Customizavel };
+            var perfilParaManter = new Perfil { Nome = "Para manter", Tipo = TipoPerfil.Customizavel };
+            var perfilBasico = new Perfil { Nome = "Básico", Tipo = TipoPerfil.Basico };
+            dbContext.Perfis.Add(perfilParaExcluir);
+            dbContext.Perfis.Add(perfilParaManter);
+            dbContext.Perfis.Add(perfilBasico);
+            dbContext.SaveChanges();
+
+            dbContext.PopulaUsuarios(5);
+            var usuarios = dbContext.Usuario.ToList();
+            usuarios[0].PerfilId = perfilParaExcluir.Id;
+            usuarios[1].PerfilId = perfilParaExcluir.Id;
+            usuarios[2].PerfilId = perfilParaExcluir.Id;
+            usuarios[3].PerfilId = perfilParaManter.Id;
+            usuarios[4].PerfilId = perfilParaManter.Id;
+            dbContext.SaveChanges();
+
+            await perfilService.ExcluirPerfil(perfilParaExcluir.Id);
+
+            var usuariosComPerfilBasico = dbContext.Usuario
+                .Include(u => u.Perfil)
+                .Where(u => u.PerfilId == perfilBasico.Id)
+                .Count();
+            Assert.Equal(3, usuariosComPerfilBasico);
+            Assert.Null(dbContext.Perfis.Find(perfilParaExcluir.Id));
+
+            var usuariosComPerfilManter = dbContext.Usuario
+                .Include(u => u.Perfil)
+                .Where(u => u.PerfilId == perfilParaManter.Id)
+                .Count();
+            Assert.Equal(2, usuariosComPerfilManter);
+        }
+
+        [Fact]
         public async Task ExcluirPerfil_QuandoPerfilNaoExiste_DeveLancarKeyNotFoundException()
         {
-            await Assert.ThrowsAsync<KeyNotFoundException>( async() => await perfilService.ExcluirPerfil(Guid.NewGuid()));
+            await Assert.ThrowsAsync<KeyNotFoundException>(async () => await perfilService.ExcluirPerfil(Guid.NewGuid()));
         }
 
         [Fact]
@@ -116,7 +152,7 @@ namespace test
 
             lista.ForEach(p => perfilService.CriarPerfil(p, p.Permissoes.ToList()));
 
-            var listaRetorno = await perfilService.ListarPerfisAsync(1,5);
+            var listaRetorno = await perfilService.ListarPerfisAsync(1, 5);
 
             Assert.Equal(5, listaRetorno.Count());
         }
@@ -125,6 +161,7 @@ namespace test
         {
             dbContext.RemoveRange(dbContext.PerfilPermissoes);
             dbContext.RemoveRange(dbContext.Perfis);
+            dbContext.RemoveRange(dbContext.Usuario);
             dbContext.SaveChanges();
         }
     }

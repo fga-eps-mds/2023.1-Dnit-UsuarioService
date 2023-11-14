@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "dnit_updater"
+version = "0.1.1"
+description = "Servidor para o deploy contínuo dos serviços do DNIT EPS FGA"
+authors = ["Thiago Paiva <thiagohdaqw@gmail.com>", "Wagner M Cunha <wagnermc506@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.104.1"
+python-multipart = "^0.0.6"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

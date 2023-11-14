@@ -16,6 +16,7 @@ namespace app.Services
     {
 
         private readonly IUsuarioRepositorio usuarioRepositorio;
+        private readonly IPerfilRepositorio perfilRepositorio;
         private readonly IMapper mapper;
         private readonly IEmailService emailService;
         private readonly SenhaConfig senhaConfig;
@@ -25,15 +26,17 @@ namespace app.Services
 
         public UsuarioService
         (
-            IUsuarioRepositorio usuarioRepositorio, 
-            IMapper mapper, 
-            IEmailService emailService, 
+            IUsuarioRepositorio usuarioRepositorio,
+            IPerfilRepositorio perfilRepositorio,
+            IMapper mapper,
+            IEmailService emailService,
             IOptions<SenhaConfig> senhaConfig,
             AppDbContext dbContext,
             AuthService autenticacaoService,
             IOptions<AuthConfig> authConfig
         )
         {
+            this.perfilRepositorio = perfilRepositorio;
             this.usuarioRepositorio = usuarioRepositorio;
             this.mapper = mapper;
             this.emailService = emailService;
@@ -45,6 +48,9 @@ namespace app.Services
 
         public async Task CadastrarUsuarioDnit(UsuarioDTO usuarioDTO)
         {
+            if (usuarioDTO.UfLotacao == 0) 
+                throw new ApiException(ErrorCodes.CodigoUfInvalido);
+
             var usuario = mapper.Map<UsuarioDnit>(usuarioDTO);
 
             usuario.Senha = EncriptarSenha(usuario.Senha);
@@ -64,9 +70,7 @@ namespace app.Services
         public void CadastrarUsuarioTerceiro(UsuarioDTO usuarioDTO)
         {
             var usuario = mapper.Map<UsuarioTerceiro>(usuarioDTO);
-
             usuario.Senha = EncriptarSenha(usuario.Senha);
-
             usuarioRepositorio.CadastrarUsuarioTerceiro(usuario);
         }
 
@@ -198,6 +202,28 @@ namespace app.Services
                 usuario.Perfil.PermissoesSessao = Enum.GetValues<Permissao>().ToList();
             }
             return usuario!.Perfil?.Permissoes?.ToList() ?? new();
+        }
+
+        public async Task<ListaPaginada<UsuarioModel>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
+        {
+            var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
+            var modelos = mapper.Map<List<UsuarioModel>>(usuarios.Items);
+            return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
+        }
+
+        public async Task EditarUsuarioPerfil(int usuarioId, string novoPerfilId, UF novaUF, int novoMunicipio)
+        {
+            var usuario = await usuarioRepositorio.ObterUsuarioAsync(usuarioId)
+                ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
+
+            var permissao = await perfilRepositorio.ObterPerfilPorIdAsync(Guid.Parse(novoPerfilId))
+                ?? throw new ApiException(ErrorCodes.PermissaoNaoEncontrada);
+
+
+            usuario.PerfilId = permissao.Id;
+            usuario.UfLotacao = novaUF;
+            usuario.MunicipioId = novoMunicipio;
+            dbContext.SaveChanges();
         }
     }
 }
