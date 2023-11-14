@@ -38,13 +38,21 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync(p => p.Cnpj == Cnpj);
         }
 
-        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
+        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
         {
             var query = dbContext.Empresa.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(nome))
             {
                 query = query.Where(p => p.RazaoSocial.ToLower().Contains(nome.ToLower()));
+            }else if(!string.IsNullOrWhiteSpace(cnpj))
+            {
+                query = query.Where(p => p.Cnpj.ToLower().Contains(cnpj.ToLower()));
+            }else if(!string.IsNullOrWhiteSpace(nome) && !string.IsNullOrWhiteSpace(cnpj))
+            {
+                var query_1 = query.Where(p => p.RazaoSocial.ToLower().Contains(nome.ToLower()));
+
+                query = query_1.Where(p => p.Cnpj.ToLower().Contains(cnpj.ToLower()));
             }
 
             return await query

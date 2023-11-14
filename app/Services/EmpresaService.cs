@@ -34,9 +34,9 @@ namespace app.Services
             dbContext.SaveChanges();
         }
 
-        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
+        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
         {
-            var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome);
+            var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
           
             return empresas;
         }
