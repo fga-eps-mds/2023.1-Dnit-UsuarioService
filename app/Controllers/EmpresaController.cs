@@ -65,7 +65,8 @@ namespace app.Controller
 
             if (empresa != null)
             {
-                return Ok(empresa);
+                var result = mapper.Map<EmpresaModel>(empresa);
+                return Ok(result);
             }
 
             return StatusCode(404, "A empresa não existe.");
