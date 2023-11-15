@@ -107,6 +107,7 @@ namespace app.Repositorios
                 }
 
                 return await query
+                .Include(u => u.Perfil)
                 .OrderBy(u => u.Nome)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
