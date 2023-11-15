@@ -16,7 +16,10 @@ namespace app.Entidades
 
         [JsonIgnore]
         public List<Usuario> Usuarios { get; set; }
-
-        public List<UF> UFs { get; set;}
+        
+        public List<EmpresaUF>? EmpresaUFs { get; set; }
+        
+        [NotMapped]
+        public List<UF>? UFs { get; set; }
     }
 }

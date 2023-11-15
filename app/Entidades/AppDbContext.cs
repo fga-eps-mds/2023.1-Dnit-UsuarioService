@@ -10,7 +10,7 @@ namespace app.Entidades
         public DbSet<Usuario> Usuario { get; set; }
         public DbSet<RedefinicaoSenha> RedefinicaoSenha { get; set; }
         public DbSet<Empresa> Empresa { get; set; }
-
+        public DbSet<EmpresaUF> EmpresaUFs { get; set; }
         public DbSet<Perfil> Perfis { get; set; }
         public DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
 
@@ -42,13 +42,18 @@ namespace app.Entidades
 
             modelBuilder.Entity<Empresa>()
                 .HasMany(e => e.Usuarios)
-                .WithMany(u => u.Empresas)
-                .UsingEntity(em =>
-                {
-                    em.Property<int>("UsuariosId").HasColumnName("IdUsuario");
-                    em.Property<string>("EmpresasCnpj").HasColumnName("CnpjEmpresa");
-                    em.ToTable("UsuarioEmpresa");
-                });
+                .WithOne(u => u.Empresa);
+
+            modelBuilder.Entity<Empresa>()
+                .HasMany(e => e.EmpresaUFs)
+                .WithOne(u => u.Empresa);
+
+            modelBuilder.Entity<Empresa>()
+                .Navigation(e => e.EmpresaUFs)
+                .AutoInclude();
+
+            modelBuilder.Entity<EmpresaUF>()
+                .HasKey(e => new { e.EmpresaId, e.Uf });
 
             modelBuilder.Entity<Perfil>()
                 .HasIndex(p => p.Nome)

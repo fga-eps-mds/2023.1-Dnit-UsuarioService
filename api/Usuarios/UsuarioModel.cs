@@ -9,7 +9,7 @@ namespace api.Usuarios
         public int Id { get; set; }
         public string Email { get; set; }
         public string Nome { get; set; }
-        public List<EmpresaModel> empresas{ get; set; }
+        public EmpresaModel? empresa{ get; set; }
         public Guid? PerfilId { get; set; }
         public PerfilModel? Perfil { get; set; }
         public UF UfLotacao { get; set; }

@@ -62,16 +62,20 @@ namespace app.Repositorios
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
 
-            List<Empresa> empresas = new() { empresa };
+            // List<Empresa> empresas = new() { empresa };
 
             var novoUsuarioTerceiro = new Usuario
             {
                 Nome = usuarioTerceiro.Nome,
                 Email = usuarioTerceiro.Email,
                 Senha = usuarioTerceiro.Senha,
-                Empresas = empresas,
-                Perfil = await RecuperaPerfilBasicoAsync()
+                Perfil = await RecuperaPerfilBasicoAsync(),
+                Associacao = Associacao.Empresa
             };
+
+            if (empresa != null){
+                novoUsuarioTerceiro.Empresa = empresa;
+            }
 
             dbContext.Usuario.Add(novoUsuarioTerceiro);
         }
@@ -127,7 +131,7 @@ namespace app.Repositorios
             var query = dbContext.Usuario
                 .Include(u => u.Municipio)
                 .Include(u => u.Perfil)
-                .Include(u => u.Empresas)
+                .Include(u => u.Empresa)
                 .AsQueryable();
 
             if (filtro.Nome != null)
@@ -143,7 +147,7 @@ namespace app.Repositorios
                 query = query.Where(u => u.MunicipioId == filtro.MunicipioId);
 
             if (filtro.Empresa != null)
-                query = query.Where(u => u.Empresas.All(e => e.RazaoSocial.ToLower().Contains(filtro.Empresa.ToLower())));
+                query = query.Where(u => u.Empresa.RazaoSocial.Contains(filtro.Empresa));
 
             var total = await query.CountAsync();
             var items = await query

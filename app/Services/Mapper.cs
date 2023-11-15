@@ -52,12 +52,14 @@ namespace app.Services.Mapper
                 .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()))
                 .ForMember(model => model.CategoriasPermissao, opt => opt.Ignore());
             
-            CreateMap<Empresa, EmpresaModel>();
+            CreateMap<Empresa, EmpresaModel>()
+                .ForMember(em => em.UFs, opt => opt.MapFrom(e => e.EmpresaUFs.ConvertAll(d => d.Uf)));
 
             CreateMap<EmpresaDTO, Empresa>()
                 .ForMember(e => e.Cnpj, opt => opt.MapFrom(em => em.Cnpj))
                 .ForMember(e => e.RazaoSocial, opt => opt.MapFrom(em => em.RazaoSocial))
-                .ForMember(e => e.UFs, opt => opt.MapFrom(em => em.UFs));
+                .ForMember(e => e.EmpresaUFs, opt => opt.MapFrom((dto, em) => dto.UFs.ConvertAll(uf => new EmpresaUF {Empresa=em, Uf=uf})))
+                .ForMember(e => e.Usuarios, opt => opt.Ignore());
 
         }
     }

@@ -8,6 +8,7 @@ using api.Empresa;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using api.Usuarios;
 
 namespace app.Controller
 {
@@ -125,7 +126,8 @@ namespace app.Controller
             try
             {
                 var novaEmpresa = await empresaService.EditarEmpresa(cnpj, empresa);
-                return Ok(novaEmpresa);
+                var result = mapper.Map<EmpresaModel>(novaEmpresa);
+                return Ok(result);
             }
             catch (DbUpdateException)
             {
@@ -196,8 +198,9 @@ namespace app.Controller
             try
             {
                 var pagina = await empresaService.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
+                var result = mapper.Map<List<UsuarioModel>>(pagina);
 
-                return Ok(pagina);
+                return Ok(result);
             }
             catch (KeyNotFoundException ex)
             {

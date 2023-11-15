@@ -2,6 +2,7 @@ using app.Services.Interfaces;
 using app.Entidades;
 using AutoMapper;
 using app.Repositorios.Interfaces;
+using api;
 
 namespace app.Services
 {
@@ -37,7 +38,7 @@ namespace app.Services
         public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
         {
             var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome);
-          
+
             return empresas;
         }
 
@@ -49,7 +50,7 @@ namespace app.Services
             {
                 empresaAtualizar.Cnpj = empresa.Cnpj;
                 empresaAtualizar.RazaoSocial = empresa.RazaoSocial;
-                empresaAtualizar.UFs = empresa.UFs;
+                empresaAtualizar.EmpresaUFs = empresa.EmpresaUFs;
                 empresaAtualizar.Usuarios = empresa.Usuarios;
             }
 

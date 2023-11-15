@@ -139,4 +139,12 @@ namespace api
         Administrador,
         Customizavel
     }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum Associacao
+    {
+        DNIT = 1,
+        Empresa,
+        Escola
+    }
 }
