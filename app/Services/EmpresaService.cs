@@ -5,6 +5,7 @@ using app.Repositorios.Interfaces;
 using api;
 using api.Empresa;
 using api.Usuarios;
+using api.Usuarios;
 
 namespace app.Services
 {
@@ -75,9 +76,9 @@ namespace app.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<ListaPaginada<UsuarioModel>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
+        public async Task<ListaPaginada<UsuarioModel>> ListarUsuarios(string cnpj, PesquisaUsuarioFiltro filtro)
         {
-            var pagina = await empresaRepositorio.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
+            var pagina = await empresaRepositorio.ListarUsuarios(cnpj, filtro);
             var modelo = mapper.Map<List<UsuarioModel>>(pagina.Items);
             return new ListaPaginada<UsuarioModel>(modelo, pagina.Pagina, pagina.ItemsPorPagina, pagina.Total);
         }

@@ -189,13 +189,13 @@ namespace app.Controller
 
         [Authorize]
         [HttpGet("listarUsuarios/{cnpj}")]
-        public async Task<IActionResult> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome = null)
+        public async Task<IActionResult> ListarUsuarios(string cnpj, [FromQuery] PesquisaUsuarioFiltro filtro)
         {
             authService.Require(Usuario, Permissao.EmpresaVisualizarUsuarios);
 
             try
             {
-                var pagina = await empresaService.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
+                var pagina = await empresaService.ListarUsuarios(cnpj, filtro);
                 return Ok(pagina);
             }
             catch (KeyNotFoundException ex)

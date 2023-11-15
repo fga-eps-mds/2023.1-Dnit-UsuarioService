@@ -1,4 +1,5 @@
 using api;
+using api.Usuarios;
 using app.Entidades;
 using app.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -97,7 +98,7 @@ namespace app.Repositorios
 
         }        
         
-        public async Task<ListaPaginada<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
+        public async Task<ListaPaginada<Usuario>> ListarUsuarios(string cnpj, PesquisaUsuarioFiltro filtro)
         {
             var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == cnpj).FirstOrDefault();
 
@@ -105,20 +106,29 @@ namespace app.Repositorios
             {
                 var query = dbContext.Entry(empresa).Collection(e => e.Usuarios).Query();
 
-                if (!string.IsNullOrWhiteSpace(nome))
+                if (!string.IsNullOrWhiteSpace(filtro.Nome))
                 {
-                    query = query.Where(u => u.Nome.ToLower().Contains(nome.ToLower()));
+                    query = query.Where(u => u.Nome.ToLower().Contains(filtro.Nome.ToLower()));
                 }
+
+                if (filtro.PerfilId != null)
+                    query = query.Where(u => u.PerfilId == filtro.PerfilId);
+
+                if (filtro.UfLotacao != null)
+                    query = query.Where(u => u.UfLotacao == filtro.UfLotacao);
+
+                if (filtro.MunicipioId != null)
+                    query = query.Where(u => u.MunicipioId == filtro.MunicipioId);
 
                 var total = await query.CountAsync();
                 var items = await query
                 .Include(u => u.Perfil)
                 .OrderBy(u => u.Nome)
-                .Skip((pageIndex - 1) * pageSize)
-                .Take(pageSize)
+                .Skip((filtro.Pagina - 1) * filtro.ItemsPorPagina)
+                .Take(filtro.ItemsPorPagina)
                 .ToListAsync();
 
-                return new ListaPaginada<Usuario>(items, pageIndex, pageSize, total);
+                return new ListaPaginada<Usuario>(items, filtro.Pagina, filtro.ItemsPorPagina, total);
             }
             else
             {
