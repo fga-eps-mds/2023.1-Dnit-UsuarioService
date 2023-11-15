@@ -3,6 +3,8 @@ using app.Entidades;
 using AutoMapper;
 using app.Repositorios.Interfaces;
 using api;
+using api.Empresa;
+using api.Usuarios;
 
 namespace app.Services
 {
@@ -10,10 +12,12 @@ namespace app.Services
     {
         private readonly IEmpresaRepositorio empresaRepositorio;
         private readonly AppDbContext dbContext;
-        public EmpresaService(IEmpresaRepositorio empresaRepositorio, AppDbContext dbContext)
+        private readonly IMapper mapper;
+        public EmpresaService(IEmpresaRepositorio empresaRepositorio, AppDbContext dbContext, IMapper mapper)
         {
             this.empresaRepositorio = empresaRepositorio;
             this.dbContext = dbContext;
+            this.mapper = mapper;
         }
         
         public async Task CadastrarEmpresa(Empresa empresa)
@@ -35,11 +39,11 @@ namespace app.Services
             dbContext.SaveChanges();
         }
 
-        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
+        public async Task<ListaPaginada<EmpresaModel>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
         {
-            var empresas = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
-          
-            return empresas;
+            var pagina = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
+            var modelo = mapper.Map<List<EmpresaModel>>(pagina.Items);
+            return new ListaPaginada<EmpresaModel>(modelo, pagina.Pagina, pagina.ItemsPorPagina, pagina.Total);
         }
 
         public async Task<Empresa?> EditarEmpresa(string empresaid, Empresa empresa)
@@ -71,11 +75,11 @@ namespace app.Services
             await dbContext.SaveChangesAsync();
         }
 
-        public async Task<List<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
+        public async Task<ListaPaginada<UsuarioModel>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
         {
-            var usuarios = await empresaRepositorio.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
-
-            return usuarios;
+            var pagina = await empresaRepositorio.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
+            var modelo = mapper.Map<List<UsuarioModel>>(pagina.Items);
+            return new ListaPaginada<UsuarioModel>(modelo, pagina.Pagina, pagina.ItemsPorPagina, pagina.Total);
         }
     }
 }

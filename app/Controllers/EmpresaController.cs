@@ -104,9 +104,7 @@ namespace app.Controller
             try
             {
                 var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
-                var result = mapper.Map<List<EmpresaModel>>(pagina);
-                
-                return Ok(result);
+                return Ok(pagina);
             }
             catch(Exception e)
             {
@@ -198,9 +196,7 @@ namespace app.Controller
             try
             {
                 var pagina = await empresaService.ListarUsuarios(cnpj, pageIndex, pageSize, nome);
-                var result = mapper.Map<List<UsuarioModel>>(pagina);
-
-                return Ok(result);
+                return Ok(pagina);
             }
             catch (KeyNotFoundException ex)
             {

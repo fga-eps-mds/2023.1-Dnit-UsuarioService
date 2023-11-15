@@ -1,3 +1,4 @@
+using api;
 using app.Entidades;
 using app.Repositorios.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync(p => p.Cnpj == Cnpj);
         }
 
-        public async Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
+        public async Task<ListaPaginada<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
         {
             var query = dbContext.Empresa.AsQueryable();
 
@@ -55,11 +56,14 @@ namespace app.Repositorios
                 query = query_1.Where(p => p.Cnpj.ToLower().Contains(cnpj.ToLower()));
             }
 
-            return await query
+            var total = await query.CountAsync();
+            var items = await query
                 .OrderBy(p => p.RazaoSocial)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+
+            return new ListaPaginada<Empresa>(items, pageIndex, pageSize, total);
         }
         
         public async Task AdicionarUsuario(int usuarioid, string empresaid)
@@ -93,7 +97,7 @@ namespace app.Repositorios
 
         }        
         
-        public async Task<List<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
+        public async Task<ListaPaginada<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome)
         {
             var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == cnpj).FirstOrDefault();
 
@@ -106,12 +110,15 @@ namespace app.Repositorios
                     query = query.Where(u => u.Nome.ToLower().Contains(nome.ToLower()));
                 }
 
-                return await query
+                var total = await query.CountAsync();
+                var items = await query
                 .Include(u => u.Perfil)
                 .OrderBy(u => u.Nome)
                 .Skip((pageIndex - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
+
+                return new ListaPaginada<Usuario>(items, pageIndex, pageSize, total);
             }
             else
             {
