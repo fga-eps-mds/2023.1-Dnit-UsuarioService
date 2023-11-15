@@ -10,7 +10,7 @@ namespace app.Services.Interfaces
         Task DeletarEmpresa(string empresaid);
         
         Task<Empresa?> EditarEmpresa(string empresaid, Empresa empresa);
-        Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null);
+        Task<List<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null);
         Task<List<Usuario>> ListarUsuarios(string cnpj, int pageIndex, int pageSize, string? nome = null);
         Task AdicionarUsuario(int usuarioid, string empresaid);
         Task RemoverUsuario(int usuarioid, string empresaid);

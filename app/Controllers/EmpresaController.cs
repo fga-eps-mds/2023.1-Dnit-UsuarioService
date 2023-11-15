@@ -98,12 +98,12 @@ namespace app.Controller
         
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null)
+        public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
         {
             authService.Require(Usuario, Permissao.EmpresaVisualizar);
             try
             {
-                var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome);
+                var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
                 var result = mapper.Map<List<EmpresaModel>>(pagina);
                 
                 return Ok(result);
