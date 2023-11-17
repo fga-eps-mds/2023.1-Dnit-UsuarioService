@@ -16,12 +16,17 @@ namespace test
     public class EmpresaRepositorioTest : TestBed<Base>, IDisposable
     {
         private readonly IEmpresaRepositorio repositorio;
+
+        private readonly IUsuarioRepositorio repositorio_usuario;
         private readonly AppDbContext dbContext;
       
         public EmpresaRepositorioTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {   
 
             this.repositorio = fixture.GetService<IEmpresaRepositorio>
+            (testOutputHelper)!;
+
+            this.repositorio_usuario = fixture.GetService<IUsuarioRepositorio>
             (testOutputHelper)!;
             
             this.dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
@@ -89,7 +94,7 @@ namespace test
         }
 
         [Fact]
-        public async void ListarEmpresas_QuandoColocadoTamnho()
+        public async void ListarEmpresas_QuandoColocadoTamanho()
         {
             var lista = Stub.EmpresaStub.RetornaListaDeEmpresas();
             List<string> nomeLista = new();
@@ -113,10 +118,17 @@ namespace test
         // public async void AdicionarUsuario_QuandoPassado_DeveRetornarUsuario()
         // {
          
-        //     Usuario usuario = Stub.EmpresaStub.RetornarUsuario();
+            
 
         //     Empresa empresa = Stub.EmpresaStub.RetornarEmpresa();
 
+        //     Usuario usuario= Stub.EmpresaStub.RetornarUsuarioDnitBanco();
+            
+        //     var usuarioid = usuario.Id;
+        //     dbContext.Add(usuario);
+
+        //     dbContext.SaveChanges();
+            
         //     await repositorio.AdicionarUsuario(usuario.Id, empresa.Cnpj);
 
         //     dbContext.SaveChanges();
@@ -125,6 +137,27 @@ namespace test
         //     Assert.NotNull(empresaDb);
         //     // Assert.Equal(empresaCadastrado.RazaoSocial,empresa.RazaoSocial );
 
+        // }
+
+        // [Fact]
+        // public async void ListarUsuarios_QuandoColocadoCnpj()
+        // {
+        //     var lista = Stub.EmpresaStub.RetornaListaDeEmpresas();
+        //     List<string> nomeLista = new();
+
+        //     lista.ForEach(p => nomeLista.Add(p.RazaoSocial));
+
+        //     lista.ForEach(p => repositorio.CadastrarEmpresa(p));
+
+        //     dbContext.SaveChanges();
+
+        //     var listaRetornada = await repositorio.ListarEmpresas(1,3);
+        //     Assert.NotNull(listaRetornada);
+
+        //     foreach(var item in lista)
+        //     {
+        //         Assert.Contains(item.RazaoSocial, nomeLista);
+        //     }
         // }
 
     }
