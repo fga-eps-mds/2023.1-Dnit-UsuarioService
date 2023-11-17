@@ -69,17 +69,17 @@ namespace test.Stub
             return lista;
         }
 
-        // public static List<Empresa> RetornaListaDeUsuarios(int n = 4)
-        // {
-        //     var lista = new List<Empresa>();
+        public static List<EmpresaDTO> RetornaListaEmpresaDTO(int n = 4)
+        {
+            var lista = new List<EmpresaDTO>();
 
-        //     for(int i = 0; i < n; i++)
-        //     {
-        //         lista.Add(EmpresaStub.("EmpresaTeste_" + i.ToString()));
-        //     }
+            for (int i = 0; i < n; i++)
+            {
+                lista.Add(RetornarEmpresaDTO("Perfil" + i.ToString()));               
+            }
 
-        //     return lista;
-        // }
+            return lista;
+        }
 
     }  
 }
