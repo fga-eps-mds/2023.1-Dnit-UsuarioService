@@ -238,7 +238,7 @@ namespace test
         }
 
         [Fact]
-        public async void RecuperarSenha_QuandoRecuperacaoForValidada_DeveRetornarOk()
+        public async Task RecuperarSenha_QuandoRecuperacaoForValidada_DeveRetornarOk()
         {
             var usuarioStub = new UsuarioStub();
             var usuarioDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -271,7 +271,7 @@ namespace test
         }
 
         [Fact]
-        public async void RedefinirSenha_QuandoRedefinicaoForConcluida_DeveRetornarOk()
+        public async Task RedefinirSenha_QuandoRedefinicaoForConcluida_DeveRetornarOk()
         {
             RedefinicaoSenhaStub redefinicaoSenhaStub = new();
             var redefinicaoSenhaDTO = redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO();
@@ -287,7 +287,7 @@ namespace test
         }
 
         [Fact]
-        public async void RedefinirSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
+        public async Task RedefinirSenha_QuandoUsuarioNaoExistir_DeveRetornarNotFound()
         {
             RedefinicaoSenhaStub redefinicaoSenhaStub = new();
             var redefinicaoSenhaDTO = redefinicaoSenhaStub.ObterRedefinicaoSenhaDTO();

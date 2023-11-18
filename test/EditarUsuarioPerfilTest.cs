@@ -1,20 +1,13 @@
-﻿using Moq;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Xunit.Abstractions;
 using System.Linq;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 using test.Fixtures;
 using test.Stub;
 using auth;
-using app.Services.Interfaces;
 using app.Entidades;
 using app.Controllers;
 using api.Usuarios;
-using api.Senhas;
 using api;
 using app.Services;
 
@@ -33,7 +26,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuariosAsync_QuandoNãoTemPermissaoVisualizar_RetornaErroDePermissao()
+        public async Task ObterUsuariosAsync_QuandoNãoTemPermissaoVisualizar_RetornaErroDePermissao()
         {
             AutenticarUsuario(controller, permissoes: new());
             var ex = await Assert.ThrowsAsync<AuthForbiddenException>(async () =>
@@ -43,7 +36,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
+        public async Task ObterUsuariosAsync_QuandoFiltroVazio_RetornaTodosUsuarios()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var filtro = new PesquisaUsuarioFiltro
@@ -55,7 +48,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUfDada()
+        public async Task ObterUsuariosAsync_QuandoFiltradoPorUf_RetornaUsuariosDaUfDada()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var filtro = new PesquisaUsuarioFiltro
@@ -79,7 +72,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltradoPorMunicipio_RetornaUsuariosDoMunicipioDado()
+        public async Task ObterUsuariosAsync_QuandoFiltradoPorMunicipio_RetornaUsuariosDoMunicipioDado()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var m = new Municipio { Id = 1, Nome = "Municipio", Uf = UF.DF };
@@ -104,7 +97,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltradoPorNome_RetornaUsuariosComNomeDado()
+        public async Task ObterUsuariosAsync_QuandoFiltradoPorNome_RetornaUsuariosComNomeDado()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var m = new Municipio { Id = 1, Nome = "Municipio", Uf = UF.DF };
@@ -127,7 +120,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterUsuariosAsync_QuandoFiltradoPorPerfil_RetornaUsuariosComPerfilDado()
+        public async Task ObterUsuariosAsync_QuandoFiltradoPorPerfil_RetornaUsuariosComPerfilDado()
         {
             AutenticarUsuario(controller, permissoes: new() { Permissao.UsuarioVisualizar });
             var filtro = new PesquisaUsuarioFiltro
