@@ -131,7 +131,6 @@ namespace api
         EmailUtilizado,
         [Description("Empresa não encontrada")]
         EmpresaNaoEncontrada,
-        
     }
 
 
