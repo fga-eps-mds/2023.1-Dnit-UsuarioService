@@ -38,6 +38,11 @@ namespace app.Repositorios
             return query.FirstOrDefault();
         }
 
+        public Usuario? ObterUsuarioPorEmail(string email)
+        {
+            return ObterUsuario(email: email);
+        }
+
         public async Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false)
         {
             var query = dbContext.Usuario.AsQueryable();

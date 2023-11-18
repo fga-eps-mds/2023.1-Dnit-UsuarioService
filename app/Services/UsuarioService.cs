@@ -86,19 +86,12 @@ namespace app.Services
 
         private Usuario? Obter(string email)
         {
-            Usuario? usuario = usuarioRepositorio.ObterUsuario(email);
+            Usuario? usuario = usuarioRepositorio.ObterUsuarioPorEmail(email);
 
             if (usuario == null)
                 throw new KeyNotFoundException();
 
             return usuario;
-        }
-
-        public bool ValidaLogin(UsuarioDTO usuarioDTO)
-        {
-            Usuario? usuarioBanco = Obter(usuarioDTO.Email);
-
-            return ValidaSenha(usuarioDTO.Senha, usuarioBanco.Senha);
         }
 
         private bool ValidaSenha(string senhaUsuarioEntrada, string senhaUsuarioBanco)
@@ -208,7 +201,6 @@ namespace app.Services
         public async Task<ListaPaginada<UsuarioModel>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
-            usuarios.Items.ForEach(u => u.Perfil!.PermissoesSessao = u.Perfil.Permissoes?.ToList());
             var modelos = mapper.Map<List<UsuarioModel>>(usuarios.Items);
             return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }
