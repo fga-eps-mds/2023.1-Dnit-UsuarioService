@@ -51,5 +51,16 @@ namespace test.Stub
             context.SaveChanges();
             return usuariosTeste;
         }
+        public static List<Empresa> PopulaEmpresa(this AppDbContext context, int quantidade)
+        {
+            var empresaTest = EmpresaStub.Listar().Take(quantidade).ToList();
+            context.AddRange(empresaTest);
+            context.SaveChanges();
+            return empresaTest;
+
+
+
+        }
+        
     }
 }

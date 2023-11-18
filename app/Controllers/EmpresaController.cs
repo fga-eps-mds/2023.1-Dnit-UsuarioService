@@ -50,10 +50,6 @@ namespace app.Controller
             {
                 return UnprocessableEntity("Esta Empresa já existe");
             }
-            catch(Exception)
-            {
-                return StatusCode(500, "Houve um erro interno no servidor.");
-            }
         }
 
         [Authorize]
@@ -64,13 +60,8 @@ namespace app.Controller
 
             var empresa = empresaService.VisualizarEmpresa(cnpj);
 
-            if (empresa != null)
-            {
-                var result = mapper.Map<EmpresaModel>(empresa);
-                return Ok(result);
-            }
-
-            return StatusCode(404, "A empresa não existe.");
+            var result = mapper.Map<EmpresaModel>(empresa);
+            return Ok(result);
         }
 
         [Authorize]
@@ -83,17 +74,10 @@ namespace app.Controller
                 await empresaService.DeletarEmpresa(cnpj);
                 return Ok("Empresa excluida");
             }
-            catch(KeyNotFoundException ex){
-                return NotFound(ex.Message);
-            }
             catch(InvalidOperationException e)
             {
                 return StatusCode(400, e.Message);
-            }
-            catch(Exception)
-            {
-                return StatusCode(500, "Houve um erro interno no servidor.");
-            }            
+            }           
         }
         
         [Authorize]
@@ -101,15 +85,9 @@ namespace app.Controller
         public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
         {
             authService.Require(Usuario, Permissao.EmpresaVisualizar);
-            try
-            {
-                var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
-                return Ok(pagina);
-            }
-            catch(Exception e)
-            {
-                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
-            }
+            
+            var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
+            return Ok(pagina);
         }
         
         [Authorize]
@@ -131,10 +109,7 @@ namespace app.Controller
             {
                 return UnprocessableEntity("Erro ao editar a empresa.");
             }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
-            }
+
         }
 
         [Authorize]
@@ -142,24 +117,9 @@ namespace app.Controller
         public async Task<IActionResult> AdicionarUsuario(string cnpj, int usuarioid)
         {
             authService.Require(Usuario, Permissao.EmpresaGerenciarUsuarios);
-
-            try
-            {
-                await empresaService.AdicionarUsuario(usuarioid, cnpj);
-                return Ok("Usuário adicionado");
-            }
-            catch (DbUpdateException)
-            {
-                return UnprocessableEntity("Erro ao adicionar usuário.");
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
-            }
+            await empresaService.AdicionarUsuario(usuarioid, cnpj);
+            return Ok("Usuário adicionado");
+            
         }
 
         [Authorize]
@@ -167,24 +127,10 @@ namespace app.Controller
         public async Task<IActionResult> RemoverUsuario(string cnpj, int usuarioid)
         {
             authService.Require(Usuario, Permissao.EmpresaGerenciarUsuarios);
-
-            try
-            {
-                await empresaService.RemoverUsuario(usuarioid, cnpj);
-                return Ok("Usuário removido");
-            }
-            catch (DbUpdateException)
-            {
-                return UnprocessableEntity("Erro ao remover usuário.");
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
-            }
+            await empresaService.RemoverUsuario(usuarioid, cnpj);
+            return Ok("Usuário removido");
+            
+       
         }
 
         [Authorize]
@@ -192,20 +138,12 @@ namespace app.Controller
         public async Task<IActionResult> ListarUsuarios(string cnpj, [FromQuery] PesquisaUsuarioFiltro filtro)
         {
             authService.Require(Usuario, Permissao.EmpresaVisualizarUsuarios);
+            
+            var pagina = await empresaService.ListarUsuarios(cnpj, filtro);
 
-            try
-            {
-                var pagina = await empresaService.ListarUsuarios(cnpj, filtro);
-                return Ok(pagina);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message + "\n" + e.StackTrace + "\nHouve um erro interno no servidor.");
-            }
+
+            return Ok(pagina);
+            
         }
     }
 }

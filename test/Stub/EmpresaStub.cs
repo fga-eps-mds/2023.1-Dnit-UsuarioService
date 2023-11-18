@@ -11,7 +11,7 @@ using api.Empresa;
 
 namespace test.Stub
 {
-    public class EmpresaUsuarioStub: Usuario
+    public class EmpresaUsuarioStub: Empresa
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -35,17 +35,32 @@ namespace test.Stub
             };
        }
 
-        public static Usuario RetornarUsuarioDnitBanco()
+
+        public static Usuario RetornarUsuarioValidoLogin()
         {
-            return new EmpresaUsuarioStub
+            return new Usuario
             {
                 Id = 1,
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
-                Nome = "Usuario Terceiro",
-                UfLotacao = UfAleatoria(),
+                Nome = "Usuario Dnit",
+                UfLotacao = UfAleatoria()
             };
         }
+
+        public static IEnumerable<Empresa> Listar()
+        {
+            while (true)
+            {
+                yield return new Empresa()
+                {
+                    Cnpj = "teste " + Random.Shared.Next().ToString(),
+                    RazaoSocial = $"testeRazao{Random.Shared.Next()}",
+                    
+                };
+            }
+        }
+
 
         public static EmpresaDTO RetornarEmpresaDTO(string cnpj = "123456789" , string RazaoSocial = "RazaoSocial Teste")
         {

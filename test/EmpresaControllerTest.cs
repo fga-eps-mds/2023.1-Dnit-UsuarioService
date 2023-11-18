@@ -1,7 +1,10 @@
+using System.Linq;
+using System.Threading.Tasks;
 using api;
 using api.Empresa;
 using app.Controller;
 using app.Entidades;
+using app.Services;
 using auth;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +37,7 @@ namespace test
             Assert.ThrowsAsync<AuthForbiddenException>(() => empresaController.CadastrarEmpresa(empresa));
         }
 
+        
       
 
         [Fact]
@@ -88,11 +92,9 @@ namespace test
         }
 
         [Fact]
-        public async void ExcluirEmpresa_QuandoTemPermissaoEEmpresaNaoExiste_DeveLancarNotFound()
+        public async Task ExcluirEmpresa_QuandoTemPermissaoEEmpresaNaoExiste_DeveLancarNotFound()
         {
-            var resposta = await empresaController.ExcluirEmpresa("123");
-
-            Assert.IsType<NotFoundObjectResult>(resposta);
+            await Assert.ThrowsAsync<ApiException>(async() => await empresaController.ExcluirEmpresa("123"));
         }
 
         [Fact]
@@ -108,12 +110,7 @@ namespace test
             
             Assert.IsType<OkObjectResult>(resposta);
         }
-        public void Dispose()
-        {
-            dbContext.RemoveRange(dbContext.PerfilPermissoes);
-            dbContext.RemoveRange(dbContext.Empresa);
-            dbContext.SaveChanges();
-        }
+        
 
         [Fact]
         public async void ListarEmpresas_QuandoNaoTemPermissao_DeveBloquear()
@@ -172,6 +169,36 @@ namespace test
             Assert.IsType<OkObjectResult>(respostaVisualizar);
             Assert.NotNull(empresaEditado);
         }
+        [Fact]
+        public async Task AdicionarUsuario_QuandoTemPermissao_DeveRetornarOk()
+        {
+            var empresa = dbContext.PopulaEmpresa(1).First();
+            var usuario = dbContext.PopulaUsuarios(1).First();
+            var resposta = await empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id);
+            Assert.IsType<OkObjectResult>(resposta);
+            
+           
+        }
 
+        [Fact] 
+        public async Task AdicionarUsuario_QuandoNaoTemPermissao_DeveRetornarErro()
+        {
+            var empresa = dbContext.PopulaEmpresa(1).First();
+            var usuario = dbContext.PopulaUsuarios(1).First();
+            AutenticarUsuario(empresaController, permissoes: new());
+
+            await Assert.ThrowsAsync<AuthForbiddenException>(() => empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id));
+
+            
+           
+        }
+
+        
+        public new void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Empresa);
+            dbContext.SaveChanges();
+        }
     }
 }
