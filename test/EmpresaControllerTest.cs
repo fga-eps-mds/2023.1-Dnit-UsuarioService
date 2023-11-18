@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api;
 using api.Empresa;
+using api.Usuarios;
 using app.Controller;
 using app.Entidades;
 using app.Services;
@@ -41,7 +42,7 @@ namespace test
       
 
         [Fact]
-        public async void CriarEmpresa_QuandoTemPermissao_DeveRetornarOk()
+        public async Task CriarEmpresa_QuandoTemPermissao_DeveRetornarOk()
         {
             var empresa = EmpresaStub.RetornarEmpresaDTO();
             
@@ -52,7 +53,7 @@ namespace test
         }
 
         [Fact]
-        public async void EditarEmpresa_QuandoNaoTemPermissao_DeveBloquear()
+        public async Task EditarEmpresa_QuandoNaoTemPermissao_DeveBloquear()
         {
             var empresa = EmpresaStub.RetornarEmpresaDTO();
 
@@ -68,7 +69,7 @@ namespace test
         }
 
         [Fact]
-        public async void EditarEmpresa_QuandoTemPermissao_DeveRetornarOk()
+        public async Task EditarEmpresa_QuandoTemPermissao_DeveRetornarOk()
         {
             var empresa = EmpresaStub.RetornarEmpresaDTO();
             var resposta = empresaController.CadastrarEmpresa(empresa);
@@ -85,7 +86,7 @@ namespace test
         }
 
         [Fact]
-        public async void ExcluirEmpresa_QuandoNaoTemPermissao_DeveBloquear()
+        public async Task ExcluirEmpresa_QuandoNaoTemPermissao_DeveBloquear()
         {
             AutenticarUsuario(empresaController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => await empresaController.ExcluirEmpresa("1234567"));
@@ -98,7 +99,7 @@ namespace test
         }
 
         [Fact]
-        public async void ExcluirEmpresa_QuandoTemPermissao_DeveRetornarOk()
+        public async Task ExcluirEmpresa_QuandoTemPermissao_DeveRetornarOk()
         {
             var empresa= EmpresaStub.RetornarEmpresa();
             empresa.Cnpj = "123456";
@@ -113,14 +114,14 @@ namespace test
         
 
         [Fact]
-        public async void ListarEmpresas_QuandoNaoTemPermissao_DeveBloquear()
+        public async Task ListarEmpresas_QuandoNaoTemPermissao_DeveBloquear()
         {
             AutenticarUsuario(empresaController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => await empresaController.ListarEmpresas(1, 20));
         }
 
         [Fact]
-        public async void ListarEmpresas_QuandoTemPermissao_DeveRetornarOk()
+        public async Task ListarEmpresas_QuandoTemPermissao_DeveRetornarOk()
         {
             var lista = EmpresaStub.RetornaListaEmpresaDTO(5);
             var administrador = PerfilStub.RetornaPerfil(tipo: TipoPerfil.Administrador);
@@ -138,7 +139,7 @@ namespace test
         }
 
         [Fact]
-        public async void ListarEmpresas_QuandoNaoTemPermissao_DeveRetornarErro()
+        public async Task ListarEmpresas_QuandoNaoTemPermissao_DeveRetornarErro()
         {
             AutenticarUsuario(empresaController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => await empresaController.ListarEmpresas(1,5));
@@ -146,7 +147,7 @@ namespace test
         }
 
         [Fact]
-        public async void VisualizarEmpresa_QuandoNaoTemPermissao_DeveRetornarErro()
+        public async Task VisualizarEmpresa_QuandoNaoTemPermissao_DeveRetornarErro()
         {
             AutenticarUsuario(empresaController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => empresaController.VisualizarEmpresa("123445"));
@@ -154,7 +155,7 @@ namespace test
         }
 
         [Fact]
-        public async void VisualizarEmpresa_QuandoTemPermissao_DeveRetornarEmpresa()
+        public async Task VisualizarEmpresa_QuandoTemPermissao_DeveRetornarEmpresa()
         {
             
             var empresa = EmpresaStub.RetornarEmpresaDTO();
@@ -188,12 +189,32 @@ namespace test
             AutenticarUsuario(empresaController, permissoes: new());
 
             await Assert.ThrowsAsync<AuthForbiddenException>(() => empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id));
-
-            
-           
+    
         }
 
-        
+        [Fact]
+        public async Task ListarUsuarios_QuandoColocadoCnpj()
+        {
+            var usuario = dbContext.PopulaUsuarios(1).First();
+            var empresa = dbContext.PopulaEmpresa(1).First();
+            
+            await empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id);
+            await dbContext.SaveChangesAsync();
+            var lista = await empresaController.ListarUsuarios(empresa.Cnpj, new PesquisaUsuarioFiltro());
+
+            Assert.NotNull(lista);
+            
+        }
+        [Fact]
+        public async Task ExcluirUsuario_QuandoTemPermissao_DeveRetornarOk()
+        {
+            var empresa = dbContext.PopulaEmpresa(1).First();
+            var usuario = dbContext.PopulaUsuarios(1).First();
+
+            var resposta = await empresaController.RemoverUsuario(empresa.Cnpj, usuario.Id);
+            Assert.IsType<OkObjectResult>(resposta);
+        }
+
         public new void Dispose()
         {
             dbContext.RemoveRange(dbContext.PerfilPermissoes);

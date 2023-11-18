@@ -40,11 +40,12 @@ namespace test.Stub
         {
             return new Usuario
             {
-                Id = 1,
+                Id = 1234,
                 Email = "usuarioteste@gmail.com",
                 Senha = "$2a$11$p0Q3r8Q7pBBcfoW.EIdvvuosHDfgr6TBBOxQvpnG18fLLlHjC/J6O",
                 Nome = "Usuario Dnit",
-                UfLotacao = UfAleatoria()
+                UfLotacao = UfAleatoria(),
+                
             };
         }
 
@@ -95,6 +96,8 @@ namespace test.Stub
 
             return lista;
         }
+
+        
 
     }  
 }

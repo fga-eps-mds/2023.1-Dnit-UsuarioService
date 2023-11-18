@@ -10,6 +10,9 @@ using System.Collections.Generic;
 using api;
 using api.Usuarios;
 using System.Data.Common;
+using test.Stub;
+using System.Threading.Tasks;
+using app.Repositorios;
 
 namespace test
 {
@@ -86,7 +89,7 @@ namespace test
         [Fact]
         public void VisualizarEmpresa_QuandoColocadoCNPJ()
         {
-            var empresa = Stub.EmpresaStub.RetornarEmpresa();
+            var empresa = dbContext.PopulaEmpresa(1).First();
 
             var empresaVisualiza = repositorio.VisualizarEmpresa(empresa.Cnpj);
 
@@ -94,9 +97,9 @@ namespace test
         }
 
         [Fact]
-        public async void ListarEmpresas_QuandoColocadoTamanho()
+        public async Task ListarEmpresas_QuandoColocadoTamanho()
         {
-            var lista = Stub.EmpresaStub.RetornaListaDeEmpresas();
+            var lista = EmpresaStub.RetornaListaDeEmpresas();
             List<string> nomeLista = new();
 
             lista.ForEach(p => nomeLista.Add(p.RazaoSocial));
@@ -114,51 +117,27 @@ namespace test
             }
         }
 
-        // [Fact]
-        // public async void AdicionarUsuario_QuandoPassado_DeveRetornarUsuario()
-        // {
-         
+        [Fact]
+        public async Task AdicionarUsuario_QuandoPassado_DeveRetornarUsuario()
+        {
+            var empresa = dbContext.PopulaEmpresa(1).First();
+            var usuario = dbContext.PopulaUsuarios(1).First();
+            
+            await repositorio.AdicionarUsuario(usuario.Id, empresa.Cnpj);
+
+            dbContext.SaveChanges();
+            var empresaDb = dbContext.Empresa.FirstOrDefault(e => e.Usuarios.FirstOrDefault() == empresa.Usuarios.First());
+
+            Assert.NotNull(empresaDb);
             
 
-        //     Empresa empresa = Stub.EmpresaStub.RetornarEmpresa();
+        }
 
-        //     Usuario usuario= Stub.EmpresaStub.RetornarUsuarioDnitBanco();
-            
-        //     var usuarioid = usuario.Id;
-        //     dbContext.Add(usuario);
-
-        //     dbContext.SaveChanges();
-            
-        //     await repositorio.AdicionarUsuario(usuario.Id, empresa.Cnpj);
-
-        //     dbContext.SaveChanges();
-        //     var empresaDb = dbContext.Empresa.FirstOrDefault(e => e.Usuarios == empresa.Usuarios);
-
-        //     Assert.NotNull(empresaDb);
-        //     // Assert.Equal(empresaCadastrado.RazaoSocial,empresa.RazaoSocial );
-
-        // }
-
-        // [Fact]
-        // public async void ListarUsuarios_QuandoColocadoCnpj()
-        // {
-        //     var lista = Stub.EmpresaStub.RetornaListaDeEmpresas();
-        //     List<string> nomeLista = new();
-
-        //     lista.ForEach(p => nomeLista.Add(p.RazaoSocial));
-
-        //     lista.ForEach(p => repositorio.CadastrarEmpresa(p));
-
-        //     dbContext.SaveChanges();
-
-        //     var listaRetornada = await repositorio.ListarEmpresas(1,3);
-        //     Assert.NotNull(listaRetornada);
-
-        //     foreach(var item in lista)
-        //     {
-        //         Assert.Contains(item.RazaoSocial, nomeLista);
-        //     }
-        // }
-
+        public void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Empresa);
+            dbContext.SaveChanges();
+        }
     }
 }
