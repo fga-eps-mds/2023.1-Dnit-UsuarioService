@@ -167,10 +167,10 @@ namespace app.Services
 
         private async Task<LoginModel> CriarTokenAsync(Usuario usuario)
         {
-            var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
+            var permissoes = usuario.Perfil?.Permissoes?.ToList(comInternas: true) ?? new();
 
             if (!authConfig.Enabled || usuario.Perfil?.Tipo == TipoPerfil.Administrador)
-                permissoes = Enum.GetValues<Permissao>().ToList();
+                permissoes = Enum.GetValues<Permissao>().ToList(comInternas: true);
                 
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
@@ -208,6 +208,7 @@ namespace app.Services
         public async Task<ListaPaginada<UsuarioModel>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro)
         {
             var usuarios = await usuarioRepositorio.ObterUsuariosAsync(filtro);
+            usuarios.Items.ForEach(u => u.Perfil!.PermissoesSessao = u.Perfil.Permissoes?.ToList());
             var modelos = mapper.Map<List<UsuarioModel>>(usuarios.Items);
             return new ListaPaginada<UsuarioModel>(modelos, filtro.Pagina, filtro.ItemsPorPagina, usuarios.Total);
         }

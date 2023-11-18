@@ -88,13 +88,13 @@ namespace api
         PerfilRemover = 3002,
         [Description("Visualizar perfis")]
         PerfilVisualizar = 3003,
-
-        [Description("Calcular UPS de sinistros")]
+        
+        [Description("_Calcular UPS de Sinistros")]
         UpsCalcularSinistro = 5000,
-        [Description("Calcular UPS de escolas")]
+        [Description("_Calcular UPS de escolas")]
         UpsCalcularEscola = 5001,
-        [Description("Visualizar UPS")]
-        UpsVisualizar = 5002,
+        [Description("Visualizar Ranque")]
+        RanqueVisualizar = 5002,
 
         [Description("Cadastrar rodovia")]
         RodoviaCadastrar = 6000,

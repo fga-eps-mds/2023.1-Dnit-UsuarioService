@@ -112,8 +112,8 @@ namespace app.Controllers
 
             try
             {
-                var pagina = await perfilService.ListarPerfisAsync(pageIndex, pageSize, nome);
-
+                var pagina = await perfilService.ListarPerfisAsync(pageIndex, pageSize, nome)!;
+                pagina.ForEach(p => p.PermissoesSessao = p.Permissoes?.AsEnumerable().ToList(comInternas: false));
                 List<PerfilModel> paginaRetorno = pagina.Select(p => mapper.Map<PerfilModel>(p)).ToList();
 
                 return Ok(paginaRetorno);
@@ -138,7 +138,7 @@ namespace app.Controllers
             }
 
             var perfilModel = mapper.Map<PerfilModel>(perfil);
-            perfilModel.CategoriasPermissao = permissaoService.CategorizarPermissoes(perfil.Permissoes!.ToList());
+            perfilModel.CategoriasPermissao = permissaoService.CategorizarPermissoes(perfil.Permissoes!.ToList(comInternas: false));
 
             return Ok(perfilModel);
         }
