@@ -23,13 +23,13 @@ namespace app.Repositorios
         {
             var query = dbContext.Usuario.AsQueryable();
 
-            if (string.IsNullOrWhiteSpace(email))
+            if (!string.IsNullOrWhiteSpace(email))
             {
                 query = query.Where(u => u.Email.ToLower() == email.ToLower());
             }
             if (id.HasValue)
             {
-                query = query.Where(u => u.Id == id.Value);
+                query = query.Where(u => u.Id == id);
             }
             if (includePerfil)
             {

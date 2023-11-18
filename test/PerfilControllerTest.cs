@@ -27,7 +27,6 @@ namespace test
             perfilController = fixture.GetService<PerfilController>(testOutputHelper)!;
 
             AutenticarUsuario(perfilController);
-            
         }
 
         [Fact]

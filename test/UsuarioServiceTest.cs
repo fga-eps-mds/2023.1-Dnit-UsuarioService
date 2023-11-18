@@ -191,5 +191,13 @@ namespace test
             emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             usuarioRepositorio.Verify(x => x.RemoverUuidRedefinicaoSenha(It.IsAny<string>()), Times.Never);
         }
+
+        public new void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Perfis);
+            dbContext.SaveChanges();
+        }
     }
 }

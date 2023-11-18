@@ -16,23 +16,23 @@ using app.Entidades;
 using app.Controllers;
 using api.Usuarios;
 using api.Senhas;
-using Xunit.Microsoft.DependencyInjection.Abstracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace test
 {
-    public class UsuarioControllerTest : TestBed<Base>, IDisposable
+    public class UsuarioControllerTest : AuthTest, IDisposable
     {
         const int CREATED = 201;
-        const int BAD_REQUEST = 400;
         const int INTERNAL_SERVER_ERROR = 500;
         readonly UsuarioController controller;
         readonly AppDbContext dbContext;
+        readonly AuthService authService;
 
         public UsuarioControllerTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {
             dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
             controller = fixture.GetService<UsuarioController>(testOutputHelper)!;
+            authService = fixture.GetService<AuthService>(testOutputHelper)!;
             dbContext.PopulaUsuarios(5);
         }
 
@@ -155,8 +155,6 @@ namespace test
 
             var e = await Assert.ThrowsAsync<ApiException>(async() => await controller.CadastrarUsuarioDnit(usuarioDTO));
             Assert.Equal(ErrorCodes.CodigoUfInvalido, e.Error.Code);
-
-          
         }
 
         [Fact]
@@ -301,6 +299,78 @@ namespace test
 
             usuarioServiceMock.Verify(service => service.TrocaSenha(redefinicaoSenhaDTO), Times.Once);
             Assert.IsType<NotFoundResult>(resultado);
+        }
+
+        [Fact]
+        public void ObterApiKey_QuandoUsuarioForAdmin_DeveRetornarToken()
+        {
+            var usuario = dbContext.PopulaUsuarios(1, true).First();
+            var usuarioDb = dbContext.Usuario.First(u => u.Id == usuario.Id);
+            usuarioDb.Perfil = new Perfil
+            {
+                Id = Guid.NewGuid(),
+                Nome = "Adm",
+                Tipo = TipoPerfil.Administrador
+            };
+            dbContext.Add(usuarioDb.Perfil);
+            dbContext.SaveChanges();
+            AutenticarUsuario(controller, admin: true, userId: usuario.Id);
+
+            var key = controller.ObterApiKey();
+
+            Assert.NotEmpty(key);
+            var app = base.ObterUsuario(key);
+            Assert.True(authService.HasPermission(app, Permissao.UpsCalcularEscola));
+        }
+
+        [Fact]
+        public void ObterApiKey_QuandoUsuarioNaoForAdmin_DeveRetornarToken()
+        {
+            var usuario = dbContext.PopulaUsuarios(1, true).First();
+            AutenticarUsuario(controller, admin: false, userId: usuario.Id);
+
+            var key = controller.ObterApiKey();
+
+            Assert.NotEmpty(key);
+            var app = base.ObterUsuario(key);
+            Assert.False(authService.HasPermission(app, Permissao.UpsCalcularEscola));
+        }
+
+        [Fact]
+        public void ObterApiKey_QuandoUsuarioTiver_DeveRetornarToken()
+        {
+            var usuario = dbContext.PopulaUsuarios(1, true).First();
+            var usuarioDb = dbContext.Usuario.First(u => u.Id == usuario.Id);
+            usuarioDb.Perfil = new Perfil
+            {
+                Id = Guid.NewGuid(),
+                Nome = "Adm",
+                Tipo = TipoPerfil.Administrador,
+                PerfilPermissoes = new()
+                {
+                    new PerfilPermissao
+                    {
+                        Id = Guid.NewGuid(),
+                        Permissao = Permissao.UpsCalcularEscola
+                    }
+                }
+            };
+            dbContext.Add(usuarioDb.Perfil);
+            AutenticarUsuario(controller, userId: usuario.Id, permissoes: new() { Permissao.UpsCalcularEscola });
+
+            var key = controller.ObterApiKey();
+
+            Assert.NotEmpty(key);
+            var app = base.ObterUsuario(key);
+            Assert.True(authService.HasPermission(app, Permissao.UpsCalcularEscola));
+        }
+
+        public new void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Perfis);
+            dbContext.SaveChanges();
         }
     }
 }
