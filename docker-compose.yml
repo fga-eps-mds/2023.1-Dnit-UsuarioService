@@ -1,4 +1,5 @@
 version: "3.0"
+
 services:
   usuario-service:
     depends_on:
@@ -17,6 +18,8 @@ services:
       - MODE=container
     env_file:
       - .env
+    networks:
+      - dnit-network
 
   dnit-usuario-db:
     container_name: dnit-usuario-db
@@ -29,6 +32,8 @@ services:
       - "5432:5432"
     volumes:
       - pg-data-volume:/var/lib/postgresql/data
+    networks:
+      - dnit-network
 
   pgadmin:
     container_name: dnit-pg-admin
@@ -40,7 +45,14 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: dnit@fga.com
       PGADMIN_DEFAULT_PASSWORD: fga1234
+    networks:
+      - dnit-network
 
 volumes:
   pg-data-volume:
   pg-admin-volume:
+
+networks:
+  dnit-network:
+    name: dnit-network
+    driver: bridge
