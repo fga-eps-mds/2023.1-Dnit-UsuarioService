@@ -129,6 +129,9 @@ namespace api
         PermissaoNaoEncontrada,
         [Description("Email já cadastrado")]
         EmailUtilizado,
+        [Description("Empresa não encontrada")]
+        EmpresaNaoEncontrada,
+        
     }
 
 

@@ -2,13 +2,14 @@ using api;
 using api.Usuarios;
 using app.Entidades;
 using app.Repositorios.Interfaces;
+using app.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace app.Repositorios
 {
     public class EmpresaRepositorio : IEmpresaRepositorio
     {
-        
+
         private AppDbContext dbContext;
 
         public EmpresaRepositorio(AppDbContext dbContext)
@@ -27,8 +28,10 @@ namespace app.Repositorios
             return empresa;
         }
 
-        public async Task DeletarEmpresa(Empresa empresa){
-            var empresaParaExcluir = dbContext.Empresa.Where(e => e.Cnpj == empresa.Cnpj).FirstOrDefault();
+        public async Task DeletarEmpresa(Empresa empresa)
+        {
+            var empresaParaExcluir = dbContext.Empresa.Where(e => e.Cnpj == empresa.Cnpj).FirstOrDefault() 
+                ?? throw new ApiException(ErrorCodes.EmpresaNaoEncontrada);
 
             dbContext.Empresa.Remove(empresaParaExcluir);
         }
@@ -47,10 +50,12 @@ namespace app.Repositorios
             if (!string.IsNullOrWhiteSpace(nome))
             {
                 query = query.Where(p => p.RazaoSocial.ToLower().Contains(nome.ToLower()));
-            }else if(!string.IsNullOrWhiteSpace(cnpj))
+            }
+            else if (!string.IsNullOrWhiteSpace(cnpj))
             {
                 query = query.Where(p => p.Cnpj.ToLower().Contains(cnpj.ToLower()));
-            }else if(!string.IsNullOrWhiteSpace(nome) && !string.IsNullOrWhiteSpace(cnpj))
+            }
+            else if (!string.IsNullOrWhiteSpace(nome) && !string.IsNullOrWhiteSpace(cnpj))
             {
                 var query_1 = query.Where(p => p.RazaoSocial.ToLower().Contains(nome.ToLower()));
 
@@ -66,21 +71,18 @@ namespace app.Repositorios
 
             return new ListaPaginada<Empresa>(items, pageIndex, pageSize, total);
         }
-        
+
         public async Task AdicionarUsuario(int usuarioid, string empresaid)
         {
-            var usuario = dbContext.Usuario.Where(u => u.Id == usuarioid).FirstOrDefault();
-            var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == empresaid).FirstOrDefault();
+            var usuario = dbContext.Usuario.Where(u => u.Id == usuarioid).FirstOrDefault()
+                ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
+
+            var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == empresaid).FirstOrDefault()
+                ?? throw new ApiException(ErrorCodes.EmpresaNaoEncontrada);
+
+            empresa.Usuarios.Add(usuario);
 
 
-            if (empresa != null && usuario != null)
-            {
-                empresa.Usuarios.Add(usuario);
-            }
-            else
-            {
-                throw new KeyNotFoundException();
-            }
         }
         public async Task RemoverUsuario(int usuarioid, string empresaid)
         {
@@ -96,8 +98,8 @@ namespace app.Repositorios
                 throw new KeyNotFoundException();
             }
 
-        }        
-        
+        }
+
         public async Task<ListaPaginada<Usuario>> ListarUsuarios(string cnpj, PesquisaUsuarioFiltro filtro)
         {
             var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == cnpj).FirstOrDefault();

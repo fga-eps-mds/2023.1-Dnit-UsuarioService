@@ -34,7 +34,8 @@ namespace app.Services
         }
 
         public async Task DeletarEmpresa(string empresaid){
-            var empresaParaExcluir = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaid) ?? throw new KeyNotFoundException("Empresa não encontrada");
+            var empresaParaExcluir = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaid) 
+                ?? throw new ApiException(ErrorCodes.EmpresaNaoEncontrada);
 
             await empresaRepositorio.DeletarEmpresa(empresaParaExcluir);
             dbContext.SaveChanges();
