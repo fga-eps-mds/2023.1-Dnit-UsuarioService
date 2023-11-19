@@ -33,6 +33,14 @@ namespace app.Repositorios
             var empresaParaExcluir = dbContext.Empresa.Where(e => e.Cnpj == empresa.Cnpj).FirstOrDefault() 
                 ?? throw new ApiException(ErrorCodes.EmpresaNaoEncontrada);
 
+            var query = dbContext.Entry(empresaParaExcluir).Collection(e => e.Usuarios).Query();
+            var usuarios = await query.ToListAsync();
+
+            foreach (var usuario in usuarios) 
+            {
+                empresaParaExcluir.Usuarios.Remove(usuario);
+            }
+
             dbContext.Empresa.Remove(empresaParaExcluir);
         }
 
