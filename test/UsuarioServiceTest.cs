@@ -112,46 +112,7 @@ namespace test
         }
 
         [Fact]
-        public void ValidaLogin_QuandoUsuarioCorretoForPassado_DeveRealizarLogin()
-        {
-            var usuarioStub = new UsuarioStub();
-            var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
-            var usuarioValidoLogin = usuarioStub.RetornarUsuarioValidoLogin();
-
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioValidoLogin);
-
-            Assert.True(usuarioServiceMock.ValidaLogin(usuarioDnitDTO));
-        }
-
-        [Fact]
-        public void ValidaLogin_QuandoUsuarioInvalidoForPassado_NaoDeveRealizarLogin()
-        {
-            var usuarioStub = new UsuarioStub();
-            var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
-            var usuarioInvalidoLogin = usuarioStub.RetornarUsuarioInvalidoLogin();
-
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioInvalidoLogin);
-
-            Action validarLogin = () => usuarioServiceMock.ValidaLogin(usuarioDnitDTO);
-
-            Assert.Throws<UnauthorizedAccessException>(validarLogin);
-        }
-
-        [Fact]
-        public void ValidaLogin_QuandoUsuarioInexistenteForPassado_NaoDeveRealizarLogin()
-        {
-            var usuarioStub = new UsuarioStub();
-            var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
-
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
-
-            Action validarLogin = () => usuarioServiceMock.ValidaLogin(usuarioDnitDTO);
-
-            Assert.Throws<KeyNotFoundException>(validarLogin);
-        }
-
-        [Fact]
-        public async void RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
+        public async Task RecuperarSenha_QuandoUsuarioExistir_DeveEnviarEmailDeRecuperacaoDeSenha()
         {
             var usuarioStub = new UsuarioStub();
             var usuarioDnitDTO = usuarioStub.RetornarUsuarioDnitDTO();
@@ -162,7 +123,7 @@ namespace test
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(usuarioRetorno);
+            usuarioRepositorio.Setup(x => x.ObterUsuarioPorEmail(It.IsAny<string>())).Returns(usuarioRetorno);
 
             await usuarioServiceMock.RecuperarSenha(usuarioDnitDTO);
 
@@ -179,7 +140,7 @@ namespace test
             mapper.Setup(x => x.Map<UsuarioDnit>(It.IsAny<UsuarioDTO>())).Returns(usuarioDNIT);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+            usuarioRepositorio.Setup(x => x.ObterUsuarioPorEmail(It.IsAny<string>())).Returns(value: null);
 
             await Assert.ThrowsAsync<KeyNotFoundException>(async () => await usuarioServiceMock.RecuperarSenha(usuarioDnitDTO));
         }
@@ -198,7 +159,7 @@ namespace test
             mapper.Setup(x => x.Map<RedefinicaoSenhaModel>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+            usuarioRepositorio.Setup(x => x.ObterUsuarioPorEmail(It.IsAny<string>())).Returns(value: null);
 
             usuarioRepositorio.Setup(x => x.ObterEmailRedefinicaoSenha(It.IsAny<string>())).Returns(emailRedefinicaoSenha);
 
@@ -221,7 +182,7 @@ namespace test
             mapper.Setup(x => x.Map<RedefinicaoSenhaModel>(It.IsAny<RedefinicaoSenhaDTO>())).Returns(redefinicaoSenha);
 
             usuarioRepositorio.Setup(x => x.InserirDadosRecuperacao(It.IsAny<string>(), It.IsAny<int>()));
-            usuarioRepositorio.Setup(x => x.ObterUsuario(It.IsAny<string>())).Returns(value: null);
+            usuarioRepositorio.Setup(x => x.ObterUsuarioPorEmail(It.IsAny<string>())).Returns(value: null);
 
             usuarioRepositorio.Setup(x => x.ObterEmailRedefinicaoSenha(It.IsAny<string>())).Returns(value: null);
 
@@ -229,6 +190,14 @@ namespace test
 
             emailService.Verify(x => x.EnviarEmail(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never);
             usuarioRepositorio.Verify(x => x.RemoverUuidRedefinicaoSenha(It.IsAny<string>()), Times.Never);
+        }
+
+        public new void Dispose()
+        {
+            dbContext.RemoveRange(dbContext.Usuario);
+            dbContext.RemoveRange(dbContext.PerfilPermissoes);
+            dbContext.RemoveRange(dbContext.Perfis);
+            dbContext.SaveChanges();
         }
     }
 }

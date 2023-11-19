@@ -27,7 +27,6 @@ namespace test
             perfilController = fixture.GetService<PerfilController>(testOutputHelper)!;
 
             AutenticarUsuario(perfilController);
-            
         }
 
         [Fact]
@@ -231,7 +230,7 @@ namespace test
             Assert.Equal(perfilCriado.Id, retorno.Id);
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             dbContext.RemoveRange(dbContext.PerfilPermissoes);
             dbContext.RemoveRange(dbContext.Perfis);
