@@ -7,7 +7,8 @@ namespace app.Repositorios.Interfaces
     public interface IUsuarioRepositorio
     {
         Task<ListaPaginada<Usuario>> ObterUsuariosAsync(PesquisaUsuarioFiltro filtro);
-        Usuario? ObterUsuario(string email);
+        Usuario? ObterUsuario(string? email = null, int? id = null, bool includePerfil = false);
+        Usuario? ObterUsuarioPorEmail(string email);
         Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false);
         UsuarioModel? TrocarSenha(string senha, string email);
         void InserirDadosRecuperacao(string uuid, int idUsuario);

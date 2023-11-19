@@ -9,15 +9,12 @@ namespace app.Services
     public class PerfilService : IPerfilService
     {
         private readonly IPerfilRepositorio perfilRepositorio;
-        private readonly IUsuarioRepositorio usuarioRepositorio;
         private readonly AppDbContext dbContext;
-        private readonly IMapper mapper;
 
-        public PerfilService(IPerfilRepositorio perfilRepositorio, AppDbContext dbContext, IMapper mapper)
+        public PerfilService(IPerfilRepositorio perfilRepositorio, AppDbContext dbContext)
         {
             this.perfilRepositorio = perfilRepositorio;
             this.dbContext = dbContext;
-            this.mapper = mapper;
         }
 
         public Perfil CriarPerfil(Perfil perfil, List<Permissao> permissoes)
@@ -86,26 +83,26 @@ namespace app.Services
 
             if (administrador != null)
             {
-                PreencherPermissoesAdministrador(administrador);
+                PreencherPermissoesAdministrador(administrador, false);
             }
             return perfis;
         }
 
-        public async Task<Perfil?> ObterPorIdAsync(Guid id)
+        public async Task<Perfil?> ObterPorIdAsync(Guid id, bool comInternas = false)
         {
             var perfil = await perfilRepositorio.ObterPerfilPorIdAsync(id);
 
             if (perfil != null && perfil.Tipo == TipoPerfil.Administrador)
             {
-                PreencherPermissoesAdministrador(perfil);
+                PreencherPermissoesAdministrador(perfil, comInternas);
             }
 
             return perfil;
         }
 
-        private void PreencherPermissoesAdministrador(Perfil perfil)
+        private void PreencherPermissoesAdministrador(Perfil perfil, bool comInternas = false)
         {
-            perfil.PermissoesSessao = Enum.GetValues<Permissao>().ToList();
+            perfil.PermissoesSessao = Enum.GetValues<Permissao>().ToList(comInternas);
         }
     }
 }

@@ -19,9 +19,28 @@ namespace app.Repositorios
             this.mapper = mapper;
         }
 
-        public Usuario? ObterUsuario(string email)
+        public Usuario? ObterUsuario(string? email = null, int? id = null, bool includePerfil = false)
         {
-            return dbContext.Usuario.Where(u => u.Email == email).FirstOrDefault();
+            var query = dbContext.Usuario.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                query = query.Where(u => u.Email.ToLower() == email.ToLower());
+            }
+            if (id.HasValue)
+            {
+                query = query.Where(u => u.Id == id);
+            }
+            if (includePerfil)
+            {
+                query = query.Include(u => u.Perfil);
+            }
+            return query.FirstOrDefault();
+        }
+
+        public Usuario? ObterUsuarioPorEmail(string email)
+        {
+            return ObterUsuario(email: email);
         }
 
         public async Task<Usuario?> ObterUsuarioAsync(int? id = null, string? email = null, bool includePerfil = false)

@@ -86,19 +86,12 @@ namespace app.Services
 
         private Usuario? Obter(string email)
         {
-            Usuario? usuario = usuarioRepositorio.ObterUsuario(email);
+            Usuario? usuario = usuarioRepositorio.ObterUsuarioPorEmail(email);
 
             if (usuario == null)
                 throw new KeyNotFoundException();
 
             return usuario;
-        }
-
-        public bool ValidaLogin(UsuarioDTO usuarioDTO)
-        {
-            Usuario? usuarioBanco = Obter(usuarioDTO.Email);
-
-            return ValidaSenha(usuarioDTO.Senha, usuarioBanco.Senha);
         }
 
         private bool ValidaSenha(string senhaUsuarioEntrada, string senhaUsuarioBanco)
@@ -167,16 +160,17 @@ namespace app.Services
 
         private async Task<LoginModel> CriarTokenAsync(Usuario usuario)
         {
-            var permissoes = usuario.Perfil?.Permissoes?.ToList() ?? new();
+            var permissoes = usuario.Perfil?.Permissoes?.ToList(comInternas: true) ?? new();
 
-            if (!authConfig.Enabled || usuario.Perfil.Tipo == TipoPerfil.Administrador)
-                permissoes = Enum.GetValues<Permissao>().ToList();
+            if (!authConfig.Enabled || usuario.Perfil?.Tipo == TipoPerfil.Administrador)
+                permissoes = Enum.GetValues<Permissao>().ToList(comInternas: true);
                 
             var (token, expiraEm) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
             {
                 Id = usuario.Id,
                 Name = usuario.Nome,
                 Permissions = permissoes,
+                Administrador = usuario.Perfil?.Tipo == TipoPerfil.Administrador,
             });
 
             var (tokenAtualizacao, tokenAtualizacaoExpiracao) = autenticacaoService.GenerateRefreshToken();
@@ -224,6 +218,20 @@ namespace app.Services
             usuario.UfLotacao = novaUF;
             usuario.MunicipioId = novoMunicipio;
             dbContext.SaveChanges();
+        }
+
+        public string ObterApiKey(int usuarioid)
+        {
+            var usuario = usuarioRepositorio.ObterUsuario(id: usuarioid)!;
+            var (token, _) = autenticacaoService.GenerateToken(new AuthUserModel<Permissao>
+            {
+                Id = usuario.Id,
+                Name = usuario.Nome,
+                Permissions = usuario.Perfil?.Permissoes?.ToList() ?? new(),
+                Administrador = usuario.Perfil?.Tipo == TipoPerfil.Administrador,
+            },
+            apiKey: usuario.Perfil?.Tipo == TipoPerfil.Administrador);
+            return "Bearer " + token;
         }
     }
 }
