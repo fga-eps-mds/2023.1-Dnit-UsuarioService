@@ -14,6 +14,8 @@ namespace app.Services
         private readonly AuthConfig authConfig;
         private const string CLAIM_PERMISSIONS = "permissions";
         private const string CLAIM_ID = "id";
+        private const string CLAIM_ADMIN = "admin";
+        private const string CLAIM_APIKEY = "apiKey";
         private const char PERMISSIONS_SEPARATOR = ',';
 
         public AuthService(IOptions<AuthConfig> authConfig)
@@ -32,6 +34,9 @@ namespace app.Services
 
         public bool HasPermission<TPermission>(ClaimsPrincipal user, TPermission permission) where TPermission : struct
         {
+            var isAdmin = user.Claims.FirstOrDefault(c => c.Type == CLAIM_ADMIN)?.Value;
+            if (!string.IsNullOrWhiteSpace(isAdmin) && bool.Parse(isAdmin)) return true;
+
             var permissionsText = user.Claims.FirstOrDefault(c => c.Type == CLAIM_PERMISSIONS)?.Value;
             return DecodePermissions<TPermission>(permissionsText)?.Any(p => permission.Equals(p)) ?? false;
         }
@@ -52,12 +57,12 @@ namespace app.Services
             return int.Parse(user.Claims.First(c => c.Type == CLAIM_ID).Value);
         }
 
-        public (string Token, DateTime ExpiresAt) GenerateToken<TPermission>(AuthUserModel<TPermission> user) where TPermission : struct
+        public (string Token, DateTime ExpiresAt) GenerateToken<TPermission>(AuthUserModel<TPermission> user, bool apiKey = false) where TPermission : struct
         {
             var issuer = authConfig.Issuer;
             var audience = authConfig.Audience;
             var key = Encoding.ASCII.GetBytes(authConfig.Key);
-            var expiraEm = DateTime.UtcNow.AddMinutes(authConfig.ExpireMinutes);
+            var expiraEm = DateTime.UtcNow.AddMinutes(!apiKey ? authConfig.ExpireMinutes : authConfig.ApiKeyExpireMinutes);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -66,7 +71,9 @@ namespace app.Services
                     new Claim(CLAIM_ID, user.Id.ToString()),
                     new Claim(JwtRegisteredClaimNames.Sub, user.Name),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(CLAIM_PERMISSIONS, EncodePermissions(user.Permissions))
+                    new Claim(CLAIM_PERMISSIONS, EncodePermissions(user.Permissions)),
+                    new Claim(CLAIM_ADMIN, user.Administrador.ToString()),
+                    new Claim(CLAIM_APIKEY, apiKey.ToString())
                 }),
                 Expires = expiraEm,
                 Issuer = issuer,

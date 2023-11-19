@@ -7,7 +7,7 @@
     <Title>Dnit Eps FGA authorization services</Title>
     <PackageProjectUrl>https://github.com/fga-eps-mds/2023.2-Dnit-UsuarioService</PackageProjectUrl>
     <RepositoryUrl>https://github.com/fga-eps-mds/2023.2-Dnit-UsuarioService</RepositoryUrl>
-    <Version>1.0.7</Version>
+    <Version>1.0.8</Version>
     <PackageId>DnitEpsFga.auth</PackageId>
   </PropertyGroup>
 

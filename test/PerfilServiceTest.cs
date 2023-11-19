@@ -157,7 +157,7 @@ namespace test
             Assert.Equal(5, listaRetorno.Count());
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             dbContext.RemoveRange(dbContext.PerfilPermissoes);
             dbContext.RemoveRange(dbContext.Perfis);

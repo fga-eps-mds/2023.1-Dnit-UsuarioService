@@ -3,10 +3,9 @@ using Xunit.Abstractions;
 using test.Fixtures;
 using app.Repositorios.Interfaces;
 using app.Entidades;
-using Xunit.Sdk;
-using api.Perfis;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace test
 {
@@ -93,7 +92,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterPerfilPorIdAsync_QuandoPerfilExiste_DeveRetornarPerfil()
+        public async Task ObterPerfilPorIdAsync_QuandoPerfilExiste_DeveRetornarPerfil()
         {
             var perfil = Stub.PerfilStub.RetornaPerfil();
 
@@ -108,7 +107,7 @@ namespace test
         }
 
         [Fact]
-        public async void ObterPerfilPorIdAsync_QuandoPerfilNaoExiste_DeveRetornarNull()
+        public async Task ObterPerfilPorIdAsync_QuandoPerfilNaoExiste_DeveRetornarNull()
         {
             var id = Guid.NewGuid();
 
@@ -118,7 +117,7 @@ namespace test
         }
 
         [Fact]
-        public async void ListarPerfis_QuandoMuitosPerfis_DeveRetornarUmaListaNaoVazia()
+        public async Task ListarPerfis_QuandoMuitosPerfis_DeveRetornarUmaListaNaoVazia()
         {
             var lista = Stub.PerfilStub.RetornaListaDePerfis();
             List<string> nomeLista = new();
@@ -139,7 +138,7 @@ namespace test
             }
         }
 
-        public void Dispose()
+        public new void Dispose()
         {
             dbContext.RemoveRange(dbContext.PerfilPermissoes);
             dbContext.RemoveRange(dbContext.Perfis);

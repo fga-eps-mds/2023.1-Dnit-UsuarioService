@@ -122,7 +122,7 @@ namespace app.Controllers
         }
 
         [Authorize]
-        [HttpGet()]
+        [HttpGet]
         public async Task<ListaPaginada<UsuarioModel>> ListarAsync([FromQuery] PesquisaUsuarioFiltro filtro)
         {
             authService.Require(Usuario, Permissao.UsuarioVisualizar);
@@ -135,6 +135,14 @@ namespace app.Controllers
         {
             authService.Require(Usuario, Permissao.UsuarioPerfilEditar);
             await usuarioService.EditarUsuarioPerfil(id, dto.NovoPerfilId, dto.NovaUF, dto.NovoMunicipio);
+        }
+
+        [Authorize]
+        [HttpGet("apiKey")]
+        public string ObterApiKey()
+        {
+            var usuarioid = authService.GetUserId(Usuario);
+            return usuarioService.ObterApiKey(usuarioid);
         }
     }
 }
