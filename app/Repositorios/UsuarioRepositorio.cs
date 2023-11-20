@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
-
 using app.Entidades;
 using api.Usuarios;
 using app.Repositorios.Interfaces;
@@ -80,8 +79,6 @@ namespace app.Repositorios
         public async Task CadastrarUsuarioTerceiro(UsuarioTerceiro usuarioTerceiro)
         {
             var empresa = dbContext.Empresa.Where(e => e.Cnpj == usuarioTerceiro.CNPJ).FirstOrDefault();
-
-            // List<Empresa> empresas = new() { empresa };
 
             var novoUsuarioTerceiro = new Usuario
             {

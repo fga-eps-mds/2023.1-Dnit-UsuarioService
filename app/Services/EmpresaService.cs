@@ -5,7 +5,6 @@ using app.Repositorios.Interfaces;
 using api;
 using api.Empresa;
 using api.Usuarios;
-using api.Usuarios;
 
 namespace app.Services
 {
@@ -59,14 +58,11 @@ namespace app.Services
         {
             var empresaAtualizar = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresaid) ?? throw new KeyNotFoundException("Empresa não encontrada");
 
-            if (empresaAtualizar != null)
-            {
-                empresaAtualizar.Cnpj = empresa.Cnpj;
-                empresaAtualizar.RazaoSocial = empresa.RazaoSocial;
-                empresaAtualizar.EmpresaUFs = empresa.EmpresaUFs;
-                empresaAtualizar.Usuarios = empresa.Usuarios;
-            }
-
+            empresaAtualizar.Cnpj = empresa.Cnpj;
+            empresaAtualizar.RazaoSocial = empresa.RazaoSocial;
+            empresaAtualizar.EmpresaUFs = empresa.EmpresaUFs;
+            empresaAtualizar.Usuarios = empresa.Usuarios;
+            
             await dbContext.SaveChangesAsync();
 
             return empresaAtualizar;
