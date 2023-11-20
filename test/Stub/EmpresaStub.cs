@@ -1,10 +1,6 @@
 using System.Collections.Generic;
-using System.ComponentModel;
-using api.Perfis;
 using app.Entidades;
 using api;
-using System.Data.Common;
-using api.Usuarios;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using api.Empresa;
@@ -25,16 +21,16 @@ namespace test.Stub
         {
             return ListaUfs[Random.Shared.Next() % ListaUfs.Length];
         }
-        public static Empresa RetornarEmpresa(string cnpj ="123456789", string RazaoSocial = "RazãoSocial" ){         
-            
+
+        public static Empresa RetornarEmpresa(string cnpj ="123456789", string RazaoSocial = "RazãoSocial" )
+        {           
             return new Empresa{
                 Cnpj = cnpj,
                 RazaoSocial = RazaoSocial,
                 Usuarios = new List<Usuario>{},
                 EmpresaUFs = new List<EmpresaUF>{}
             };
-       }
-
+        }
 
         public static Usuario RetornarUsuarioValidoLogin()
         {
@@ -61,7 +57,6 @@ namespace test.Stub
                 };
             }
         }
-
 
         public static EmpresaDTO RetornarEmpresaDTO(string cnpj = "123456789" , string RazaoSocial = "RazaoSocial Teste")
         {
@@ -96,8 +91,5 @@ namespace test.Stub
 
             return lista;
         }
-
-        
-
     }  
 }

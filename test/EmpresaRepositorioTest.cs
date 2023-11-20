@@ -26,20 +26,18 @@ namespace test
         public EmpresaRepositorioTest(ITestOutputHelper testOutputHelper, Base fixture) : base(testOutputHelper, fixture)
         {   
 
-            this.repositorio = fixture.GetService<IEmpresaRepositorio>
+            repositorio = fixture.GetService<IEmpresaRepositorio>
             (testOutputHelper)!;
 
-            this.repositorio_usuario = fixture.GetService<IUsuarioRepositorio>
+            repositorio_usuario = fixture.GetService<IUsuarioRepositorio>
             (testOutputHelper)!;
             
-            this.dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
+            dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
         }
 
         [Fact]
-        public void
-        DeletarEmpresa_QuandoEmpresaPassado_DeveRemoverDoBanco()
-        {
-         
+        public void DeletarEmpresa_QuandoEmpresaPassado_DeveRemoverDoBanco()
+        {         
             Empresa empresa = Stub.EmpresaStub.RetornarEmpresa();
 
             repositorio.DeletarEmpresa(empresa);
@@ -49,14 +47,11 @@ namespace test
             var empresaDb = dbContext.Empresa.Find(empresa.RazaoSocial);
 
             Assert.Null(empresaDb);
-
         }
 
         [Fact]
-        public void
-        AdicionarEmpresa_QuandoEmpresaPassado_DeveRetornarEmpresa()
-        {
-         
+        public void AdicionarEmpresa_QuandoEmpresaPassado_DeveRetornarEmpresa()
+        {         
             Empresa empresa = Stub.EmpresaStub.RetornarEmpresa();
 
             var empresaCadastrado = empresa;
@@ -68,7 +63,6 @@ namespace test
 
             Assert.NotNull(empresaDb);
             Assert.Equal(empresaCadastrado.RazaoSocial,empresa.RazaoSocial );
-
         }
 
         [Fact]
@@ -93,7 +87,7 @@ namespace test
 
             var empresaVisualiza = repositorio.VisualizarEmpresa(empresa.Cnpj);
 
-            Assert.Equal(empresaVisualiza.Cnpj,empresa.Cnpj);
+            Assert.Equal(empresaVisualiza?.Cnpj,empresa.Cnpj);
         }
 
         [Fact]
@@ -126,13 +120,13 @@ namespace test
         [Fact]
         public void AdicionarUsuario_QuandoPassado_DeveRetornarUsuario()
         {
-            var empresa = dbContext.PopulaEmpresa(1).First();
-            var usuario = dbContext.PopulaUsuarios(1).First();
+            var empresa = dbContext.PopulaEmpresa(1)[0];
+            var usuario = dbContext.PopulaUsuarios(1)[0];
             
             repositorio.AdicionarUsuario(usuario.Id, empresa.Cnpj);
 
             dbContext.SaveChanges();
-            var empresaDb = dbContext.Empresa.FirstOrDefault(e => e.Usuarios.FirstOrDefault() == empresa.Usuarios.First());
+            var empresaDb = dbContext.Empresa.FirstOrDefault(e => e.Usuarios.FirstOrDefault() == empresa.Usuarios[0]);
 
             Assert.NotNull(empresaDb);
         }

@@ -25,8 +25,7 @@ namespace test
             dbContext = fixture.GetService<AppDbContext>(testOutputHelper)!;
             empresaController = fixture.GetService<EmpresaController>(testOutputHelper)!;
 
-            AutenticarUsuario(empresaController);
-            
+            AutenticarUsuario(empresaController);            
         }
         
         [Fact]
@@ -36,10 +35,7 @@ namespace test
             
             AutenticarUsuario(empresaController, permissoes: new());
             Assert.ThrowsAsync<AuthForbiddenException>(() => empresaController.CadastrarEmpresa(empresa));
-        }
-
-        
-      
+        }     
 
         [Fact]
         public async Task CriarEmpresa_QuandoTemPermissao_DeveRetornarOk()
@@ -47,9 +43,7 @@ namespace test
             var empresa = EmpresaStub.RetornarEmpresaDTO();
             
             var resposta = await empresaController.CadastrarEmpresa(empresa);
-            Assert.IsType<OkResult>(resposta);
-            
-           
+            Assert.IsType<OkResult>(resposta);           
         }
 
         [Fact]
@@ -59,8 +53,7 @@ namespace test
 
             AutenticarUsuario(empresaController, permissoes: new(){Permissao.EmpresaCadastrar});
 
-            var resposta = empresaController.CadastrarEmpresa(empresa);
-            
+            var resposta = empresaController.CadastrarEmpresa(empresa);            
 
             empresa.RazaoSocial = "Nova Razao";
 
@@ -111,7 +104,6 @@ namespace test
             
             Assert.IsType<OkObjectResult>(resposta);
         }
-        
 
         [Fact]
         public async Task ListarEmpresas_QuandoNaoTemPermissao_DeveBloquear()
@@ -134,8 +126,7 @@ namespace test
             var resposta = await empresaController.ListarEmpresas(1, 10);
 
             Assert.IsType<OkObjectResult>(resposta);
-            Assert.NotNull(resposta);
-            
+            Assert.NotNull(resposta);            
         }
 
         [Fact]
@@ -143,7 +134,6 @@ namespace test
         {
             AutenticarUsuario(empresaController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => await empresaController.ListarEmpresas(1,5));
-            
         }
 
         [Fact]
@@ -151,7 +141,6 @@ namespace test
         {
             AutenticarUsuario(empresaController, permissoes: new());
             await Assert.ThrowsAsync<AuthForbiddenException>(async () => empresaController.VisualizarEmpresa("123445"));
-            
         }
 
         [Fact]
@@ -159,9 +148,7 @@ namespace test
         {
             
             var empresa = EmpresaStub.RetornarEmpresaDTO();
-            var resposta = empresaController.CadastrarEmpresa(empresa);
-
-            
+            var resposta = empresaController.CadastrarEmpresa(empresa);           
 
             var respostaVisualizar = empresaController.VisualizarEmpresa(empresa.Cnpj);
 
@@ -177,8 +164,6 @@ namespace test
             var usuario = dbContext.PopulaUsuarios(1).First();
             var resposta = await empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id);
             Assert.IsType<OkObjectResult>(resposta);
-            
-           
         }
 
         [Fact] 
@@ -188,8 +173,7 @@ namespace test
             var usuario = dbContext.PopulaUsuarios(1).First();
             AutenticarUsuario(empresaController, permissoes: new());
 
-            await Assert.ThrowsAsync<AuthForbiddenException>(() => empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id));
-    
+            await Assert.ThrowsAsync<AuthForbiddenException>(() => empresaController.AdicionarUsuario(empresa.Cnpj, usuario.Id));  
         }
 
         [Fact]
@@ -202,9 +186,9 @@ namespace test
             await dbContext.SaveChangesAsync();
             var lista = await empresaController.ListarUsuarios(empresa.Cnpj, new PesquisaUsuarioFiltro());
 
-            Assert.NotNull(lista);
-            
+            Assert.NotNull(lista);            
         }
+        
         [Fact]
         public async Task ExcluirUsuario_QuandoTemPermissao_DeveRetornarOk()
         {
