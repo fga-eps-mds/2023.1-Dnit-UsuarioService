@@ -74,7 +74,9 @@ namespace test
 
             await AutenticarUsuario(usuario);
             var permissoes = await controller.ListarPermissoes();
-            Assert.NotEmpty(permissoes);
+            Assert.IsType<OkObjectResult>(permissoes);
+
+            Assert.NotEmpty((permissoes as OkObjectResult).Value as List<Permissao>);
         }
 
         [Fact]
