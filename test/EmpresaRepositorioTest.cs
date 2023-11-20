@@ -72,11 +72,11 @@ namespace test
         }
 
         [Fact]
-        public async void ObterPerfilPorIdAsync_QuandoPerfilExiste_DeveRetornarPerfil()
+        public async Task ObterPerfilPorIdAsync_QuandoPerfilExiste_DeveRetornarPerfil()
         {
-            var empresa = Stub.EmpresaStub.RetornarEmpresa();
+            var empresa = EmpresaStub.RetornarEmpresa();
 
-            await repositorio.CadastrarEmpresa(empresa);
+            repositorio.CadastrarEmpresa(empresa);
 
             dbContext.SaveChanges();
 
@@ -124,19 +124,17 @@ namespace test
         }
 
         [Fact]
-        public async Task AdicionarUsuario_QuandoPassado_DeveRetornarUsuario()
+        public void AdicionarUsuario_QuandoPassado_DeveRetornarUsuario()
         {
             var empresa = dbContext.PopulaEmpresa(1).First();
             var usuario = dbContext.PopulaUsuarios(1).First();
             
-            await repositorio.AdicionarUsuario(usuario.Id, empresa.Cnpj);
+            repositorio.AdicionarUsuario(usuario.Id, empresa.Cnpj);
 
             dbContext.SaveChanges();
             var empresaDb = dbContext.Empresa.FirstOrDefault(e => e.Usuarios.FirstOrDefault() == empresa.Usuarios.First());
 
             Assert.NotNull(empresaDb);
-            
-
         }
 
         public void Dispose()

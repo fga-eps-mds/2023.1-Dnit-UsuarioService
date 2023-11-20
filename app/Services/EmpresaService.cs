@@ -23,7 +23,7 @@ namespace app.Services
         
         public async Task CadastrarEmpresa(Empresa empresa)
         {
-            await empresaRepositorio.CadastrarEmpresa(empresa);
+            empresaRepositorio.CadastrarEmpresa(empresa);
 
             await dbContext.SaveChangesAsync();
         }
@@ -74,13 +74,13 @@ namespace app.Services
 
         public async Task AdicionarUsuario(int usuarioid, string empresaid)
         {
-            await empresaRepositorio.AdicionarUsuario(usuarioid, empresaid);
+            empresaRepositorio.AdicionarUsuario(usuarioid, empresaid);
             await dbContext.SaveChangesAsync();
         }
 
          public async Task RemoverUsuario(int usuarioid, string empresaid)
         {
-            await empresaRepositorio.RemoverUsuario(usuarioid, empresaid);
+            empresaRepositorio.RemoverUsuario(usuarioid, empresaid);
             await dbContext.SaveChangesAsync();
         }
 

@@ -10,14 +10,14 @@ namespace app.Repositorios
     public class EmpresaRepositorio : IEmpresaRepositorio
     {
 
-        private AppDbContext dbContext;
+        private readonly AppDbContext dbContext;
 
         public EmpresaRepositorio(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
         }
 
-        public async Task CadastrarEmpresa(Empresa empresa)
+        public void CadastrarEmpresa(Empresa empresa)
         {
             dbContext.Add(empresa);
         }
@@ -85,7 +85,7 @@ namespace app.Repositorios
             return new ListaPaginada<Empresa>(items, pageIndex, pageSize, total);
         }
 
-        public async Task AdicionarUsuario(int usuarioid, string empresaid)
+        public void AdicionarUsuario(int usuarioid, string empresaid)
         {
             var usuario = dbContext.Usuario.Where(u => u.Id == usuarioid).FirstOrDefault()
                 ?? throw new ApiException(ErrorCodes.UsuarioNaoEncontrado);
@@ -97,7 +97,8 @@ namespace app.Repositorios
 
 
         }
-        public async Task RemoverUsuario(int usuarioid, string empresaid)
+
+        public void RemoverUsuario(int usuarioid, string empresaid)
         {
             var usuario = dbContext.Usuario.Where(u => u.Id == usuarioid).FirstOrDefault();
             var empresa = dbContext.Empresa.Include(e => e.Usuarios).Where(e => e.Cnpj == empresaid).FirstOrDefault();
@@ -147,7 +148,7 @@ namespace app.Repositorios
             }
             else
             {
-                throw new KeyNotFoundException("A empresa n�o existe");
+                throw new KeyNotFoundException("A empresa não existe");
             }
         }
     }
