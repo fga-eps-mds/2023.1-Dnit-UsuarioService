@@ -6,10 +6,10 @@ namespace app.Entidades
 {
     public class EmpresaUF
     {
-        public string EmpresaId;
+        public string EmpresaId { get; set; }
         [Key, Column(Order = 1)]
-        public Empresa Empresa;
+        public Empresa Empresa { get; set; }
         [Key, Column(Order = 2)]
-        public UF Uf;
+        public UF Uf { get; set; }
     }
 }
