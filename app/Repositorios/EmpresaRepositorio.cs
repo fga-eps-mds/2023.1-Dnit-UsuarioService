@@ -44,7 +44,7 @@ namespace app.Repositorios
             dbContext.Empresa.Remove(empresaParaExcluir);
         }
 
-        public async Task<Empresa?> ObterEmpresaPorIdAsync(string Cnpj)
+        public async Task<Empresa?> ObterEmpresaPorCnpjAsync(string Cnpj)
         {
             var query = dbContext.Empresa.AsQueryable();
 

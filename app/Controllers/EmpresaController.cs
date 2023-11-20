@@ -19,7 +19,6 @@ namespace app.Controller
         private readonly AuthService authService;
         private readonly IEmpresaService empresaService;
         private readonly IMapper mapper;
-        private readonly IPermissaoService permissaoService;
 
         public EmpresaController(
             IEmpresaService empresaService,
@@ -31,7 +30,6 @@ namespace app.Controller
             this.empresaService = empresaService;
             this.authService = authService;
             this.mapper = mapper;
-            this.permissaoService = permissaoService;
         }
 
         [Authorize]

@@ -36,7 +36,7 @@ namespace test
 
             await empresaService.CadastrarEmpresa(empresa);
 
-            var empresaDb = await empresaRepositorio.ObterEmpresaPorIdAsync(empresa.Cnpj);
+            var empresaDb = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresa.Cnpj);
 
             Assert.NotNull(empresaDb);
             Assert.Equal(empresaDTO.RazaoSocial, empresaDb.RazaoSocial);
@@ -57,7 +57,7 @@ namespace test
             empresaEdicao.Cnpj = empresa.Cnpj;
             var empresaRetornoEditado = await empresaService.EditarEmpresa(empresa.Cnpj, empresaEdicao);
 
-            var empresaDb = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaRetornoEditado.Cnpj);
+            var empresaDb = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresaRetornoEditado.Cnpj);
 
             Assert.NotNull(empresa);
             Assert.NotNull(empresaEdicao);
@@ -78,7 +78,7 @@ namespace test
 
             await empresaService.DeletarEmpresa(empresa.Cnpj);
 
-            var perfilDb = await empresaRepositorio.ObterEmpresaPorIdAsync(empresa.Cnpj);
+            var perfilDb = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresa.Cnpj);
 
             Assert.Null(perfilDb);
         }
@@ -93,7 +93,7 @@ namespace test
 
             var empresaVisalizar = empresaService.VisualizarEmpresa(empresa.Cnpj);
 
-            var perfilDb = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaVisalizar.Cnpj);
+            var perfilDb = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresaVisalizar.Cnpj);
 
             Assert.NotNull(perfilDb);
         }

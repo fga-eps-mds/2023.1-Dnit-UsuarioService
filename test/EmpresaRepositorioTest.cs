@@ -80,7 +80,7 @@ namespace test
 
             dbContext.SaveChanges();
 
-            var EmpresaRecuperado = await repositorio.ObterEmpresaPorIdAsync(empresa.Cnpj);
+            var EmpresaRecuperado = await repositorio.ObterEmpresaPorCnpjAsync(empresa.Cnpj);
 
             Assert.NotNull(EmpresaRecuperado);
             Assert.Equal(EmpresaRecuperado.RazaoSocial, empresa.RazaoSocial);

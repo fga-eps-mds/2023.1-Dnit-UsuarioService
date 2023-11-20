@@ -34,7 +34,7 @@ namespace app.Services
         }
 
         public async Task DeletarEmpresa(string empresaid){
-            var empresaParaExcluir = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaid) 
+            var empresaParaExcluir = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresaid) 
                 ?? throw new ApiException(ErrorCodes.EmpresaNaoEncontrada);
 
             await empresaRepositorio.DeletarEmpresa(empresaParaExcluir);
@@ -57,7 +57,7 @@ namespace app.Services
 
         public async Task<Empresa?> EditarEmpresa(string empresaid, Empresa empresa)
         {
-            var empresaAtualizar = await empresaRepositorio.ObterEmpresaPorIdAsync(empresaid) ?? throw new KeyNotFoundException("Empresa não encontrada");
+            var empresaAtualizar = await empresaRepositorio.ObterEmpresaPorCnpjAsync(empresaid) ?? throw new KeyNotFoundException("Empresa não encontrada");
 
             if (empresaAtualizar != null)
             {
