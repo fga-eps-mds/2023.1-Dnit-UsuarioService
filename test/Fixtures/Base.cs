@@ -1,3 +1,4 @@
+using app.Controller;
 using app.Controllers;
 using app.Entidades;
 using app.Repositorios;
@@ -28,6 +29,7 @@ namespace test.Fixtures
             services.AddScoped<IUnidadeFederativaRepositorio, UnidadeFederativaRepositorio>();
             services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
             services.AddScoped<IPerfilRepositorio, PerfilRepositorio>();
+            services.AddScoped<IEmpresaRepositorio, EmpresaRepositorio>();
 
             // Services
             services.AddScoped<IUsuarioService, UsuarioService>();
@@ -35,11 +37,13 @@ namespace test.Fixtures
             services.AddAutoMapper(typeof(AutoMapperConfig));
             services.AddScoped<IPermissaoService, PermissaoService>();
             services.AddScoped<IPerfilService, PerfilService>();
+            services.AddScoped<IEmpresaService, EmpresaService>();
 
             // Controllers
             services.AddScoped<DominioController>();
             services.AddScoped<UsuarioController>();
             services.AddScoped<PerfilController>();
+            services.AddScoped<EmpresaController>();
 
             services.AddAuth(configuration);
         }

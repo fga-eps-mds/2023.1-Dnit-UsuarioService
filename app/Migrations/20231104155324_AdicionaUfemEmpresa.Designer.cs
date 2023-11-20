@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using app.Entidades;
@@ -11,9 +12,11 @@ using app.Entidades;
 namespace app.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231104155324_AdicionaUfemEmpresa")]
+    partial class AdicionaUfemEmpresa
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,23 @@ namespace app.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("EmpresaUsuario", b =>
+                {
+                    b.Property<string>("EmpresasCnpj")
+                        .HasColumnType("character varying(14)")
+                        .HasColumnName("CnpjEmpresa");
+
+                    b.Property<int>("UsuariosId")
+                        .HasColumnType("integer")
+                        .HasColumnName("IdUsuario");
+
+                    b.HasKey("EmpresasCnpj", "UsuariosId");
+
+                    b.HasIndex("UsuariosId");
+
+                    b.ToTable("UsuarioEmpresa", (string)null);
+                });
 
             modelBuilder.Entity("app.Entidades.Empresa", b =>
                 {
@@ -34,26 +54,16 @@ namespace app.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
+                    b.Property<int[]>("UFs")
+                        .IsRequired()
+                        .HasColumnType("integer[]");
+
                     b.HasKey("Cnpj");
 
                     b.HasIndex("Cnpj")
                         .IsUnique();
 
                     b.ToTable("Empresa");
-                });
-
-            modelBuilder.Entity("app.Entidades.EmpresaUF", b =>
-                {
-                    b.Property<string>("EmpresaId")
-                        .HasColumnType("character varying(14)");
-
-                    b.Property<int>("Uf")
-                        .HasColumnType("integer")
-                        .HasColumnOrder(2);
-
-                    b.HasKey("EmpresaId", "Uf");
-
-                    b.ToTable("EmpresaUFs");
                 });
 
             modelBuilder.Entity("app.Entidades.Municipio", b =>
@@ -149,16 +159,10 @@ namespace app.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Associacao")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<string>("EmpresaCnpj")
-                        .HasColumnType("character varying(14)");
 
                     b.Property<int?>("MunicipioId")
                         .HasColumnType("integer");
@@ -190,8 +194,6 @@ namespace app.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.HasIndex("EmpresaCnpj");
-
                     b.HasIndex("MunicipioId");
 
                     b.HasIndex("PerfilId");
@@ -199,15 +201,19 @@ namespace app.Migrations
                     b.ToTable("Usuario");
                 });
 
-            modelBuilder.Entity("app.Entidades.EmpresaUF", b =>
+            modelBuilder.Entity("EmpresaUsuario", b =>
                 {
-                    b.HasOne("app.Entidades.Empresa", "Empresa")
-                        .WithMany("EmpresaUFs")
-                        .HasForeignKey("EmpresaId")
+                    b.HasOne("app.Entidades.Empresa", null)
+                        .WithMany()
+                        .HasForeignKey("EmpresasCnpj")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Empresa");
+                    b.HasOne("app.Entidades.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("UsuariosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("app.Entidades.PerfilPermissao", b =>
@@ -234,10 +240,6 @@ namespace app.Migrations
 
             modelBuilder.Entity("app.Entidades.Usuario", b =>
                 {
-                    b.HasOne("app.Entidades.Empresa", "Empresa")
-                        .WithMany("Usuarios")
-                        .HasForeignKey("EmpresaCnpj");
-
                     b.HasOne("app.Entidades.Municipio", "Municipio")
                         .WithMany()
                         .HasForeignKey("MunicipioId");
@@ -247,18 +249,9 @@ namespace app.Migrations
                         .HasForeignKey("PerfilId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.Navigation("Empresa");
-
                     b.Navigation("Municipio");
 
                     b.Navigation("Perfil");
-                });
-
-            modelBuilder.Entity("app.Entidades.Empresa", b =>
-                {
-                    b.Navigation("EmpresaUFs");
-
-                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("app.Entidades.Perfil", b =>

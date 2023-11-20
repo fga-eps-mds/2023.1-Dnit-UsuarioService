@@ -8,5 +8,6 @@ namespace api.Usuarios
         public UF? UfLotacao { get; set; }
         public Guid? PerfilId { get; set; }
         public int? MunicipioId { get; set; }
+        public string? Empresa { get; set; }
     }
 }

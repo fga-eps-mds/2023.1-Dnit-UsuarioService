@@ -10,6 +10,7 @@ namespace app.DI
             services.AddScoped<IUnidadeFederativaRepositorio, UnidadeFederativaRepositorio>();
             services.AddScoped<IUsuarioRepositorio, UsuarioRepositorio>();
             services.AddScoped<IPerfilRepositorio, PerfilRepositorio>();
+            services.AddScoped<IEmpresaRepositorio, EmpresaRepositorio>();
         }
     }
 }

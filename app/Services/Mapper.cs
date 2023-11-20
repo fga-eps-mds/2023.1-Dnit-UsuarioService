@@ -7,6 +7,7 @@ using EnumsNET;
 using api.Perfis;
 using api.Permissoes;
 using api.Municipios;
+using api.Empresa;
 
 namespace app.Services.Mapper
 {
@@ -16,8 +17,7 @@ namespace app.Services.Mapper
         {
             CreateMap<Municipio, MunicipioModel>();
 
-            CreateMap<Usuario, UsuarioModel>()
-                .ForMember(u => u.Cnpj, opt => opt.Ignore());
+            CreateMap<Usuario, UsuarioModel>();
             
             CreateMap<UsuarioDTO, UsuarioTerceiro>()
                 .ForMember(u => u.CNPJ, opt => opt.Ignore());
@@ -51,6 +51,16 @@ namespace app.Services.Mapper
                 )
                 .ForMember(model => model.QuantidadeUsuarios, opt => opt.MapFrom(p => p.Usuarios.Count()))
                 .ForMember(model => model.CategoriasPermissao, opt => opt.Ignore());
+            
+            CreateMap<Empresa, EmpresaModel>()
+                .ForMember(em => em.UFs, opt => opt.MapFrom(e => e.EmpresaUFs.ConvertAll(d => d.Uf)));
+
+            CreateMap<EmpresaDTO, Empresa>()
+                .ForMember(e => e.Cnpj, opt => opt.MapFrom(em => em.Cnpj))
+                .ForMember(e => e.RazaoSocial, opt => opt.MapFrom(em => em.RazaoSocial))
+                .ForMember(e => e.EmpresaUFs, opt => opt.MapFrom((dto, em) => dto.UFs.ConvertAll(uf => new EmpresaUF {Empresa=em, Uf=uf})))
+                .ForMember(e => e.Usuarios, opt => opt.Ignore());
+
         }
     }
 }

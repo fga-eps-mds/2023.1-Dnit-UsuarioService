@@ -73,12 +73,20 @@ namespace api
         [Description("Visualizar Escola")]
         EscolaVisualizar = 1003,
 
-        //[Description("Cadastrar Empresa")]
-        //EmpresaCadastrar = 2000,
-        //[Description("Editar Empresa")]
-        //EmpresaEditar = 2001,
-        //[Description("Remover Empresa")]
-        //EmpresaRemover = 2002,
+        [Description("Cadastrar Empresa")]
+        EmpresaCadastrar = 2000,
+        [Description("Editar Empresa")]
+        EmpresaEditar = 2001,
+        [Description("Remover Empresa")]
+        EmpresaRemover = 2002,
+        [Description("Visualizar Empresa")]
+        EmpresaVisualizar = 2003,
+        [Description("Gerenciar Empresas")]
+        EmpresaGerenciar = 2004,
+        [Description("Gerenciar Usuários da Empresa")]
+        EmpresaGerenciarUsuarios = 2005,
+        [Description("Visualizar Usuários da Empresa")]
+        EmpresaVisualizarUsuarios = 2006,
 
         [Description("Cadastrar Perfil de Usuário")]
         PerfilCadastrar = 3000,
@@ -121,6 +129,8 @@ namespace api
         PermissaoNaoEncontrada,
         [Description("Email já cadastrado")]
         EmailUtilizado,
+        [Description("Empresa não encontrada")]
+        EmpresaNaoEncontrada,
     }
 
 
@@ -130,5 +140,13 @@ namespace api
         Basico = 1,
         Administrador,
         Customizavel
+    }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum Associacao
+    {
+        DNIT = 1,
+        Empresa,
+        Escola
     }
 }

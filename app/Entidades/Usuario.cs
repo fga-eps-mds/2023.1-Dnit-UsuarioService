@@ -24,7 +24,7 @@ namespace app.Entidades
 
         public List<RedefinicaoSenha> RedefinicaoSenha { get; set; }
 
-        public List<Empresa>? Empresas { get; set; }
+        public Empresa? Empresa { get; set; }
 
         public Guid? PerfilId { get; set; }
         public Perfil? Perfil { get; set; }
@@ -33,5 +33,6 @@ namespace app.Entidades
         public DateTime? TokenAtualizacaoExpiracao { get; set; }
         public int? MunicipioId { get; set; }
         public Municipio? Municipio { get; set; }
+        public Associacao Associacao { get; set; }
     }
 }

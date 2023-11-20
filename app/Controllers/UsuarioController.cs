@@ -46,10 +46,17 @@ namespace app.Controllers
 
         [HttpGet("permissoes")]
         [Authorize]
-        public async Task<List<Permissao>> ListarPermissoes()
+        public async Task<IActionResult> ListarPermissoes()
         {
-            var userId = authService.GetUserId(Usuario);
-            return await usuarioService.ListarPermissoesAsync(userId);
+            try
+            {
+                var userId = authService.GetUserId(Usuario);
+                return new OkObjectResult(await usuarioService.ListarPermissoesAsync(userId));
+            }
+            catch (InvalidOperationException _)
+            {
+                return StatusCode(401);
+            }
         }
 
         [HttpPost("atualizarToken")]

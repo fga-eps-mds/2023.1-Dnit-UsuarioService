@@ -141,7 +141,7 @@ namespace test
             Assert.Equal(usuarioTerceiro.Email, usuarioObtido.Email);
             Assert.Equal(usuarioTerceiro.Senha, usuarioObtido.Senha);
             Assert.Equal(usuarioTerceiro.Nome, usuarioObtido.Nome);
-            Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtido?.Empresas?.First()?.Cnpj);
+            Assert.Equal(usuarioTerceiro.CNPJ, usuarioObtido?.Empresa?.Cnpj);
         }
 
         public new void Dispose()
