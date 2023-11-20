@@ -41,9 +41,16 @@ namespace app.Services
             dbContext.SaveChanges();
         }
 
-        public async Task<ListaPaginada<EmpresaModel>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
+        public async Task<ListaPaginada<EmpresaModel>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null, string? ufs = "")
         {
-            var pagina = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
+            List<UF> listaUFs = new List<UF>();
+            if (!string.IsNullOrEmpty(ufs)){
+                foreach (var uf in ufs.Split(",")) {
+                    listaUFs.Add((UF)int.Parse(uf));
+                }
+            }
+
+            var pagina = await empresaRepositorio.ListarEmpresas(pageIndex, pageSize, listaUFs, nome, cnpj);
             var modelo = mapper.Map<List<EmpresaModel>>(pagina.Items);
             return new ListaPaginada<EmpresaModel>(modelo, pagina.Pagina, pagina.ItemsPorPagina, pagina.Total);
         }

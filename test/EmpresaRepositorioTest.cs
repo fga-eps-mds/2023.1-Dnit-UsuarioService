@@ -100,6 +100,12 @@ namespace test
         public async Task ListarEmpresas_QuandoColocadoTamanho()
         {
             var lista = EmpresaStub.RetornaListaDeEmpresas();
+            var listaUFs = new List<UF>
+            {
+                UF.DF,
+                UF.GO
+            };
+            
             List<string> nomeLista = new();
 
             lista.ForEach(p => nomeLista.Add(p.RazaoSocial));
@@ -108,7 +114,7 @@ namespace test
 
             dbContext.SaveChanges();
 
-            var listaRetornada = await repositorio.ListarEmpresas(1,3);
+            var listaRetornada = await repositorio.ListarEmpresas(1,3, listaUFs);
             Assert.NotNull(listaRetornada);
 
             foreach(var item in lista)

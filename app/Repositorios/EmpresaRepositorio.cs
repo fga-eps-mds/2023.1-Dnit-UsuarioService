@@ -51,7 +51,7 @@ namespace app.Repositorios
             return await query.FirstOrDefaultAsync(p => p.Cnpj == Cnpj);
         }
 
-        public async Task<ListaPaginada<Empresa>> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
+        public async Task<ListaPaginada<Empresa>> ListarEmpresas(int pageIndex, int pageSize, List<UF> ufs, string? nome = null, string? cnpj = null)
         {
             var query = dbContext.Empresa.AsQueryable();
 
@@ -68,6 +68,11 @@ namespace app.Repositorios
                 var query_1 = query.Where(p => p.RazaoSocial.ToLower().Contains(nome.ToLower()));
 
                 query = query_1.Where(p => p.Cnpj.ToLower().Contains(cnpj.ToLower()));
+            }
+
+            if (ufs.Count > 0) {
+                var queryUFs = await dbContext.EmpresaUFs.Where(e => ufs.Contains(e.Uf)).Select(e => e.EmpresaId).ToListAsync();
+                query = query.Where(p => queryUFs.Contains(p.Cnpj));
             }
 
             var total = await query.CountAsync();

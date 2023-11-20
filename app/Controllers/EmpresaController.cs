@@ -82,11 +82,11 @@ namespace app.Controller
         
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null)
+        public async Task<IActionResult> ListarEmpresas(int pageIndex, int pageSize, string? nome = null, string? cnpj = null, string? ufs = "")
         {
             authService.Require(Usuario, Permissao.EmpresaVisualizar);
             
-            var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome, cnpj);
+            var pagina = await empresaService.ListarEmpresas(pageIndex, pageSize, nome, cnpj, ufs);
             return Ok(pagina);
         }
         
