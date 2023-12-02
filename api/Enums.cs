@@ -72,6 +72,8 @@ namespace api
         EscolaRemover = 1002,
         [Description("Visualizar Escola")]
         EscolaVisualizar = 1003,
+        [Description("Exportar Escola")]
+        EscolaExportar = 1004,
 
         [Description("Cadastrar Empresa")]
         EmpresaCadastrar = 2000,
@@ -103,6 +105,8 @@ namespace api
         UpsCalcularEscola = 5001,
         [Description("Visualizar Ranque")]
         RanqueVisualizar = 5002,
+        [Description("Exportar Ranque")]
+        RanqueExportar = 5003,
 
         [Description("Cadastrar rodovia")]
         RodoviaCadastrar = 6000,
