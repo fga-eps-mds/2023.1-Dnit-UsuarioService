@@ -98,7 +98,7 @@ namespace api
         PerfilRemover = 3002,
         [Description("Visualizar perfis")]
         PerfilVisualizar = 3003,
-        
+
         [Description("_Calcular UPS de Sinistros")]
         UpsCalcularSinistro = 5000,
         [Description("_Calcular UPS de escolas")]
@@ -122,6 +122,9 @@ namespace api
         UsuarioVisualizar = 8003,
         [Description("Editar Perfil Usuário")]
         UsuarioPerfilEditar = 8004,
+
+        [Description("Visualizar solicitação")]
+        SolicitacaoVisualizar = 9000,
     }
 
     public enum ErrorCodes
